@@ -1,0 +1,35 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+
+    <class name="com.mdmd.entity.GameRecordEntity" table="game_record" schema="happyfish">
+        <id name="id">
+            <column name="id" sql-type="int(11)"/>
+            <generator class="identity"/>
+        </id>
+
+        <property name="time">
+            <column name="time" sql-type="timestamp" not-null="false"/>
+        </property>
+        <property name="gameType">
+            <column name="gameType" sql-type="varchar(40)" length="40"/>
+        </property>
+        <property name="gameResult">
+            <column name="gameResult" sql-type="varchar(50)" length="50"/>
+        </property>
+        <property name="gameContent">
+            <column name="gameContent" sql-type="varchar(50)" length="50"/>
+        </property>
+        <property name="gameCost">
+            <column name="gameCost" sql-type="double" precision="-1"/>
+        </property>
+        <property name="principal">
+            <column name="principal" sql-type="double" precision="-1"/>
+        </property>
+        <many-to-one name="userEntity" class="com.mdmd.entity.UserEntity" cascade="none" lazy="false">
+            <column name="userId" />
+        </many-to-one>
+    </class>
+</hibernate-mapping>

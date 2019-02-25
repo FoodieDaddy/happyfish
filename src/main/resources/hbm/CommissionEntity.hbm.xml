@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+
+    <class name="com.mdmd.entity.CommissionEntity" table="commission" schema="happyfish">
+        <id name="id">
+            <column name="id" sql-type="int(11)"/>
+            <generator class="identity"/>
+        </id>
+        <property name="preCommission">
+            <column name="preCommission" sql-type="double" precision="-1"/>
+        </property>
+        <property name="todayCommission">
+            <column name="todayCommission" sql-type="double" precision="-1"/>
+        </property>
+        <property name="calcuDate">
+            <column name="calcuDate" sql-type="int(11)"/>
+        </property>
+        <property name="takeoutCommission">
+            <column name="takeoutCommission" sql-type="int(11)"/>
+        </property>
+    </class>
+</hibernate-mapping>

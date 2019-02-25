@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+
+    <class name="com.mdmd.entity.FishRuleEntity" table="fish_rule" schema="happyfish">
+        <id name="id">
+            <column name="id" sql-type="int(11)"/>
+            <generator class="identity"/>
+        </id>
+        <property name="price">
+            <column name="price" sql-type="int(11)"/>
+        </property>
+        <property name="targetValue">
+            <column name="targetValue" sql-type="int(11)"/>
+        </property>
+        <property name="probability">
+            <column name="probability" sql-type="int(11)"/>
+        </property>
+        <property name="volume">
+            <column name="volume" sql-type="int(11)"/>
+        </property>
+        <property name="minReturn">
+            <column name="minReturn" sql-type="double" precision="-1"/>
+        </property>
+        <property name="maxReturn">
+            <column name="maxReturn" sql-type="double" precision="-1"/>
+        </property>
+    </class>
+</hibernate-mapping>

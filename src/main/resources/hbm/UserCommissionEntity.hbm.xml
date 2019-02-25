@@ -1,0 +1,34 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+
+    <class name="com.mdmd.entity.UserCommissionEntity" table="user_commission" schema="happyfish">
+        <id name="id">
+            <column name="id" sql-type="int(11)"/>
+            <generator class="identity"/>
+        </id>
+        <property name="time">
+            <column name="time" sql-type="timestamp" />
+        </property>
+        <property name="commissionType">
+            <column name="commissionType" sql-type="varchar(20)" length="20"/>
+        </property>
+        <property name="commissionResult">
+            <column name="commissionResult" sql-type="double" precision="-1"/>
+        </property>
+        <property name="nodeUserId">
+            <column name="nodeUserId" sql-type="int(11)"/>
+        </property>
+        <property name="baseNumber">
+            <column name="baseNumber" sql-type="double" precision="-1"/>
+        </property>
+        <property name="baseScale">
+            <column name="baseScale" sql-type="int(11)"/>
+        </property>
+        <property name="childNodeIndex">
+            <column name="childNodeIndex" sql-type="int(11)"/>
+        </property>
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+
+    <class name="com.mdmd.entity.UserTopupEntity" table="user_topup" schema="happyfish">
+        <id name="id">
+            <column name="id" sql-type="int(11)"/>
+            <generator class="identity"/>
+        </id>
+        <property name="time">
+            <column name="time" sql-type="timestamp" />
+        </property>
+        <property name="orderNumber">
+            <column name="orderNumber" sql-type="varchar(30)" length="30"/>
+        </property>
+        <property name="topupType">
+            <column name="topupType" sql-type="varchar(20)" length="20"/>
+        </property>
+        <property name="topupResult">
+            <column name="topupResult" sql-type="varchar(20)" length="20"/>
+        </property>
+        <property name="topupQuantity">
+            <column name="topupQuantity" sql-type="int(11)"/>
+        </property>
+        <many-to-one name="userEntity" class="com.mdmd.entity.UserEntity" cascade="none" lazy="false">
+            <column name="userId"/>
+        </many-to-one>
+    </class>
+</hibernate-mapping>

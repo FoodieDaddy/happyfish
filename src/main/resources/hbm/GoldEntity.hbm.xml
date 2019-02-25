@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+
+    <class name="com.mdmd.entity.GoldEntity" table="gold" schema="happyfish">
+        <id name="id">
+            <column name="id" sql-type="int(11)"/>
+            <generator class="identity"/>
+        </id>
+        <property name="preGold">
+            <column name="preGold" sql-type="double" precision="-1"/>
+        </property>
+        <property name="calcDate">
+            <column name="calcDate" sql-type="int(11)" not-null="true"/>
+        </property>
+        <property name="todayWater">
+            <column name="todayWater" sql-type="double" precision="-1"/>
+        </property>
+        <property name="todayGold">
+            <column name="todayGold" sql-type="double" precision="-1"/>
+        </property>
+    </class>
+</hibernate-mapping>

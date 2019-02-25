@@ -1,0 +1,54 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+
+    <class name="com.mdmd.entity.UserEntity" table="user" schema="happyfish"  lazy="false" >
+        <id name="userid">
+            <column name="userid" sql-type="int(11)"/>
+            <generator class="identity"/>
+        </id>
+        <property name="userOpenid">
+            <column name="userOpenid" sql-type="varchar(28)" length="28"/>
+        </property>
+        <property name="gold">
+            <column name="gold" sql-type="double" precision="-1"/>
+        </property>
+        <property name="commission">
+            <column name="commission" sql-type="double" precision="-1"/>
+        </property>
+        <property name="superUserId">
+            <column name="superUserId" sql-type="int(11)"/>
+        </property>
+        <property name="loginBan">
+            <column name="loginBan" sql-type="tinyint(1)"/>
+        </property>
+        <property name="takeoutBan">
+            <column name="takeoutBan" sql-type="tinyint(1)"/>
+        </property>
+        <property name="commissionGiveBan">
+            <column name="commissionGiveBan" sql-type="tinyint(1)"/>
+        </property>
+        <property name="commissionGetBan">
+            <column name="commissionGetBan" sql-type="tinyint(1)"/>
+        </property>
+        <property name="topupBan">
+            <column name="topupBan" sql-type="tinyint(1)"/>
+        </property>
+        <property name="takeoutTime">
+            <column name="takeoutTime" sql-type="int(11)" not-null="true"/>
+        </property>
+        <property name="calcuDay" not-null="true">
+            <column name="calcuDay" sql-type="int(11)"/>
+        </property>
+        <set name="goldEntitySet"  cascade="save-update" fetch="join" lazy="false">
+            <key column="userId" not-null="true"/>
+            <one-to-many  class="com.mdmd.entity.GoldEntity" />
+        </set>
+        <set name="commissionEntitySet"  cascade="save-update" fetch="join" lazy="false">
+            <key column="userId" not-null="true"/>
+            <one-to-many  class="com.mdmd.entity.CommissionEntity" />
+        </set>
+    </class>
+</hibernate-mapping>

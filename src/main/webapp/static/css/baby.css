@@ -1,0 +1,477 @@
+.baby{
+	width: 10rem;
+	height: 100vh;
+	background: url(/static/img/b_bg.png) no-repeat;
+	background-size: 100% 100%;
+	margin: 0 auto;
+	position: relative;
+}
+::-webkit-scrollbar {
+	display:none
+}
+.b-home{
+	width: 10rem;
+	height: 100vh;
+	position: relative;
+}
+.clearfix:after{
+	display: block;
+	content: "";
+	clear: both;
+}
+/*top*/
+.b-top{
+	width: 10rem;
+	height: 1.1111rem;
+	position: relative;
+	top: 0;
+	left: 0;
+}
+.b-top-bg{
+	position: absolute;
+	width: 9.537rem;
+	height: 1.1111rem;
+	top: 0;
+	left: 0.2222rem;
+}
+.b-top-bg img{
+	width: 100%;
+	transform: rotate(180deg);
+}
+.b-number,.b-money{
+	float: left;
+	z-index: 4;
+}
+.b-rule{
+	float: right;
+	width: 1.0185rem;
+	height: 1.0185rem;
+	position: relative;
+	z-index: 1;
+	    margin-right: .5rem;
+}
+.b-rule img{
+	width: 100%;
+}
+.b-number{
+	width: 3.6296rem;
+	height: 0.8889rem;
+	background: url(/static/img/m_btn.png) no-repeat;
+	background-size: 100% 100%;
+	color: #fff;
+	position: relative;
+    z-index: 1;
+    font-size: 16px;
+    font-weight: 600;
+    margin-left: 0.6rem;
+    text-indent: 1.15rem;
+    line-height: 0.8889rem;
+    margin-top: 0.1rem;
+}
+.b-money{
+	width: 3.5rem;
+	height: 0.8704rem;
+	background: url(/static/img/id_num.png) no-repeat;
+	background-size: 100% 100%;
+	color: #fff;
+	position: relative;
+    z-index: 1;
+    font-size: 16px;
+    font-weight: 600;
+    margin-left: .6rem;
+    line-height: 0.8704rem;
+    text-indent: 1rem;
+    margin-top: 0.1rem;
+}
+/*通知中奖*/
+.b-notice{
+	width: 8.5556rem;
+	height: 0.6111rem;
+	margin-left: 0.7222rem;
+	margin-top: 0.15rem;
+	margin-bottom: 0.15rem;
+	background: url(/static/img/info.png) no-repeat;
+	background-size: 100% 100%;
+	color: #fff;
+	font-size: 14px;
+	text-align: center;
+	line-height: 0.6111rem;
+}
+
+/*玩法*/
+.b-method{
+	width: 10rem;
+	height: 1.2407rem;
+}
+.b-two,.b-five{
+	width: 3.037rem;
+	height: 1.2407rem;
+	float: left;
+}
+.b-two img,.b-five img{
+	width: 100%;
+}
+.b-two{
+	margin-left: 1.962rem;
+	margin-right: 0.02rem;
+}
+
+/*猜大小和数字*/
+.guess{
+	width: 9.2593rem;
+	height: 3.8148rem;
+	background: url(/static/img/info3.png) no-repeat;
+	background-size: 100% 100%;
+	margin-left: 0.3704rem;
+	color: #fff;
+	font-size: 14px;
+	margin-top: -0.471rem;
+}
+.guess-big-small{
+	width: 9.2593rem;
+	padding-top: 0.48rem;
+}
+.guess-list1{
+	width: 9.2593rem;
+}
+.guess-list1 li{
+	float: left;
+	width: 2.2778rem;
+	height: 0.963rem;
+	background: url(/static/img/b_btn1.png) no-repeat;
+	background-size: 100% 100%;
+	font-size: 16px;
+    text-align: center;
+    line-height: 0.75rem;
+}
+.guess-list1 li.b-active{
+	background: url(/static/img/b_btn2.png) no-repeat;
+	background-size: 100% 100%;
+}
+.guess-list1 li:nth-of-type(1){
+	margin-left: 1.8rem;
+    margin-top: 0.3rem;
+}
+.guess-list1 li:nth-of-type(2){
+	margin-left: 1.3rem;
+    margin-top: 0.3rem;
+}
+.guess-list1 li:nth-of-type(3){
+	margin-left: 1.5rem;
+    margin-top: 0.3rem;
+}
+.guess-list1 li:nth-of-type(4){
+	margin-left: 1.8rem;
+	margin-top: 0.3rem;
+}
+
+.guess-num{
+	width: 9.2593rem;
+	padding-top: 0.48rem;
+	display: none;
+}
+.guess-list2{
+	width:7.7778rem;
+	margin-left: 0.7407rem; 
+	margin-top: 0.1rem;
+}
+.guess-list2 li{
+	float: left;
+	width: 1.2593rem;
+	height: 0.963rem;
+	background: url(/static/img/num_btn1.png) no-repeat;
+	background-size: 100% 100%;
+	line-height: 0.8rem;
+	font-size: 16px;
+	text-align: center;
+	margin-left: 0.24rem;
+	margin-top: 0.25rem;
+}
+.guess-list2 li.num-active{
+	background: url(/static/img/num_btn2.png) no-repeat;
+	background-size: 100% 100%;
+}
+
+/*最大最小*/
+.b-info{
+	width: 10.0rem;
+	height: 8.5926rem;
+	background: url(/static/img/info2.png) no-repeat;
+	background-size: 100% 100%;
+	margin-top: -.7rem;
+}
+.max-min{
+	width: 10rem;
+}
+.b-max,.b-min{
+	width: 1.7778rem;
+	height: 1.0185rem;
+	float: left;
+}
+.b-reduce,.b-add{
+	width: 1.1296rem;
+	height: 1.0926rem;
+	float: left;
+}
+.b-hand{
+	float: left;
+	color: #fff;
+    margin-top: 0.45rem;
+    font-size: 24px;
+    font-weight: 500;
+    width: 2.2rem;
+    text-align: center;
+}
+.b-max img,.b-min img,.b-reduce img,.b-add img{
+	width: 100%;
+}
+.b-max{
+	margin-left: 0.35rem;
+    margin-top: 0.45rem;
+}
+.b-reduce{
+	margin-left: 0.35rem;
+    margin-top: 0.35rem;
+}
+.b-add{
+    margin-left: 0.1rem;
+    margin-top: 0.35rem;
+}
+.b-min{
+	margin-top: 0.44rem;
+    margin-left: 0.5rem;
+}
+
+/*上期收益等*/
+.b-info-much{
+	width:8.8889rem;
+	margin-left:0.1852rem;
+	font-size: 14px;
+	color: #fff;
+	margin-top: 0.5rem;
+}
+.info-list{
+	width: 8.8889rem;
+}
+.info-list li{
+	width: 8.8889rem;
+	height: 0.8rem;
+	line-height: 0.8rem;
+}
+.info-list li div.info-left{
+	float: left;
+	text-indent: 0.9rem;
+}
+.info-list li div.info-right{
+	float: right;
+	margin-right: 0.1rem;
+}
+.last-num{
+	float: left !important;
+	margin-left: 0.4rem;
+}
+.info-list li:nth-of-type(2){
+	margin-top: 0.08rem;
+}
+.info-list li:nth-of-type(3){
+	margin-top: 0.2rem;
+}
+.info-list li:nth-of-type(4){
+	margin-top: 0.3rem;
+}
+.hand-money,.hash-money,.order-text,.last-num{
+	color: #dcd793;
+}
+.order-text{
+	margin-right: 0.1rem;
+}
+
+.b-start{
+	width: 3.037rem;
+	height: 1.0556rem;
+	margin-top: 0.3rem;
+	margin-left: 3.4815rem;
+}
+.b-start img{
+	width: 100%;
+}
+.back{
+	width: 9.537rem;
+	height: 1.1111rem;
+	background: url(/static/img/back.png) no-repeat;
+	background-size: 100% 100%;
+	color: #fff;
+	font-size: 20px;
+	letter-spacing:0.1rem;
+	position: absolute;
+	bottom: 0;
+	left: 0.2222rem;
+	text-align: center;
+	line-height: 1.1111rem;
+}
+
+/*游戏规则*/
+.game-rule{
+	width: 10rem;
+	height: 100vh;
+	position: absolute;
+	top: 0;
+	left: 0;
+	background: rgba(0,0,0,0.6);
+	display: none;
+}
+.inner-rule{
+	animation: rank .2s;
+}
+.rule-pic{
+	width: 7.9815rem;
+	height: 4.6667rem;
+	margin-left: 1.0rem;
+	padding-top: 5rem;
+}
+.rule-close{
+	width: 1.5556rem;
+	height: 1.5556rem;
+	margin-left: 4.2222rem;
+	margin-top: .4rem;
+	position: relative;
+	z-index: 111;
+}
+.rule-close img,.rule-pic img{
+	width: 100%;
+}
+
+@keyframes rank{
+	0%{
+		transform: scale(0.8);
+	}
+	100%{
+		transform: scale(1);
+	}
+}
+
+/*开奖结果*/
+.result{
+	width: 10rem;
+	height: 100vh;
+	position: absolute;
+	top: 0;
+	left: 0;
+	background: rgba(0,0,0,0.6);
+	display: none;
+}
+.inner-result{
+	width: 10rem;
+	height: 100vh;
+	animation: rank .2s;
+}
+.result-pic{
+	width: 9.5741rem;
+	height: 7.4444rem;
+	margin-left: 0.2037rem;
+	margin-top: 2rem;
+	background: url(/static/img/result.png) no-repeat;
+	background-size: 100% 100%;
+	font-size: 14px;
+	color: #fff;
+}
+
+.result-close{
+	width: 1.5556rem;
+	height: 1.5556rem;
+	margin-left: 4.2222rem;
+	margin-top: .4rem;
+	position: relative;
+	z-index: 111;
+}
+.result-close img{
+	width: 100%;
+}
+.result-num{
+	padding-top: 3.1rem;
+    text-align: center;
+    font-size: 20px;
+    font-weight: 600;
+    color: #1eef16;
+}
+.tip-content{
+	margin-top: 0.2rem;
+}
+.tip-content,.prize-result,.order-num{
+	height: .8rem;
+    line-height: .8rem;
+    text-indent: 1rem;
+}
+.prize-num{
+	color: #dcd793;
+}
+.win{
+	color: red;
+	font-size: 16px;
+}
+
+
+/*充值*/
+.pay{
+	width: 10rem;
+	height: 100vh;
+	position: absolute;
+	top: 0;
+	left: 0;
+	background: rgba(0,0,0,0.6);
+	display: none;
+	z-index: 6;
+}
+.inner-pay{
+	animation: rank .2s;
+	margin-top: .5rem;
+}
+.pay-bg{
+	width: 9.3519rem;
+	height: 13.9815rem;
+	background: url(/static/img/czbg.png) no-repeat;
+	background-size: 100% 100%;
+	margin-left: 0.3148rem;
+	position: relative;
+}
+.pay-close{
+	width: 1.5556rem;
+	height: 1.5556rem;
+	position: absolute;
+	right: 0rem;
+	top: 0.8rem;
+	z-index: 111;
+}
+.pay-close img{
+	width: 100%;
+}
+.pay-list{
+	width: 9.3519rem;
+	padding-top:3.8rem;
+}
+.pay-list li{
+	float: left;
+	width: 2.5rem;
+	height: 1.0741rem;
+	background: url(/static/img/btn_pay2.png) no-repeat;
+	background-size: 100% 100%;
+	margin-left: 0.48rem;
+    color: #fff;
+    font-size: 14px;
+    text-align: center;
+    line-height: 1.0741rem;
+    margin-top: 0.48rem;
+}
+.pay-list li.pay-active{
+	background: url(/static/img/btn_pay1.png) no-repeat;
+	background-size: 100% 100%;
+}
+.weixin-pay,.ali-pay,.person-pay{
+	width: 8.1111rem;
+	height: 1.0556rem;
+	margin-left: 0.6111rem;
+	margin-top: .5rem;
+}
+.weixin-pay img,.ali-pay img,.person-pay img{
+	width: 100%;
+}

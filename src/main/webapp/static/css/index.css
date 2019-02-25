@@ -1,0 +1,1025 @@
+.bg{
+	width:10.0rem;
+	height: 100vh;
+	background: url(../img/load_bg.jpg) no-repeat;
+	background-size: 100% 100%;
+	position: relative;
+	margin: 0 auto;
+}
+::-webkit-scrollbar {
+	display:none
+}
+.load-tar-top{
+	background-color: #0EC800;
+	width:0;
+	height: 0.1852rem;
+	border-radius: 0.1852rem;
+	margin-left: 0.7407rem;
+	position: absolute;
+	top: 85vh;
+	z-index: 2;
+	animation: upDown 1s;
+}
+.load-tar-bottom{
+	background-color: #1A124A;
+	width:8.5185rem;
+	height: 0.1852rem;
+	border-radius: 0.1852rem;
+	margin-left: 0.7407rem;
+	position: absolute;
+	top: 85vh;
+}
+
+@keyframes upDown{
+	0%{
+		width:0;
+	}
+	10%{
+		width:0.8519rem;
+	}
+	20%{
+		width: 1.7037rem;
+	}
+	30%{
+		width: 2.5556rem;
+	}
+	40%{
+		width: 3.4074rem;
+	}
+	50%{
+		width: 4.2593rem;
+	}
+	60%{
+		width: 5.1111rem;
+	}
+	70%{
+		width: 5.963rem;
+	}
+	80%{
+		width: 6.8148rem;
+	}
+	90%{
+		width: 7.6667rem;
+	}
+	100%{
+		width: 8.5185rem;
+	}
+}
+
+/*主页面*/
+.home-page{
+	width: 10.0rem;
+	height: 100vh;
+	background: url(../img/bg.jpg) no-repeat;
+	background-size: 100% 100%;
+	position: relative;
+	display: none;
+	margin: 0 auto;
+}
+
+/*头部*/
+.top{
+	width: 10.0rem;
+	height: 5.8704rem;
+	background: url(../img/top.png) no-repeat;
+	background-size: 100% 100%;
+	color: #fff;
+	position: relative;
+}
+.notice-complain{
+	width: 10.0rem;
+}
+.clearfix::after{
+	display: block;
+	content: "";
+	clear: both;
+}
+.notice{
+	width: 6.8889rem;
+	height: 0.6852rem;
+	background: url(../img/notice.png) no-repeat;
+	background-size: 100% 100%;
+	float: left;
+	color: #fff;
+	margin-left: 1.95rem;
+    margin-top: .2rem;
+}
+.notice-text{
+	margin-left: 2rem;
+    margin-top: 0.14rem;
+}
+.complain{
+	width: 0.963rem;
+	height: 0.963rem;
+	float: right;
+	background: url(../img/complain.png) no-repeat;
+	background-size: 100% 100%;
+	margin-top: 0.1rem;
+    margin-right: 0.1rem;
+    cursor: pointer;
+}
+.id-tixian{
+	width: 10rem;
+	margin-top: 2.1rem;
+}
+.youe-id{
+    text-indent: 5rem;
+    font-weight: 600;
+    font-size: 16px;
+    float: left;
+    margin-top: 0.025rem;
+}
+.tixian-btn{
+	float: right;
+	width: 1.7222rem;
+	height: 0.8704rem;
+	background: url(../img/tixian.png) no-repeat;
+	background-size: 100% 100%;
+	margin-top: -0.1rem;
+}
+.pay-yongjin{
+	width: 10.0rem;
+}
+.pay-num{
+	display: block;
+	width: 3.1481rem;
+	height: 0.8519rem;
+	background: url(../img/index_m.png) no-repeat;
+	background-size: 100% 100%;
+   	margin-left: .2rem;
+    margin-top: .65rem;
+    font-weight: 500;
+    font-size: 16px;
+    float: left;
+    text-indent: 1.1rem;
+    line-height: 0.9rem;
+}
+.yongjin-num{
+	display: block;
+	width: 3.3704rem;
+	height: 0.7037rem;
+	background: url(../img/index_y.png) no-repeat;
+	background-size: 100% 100%;
+    font-size: 16px;
+    font-weight: 500;
+    float: right;
+    margin-top: .75rem;
+    margin-right: 0.1rem;
+    text-indent: 1.4rem;
+    line-height: 0.7rem;
+}
+.rank{
+	position: absolute;
+    bottom: -1rem;
+    left: 3.65rem;
+    cursor: pointer;
+}
+.rank img{
+	width: 2.7407rem;
+	height: 2.7407rem;
+}
+
+/*夺宝和捕鱼*/
+.center{
+	width: 10.0rem;
+	margin-top: .6rem;
+}
+.baby{
+	float: left;
+	width: 4.8rem;
+	margin-left: 0.2rem;
+}
+.fish{
+	float: left;
+	width: 4.8rem;
+	margin-top: .4rem;
+}
+.baby img,.fish img{
+	width: 4.5rem;
+	height: 6.4444rem;
+}
+
+/*footer*/
+.footer{
+	width: 10.0rem;
+	height: 1.4815rem;
+	position: fixed;
+	bottom: 0;
+	background: url(../img/bottom_tar.png) no-repeat;
+	background-size: 100% 100%;
+}
+.list{
+	width: 10rem;
+}
+.list li{
+	float: left;
+	width: 2rem;
+}
+.list li img{
+	width: 1.7778rem;
+	height: 1.3148rem;
+	margin-top: 0.15rem;
+}
+.list li:last-child{
+	margin-top: -.58rem;
+}
+.list li:last-child img{
+	width: 1.8148rem;
+	height: 1.8333rem;
+
+}
+
+.list li .active2,.list li .no-active1{
+	display: none;
+}
+.list li .active{
+	display: block;
+}
+
+/*用户协议*/
+.protocol{
+	width: 10rem;
+	height: 100vh;
+	position: absolute;
+	top: 0;
+	left: 0;
+	background: rgba(0,0,0,0.6);
+	z-index: 3;
+}
+.protocol-text{
+	width: 9.0926rem;
+	/*height: 92vh;*/
+	height: 15.6481rem;
+	background: url(../img/protocol.png);
+	background-size: 100% 100%;
+	margin-left: 0.463rem;
+    margin-top: 0.03rem;
+    animation: protocal .2s;
+    position: relative;
+}
+.refuse,.agree{
+	position: absolute;
+	bottom: 1.5rem;
+	float: left;
+	width: 2.3519rem;
+	height: 0.9444rem;
+}
+.agree{
+	left: 5.2rem;
+}
+.refuse{
+	left: 1.8rem;
+}
+.refuse img,.agree img{
+	width: 100%;
+}
+
+@keyframes protocal{
+	0%{
+		transform: scale(0.8);
+	}
+	100%{
+		transform: scale(1);
+	}
+}
+
+/*排行榜*/
+@keyframes rank{
+	0%{
+		transform: scale(0.8);
+	}
+	100%{
+		transform: scale(1);
+	}
+}
+.rank-bg{
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 10rem;
+	height: 100vh;
+	background: rgba(0,0,0,0.6);
+	display: none;
+	z-index: 9;
+}
+.rank-box{
+	width: 9.6111rem;
+	height: 13.3704rem;
+	background: url(/static/img/box1.png) no-repeat;
+	background-size: 100% 100%;
+	margin-left: 0.1852rem;
+	margin-top: 0.3rem;
+	color: #fff;
+	animation: rank .2s;
+}
+.rank-text{
+	text-align: center;
+    font-size: 14px;
+    height: 1rem;
+    line-height: .75rem;
+}
+
+.rank-tar{
+	width: 7.5926rem;
+	height: 0.8333rem;
+	margin-left: 1.2037rem;
+	margin-top: 0.2rem;
+	margin-bottom: 0.2rem;
+}
+.yesterday,.total{
+	width: 3.7963rem;
+	height: 0.8333rem;
+	float: left;
+}
+.yesterday img,.total img{
+	width: 100%;
+}
+.rank-list-bg{
+	width: 8.7778rem;
+	height: 10.0185rem;
+	background: url(../img/box2.png) no-repeat;
+	background-size: 100% 100%;
+	margin-left: 0.45rem;
+	font-size: 14px;
+}
+.columns{
+	width: 8.7778rem;
+}
+.columns li{
+	float: left;
+	width: 2.9259rem;
+	height: 0.8rem;
+	line-height: 0.8rem;
+	text-align: center;
+}
+.rank-content{
+	width: 8.7778rem;
+	height: 9.0741rem;
+	overflow: hidden;
+	overflow-y: scroll;
+}
+.rank-list{
+	width: 8.7778rem;
+}
+.rank-list li{
+	width: 8.7778rem;
+	height: 0.8rem;
+	line-height: 0.8rem;
+}
+.rank-list li div{
+	float: left;
+    width: 2.9259rem;
+    text-align: center;
+    font-size: 14px;
+}
+.close{
+	width: 1.5556rem;
+	height: 1.5556rem;
+	margin-left: 4.2222rem;
+	margin-top: 1.4rem;
+	position: relative;
+	z-index: 111;
+}
+.close img{
+	width: 100%;
+}
+
+/*推广*/
+.spread{
+	width: 10rem;
+	display: none;
+}
+.spread-top{
+	width: 10rem;
+	padding-top: 0.3rem;
+}
+.team-btn,.spread-btn{
+	float: left;
+	width: 4.2778rem;
+	height: 1.2222rem;
+}
+.team-btn{
+	margin-left: 0.3519rem;
+	margin-right: 0.3519rem;
+}
+.spread-btn{
+	margin-left: 0.3519rem;
+}
+
+.team-btn img,.spread-btn img{
+	width: 100%;
+}
+
+.code{
+	width: 10rem;
+	margin-top: 0.2rem;
+}
+.code img{
+	width: 3.6296rem;
+	height: 3.7407rem;
+	margin-left: 3.1852rem;
+}
+
+.spread-bottom{
+	width: 10rem;
+}
+
+.spread-pic1{
+	width: 8.9815rem;
+	height: 1.8889rem;
+	margin-left: 0.5rem;
+}
+.spread-pic2{
+	width: 8.9815rem;
+	height: 6.5556rem;
+	margin-left: 0.5rem;
+	margin-top: 0.3rem;
+}
+.spread-pic1 img,.spread-pic2 img{
+	width: 100%;
+}
+
+/*我的战队*/
+.my-team{
+	width: 10rem;
+	height: 100vh;
+	position: absolute;
+	top: 0;
+	left: 0;
+	background: rgba(0,0,0,.5);
+	display: none;
+	z-index: 3;
+}
+.inner-team{
+	animation: rank .2s;
+	margin-top: 2.5rem;
+}
+.team-bg{
+	width: 9.6111rem;
+	height: 8.9815rem;
+	margin-left: 0.1852rem;
+	background: url(../img/my_team.png) no-repeat;
+	background-size: 100% 100%;
+	position: relative;
+}
+.team-list{
+	height: 7rem;
+	position: absolute;
+	top: 1rem;
+}
+.team-list li div{
+	float: left;
+	width: 3.2037rem;
+	height: 1rem;
+	line-height: 1rem;
+	text-align: center;
+	font-size: 14px;
+}
+
+.team-close{
+	width: 1.5556rem;
+	height: 1.5556rem;
+	margin-left: 4.2222rem;
+	margin-top: 0.3704rem;
+	position: relative;
+	z-index: 111;
+}
+.team-close img{
+	width: 100%;
+}
+
+/*推广方法*/
+.spread-act{
+	width: 10rem;
+	height: 100vh;
+	position: absolute;
+	top: 0;
+	left: 0;
+	background: rgba(0,0,0,0.6);
+	display: none;
+	color: #fff;
+	font-size: 14px;
+	overflow: hidden;
+}
+.inner-spread{
+	animation: rank .2s;
+	margin-top: .5rem;
+}
+.spread-bg{
+	width: 9.6111rem;
+	height: 13.3704rem;
+	margin-left: 0.1852rem;
+	background: url(/static/img/box1.png) no-repeat;
+	background-size: 100% 100%;
+	position: relative;
+}
+.spread-bg-text{
+	width: 8.6111rem;
+	height: 11.7778rem;
+	position: absolute;
+	top: 0.14rem;
+	left: 0.5rem;
+	background: url(/static/img/spread_text.png) no-repeat;
+	background-size: 100% 100%;
+}
+.spread-close{
+	width: 1.5556rem;
+	height: 1.5556rem;
+	margin-left: 4.2222rem;
+	margin-top: 0.3704rem;
+	position: relative;
+	z-index: 111;
+}
+.spread-close img{
+	width: 100%;
+}
+
+/*二维码图片*/
+.code-pic{
+	width: 10rem;
+	height: 100vh;
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 3;
+	background: rgba(0,0,0,0.6);
+	display: none;
+}
+.inner-code{
+	animation: rank .2s;
+	margin-top: .5rem;
+}
+
+/*佣金奖励*/
+.reward{
+	width: 10rem;
+	height: 100vh;
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 3;
+	background: rgba(0,0,0,0.6);
+	display: none;
+}
+.inner-reward{
+	animation: rank .2s;
+	margin-top: .5rem;
+}
+.reward-bg{
+	width: 9.6111rem;
+	height: 13.3704rem;
+	margin-left: 0.1852rem;
+	background: url(/static/img/box1.png) no-repeat;
+	background-size: 100% 100%;
+	position: relative;
+}
+.reward-title{
+	width: 2.0926rem;
+	height: 0.537rem;
+	position: absolute;
+	top: 0.14rem;
+	left: 3.66rem;
+}
+.reward-title img{
+	width: 100%;
+}
+.reward-list{
+	width: 9.6111rem;
+	padding-top: .9rem;
+	color: #fff;
+	font-synthesis: 14px;
+}
+.reward-list li{
+	width: 9.1481rem;
+	height: 1.1852rem;
+	background: url(/static/img/list.png) no-repeat;
+	background-size: 100% 100%;
+	line-height: 1.1852rem;
+	margin-top: 0.41rem;
+	margin-left: 0.2222rem;
+}
+.reward-left-text{
+	float: left;
+	text-indent: 0.4rem;
+}
+.reward-btn{
+	width: 1.8333rem;
+	height: 0.8889rem;
+	float: right;
+	margin-right: 0.3rem;
+	margin-top: 0.14rem;
+}
+.reward-btn img{
+	width: 100%;
+}
+
+.reward-close{
+	width: 1.5556rem;
+	height: 1.5556rem;
+	margin-left: 4.2222rem;
+	margin-top:1.6rem;
+	position: relative;
+	z-index: 111;
+}
+.reward-close img{
+	width: 100%;
+}
+
+/*充值*/
+.pay{
+	width: 10rem;
+	height: 100vh;
+	position: absolute;
+	top: 0;
+	left: 0;
+	background: rgba(0,0,0,0.6);
+	display: none;
+	z-index: 6;
+}
+.inner-pay{
+	animation: rank .2s;
+	margin-top: .5rem;
+}
+.pay-bg{
+	width: 9.3519rem;
+	height: 13.9815rem;
+	background: url(/static/img/czbg.png) no-repeat;
+	background-size: 100% 100%;
+	margin-left: 0.3148rem;
+	position: relative;
+}
+.pay-close{
+	width: 1.5556rem;
+	height: 1.5556rem;
+	position: absolute;
+	right: 0rem;
+	top: 0.8rem;
+	z-index: 111;
+}
+.pay-close img{
+	width: 100%;
+}
+.pay-list{
+	width: 9.3519rem;
+	padding-top:3.8rem;
+}
+.pay-list li{
+	float: left;
+	width: 2.5rem;
+	height: 1.0741rem;
+	background: url(/static/img/btn_pay2.png) no-repeat;
+	background-size: 100% 100%;
+	margin-left: 0.48rem;
+    color: #fff;
+    font-size: 14px;
+    text-align: center;
+    line-height: 1.0741rem;
+    margin-top: 0.48rem;
+}
+.pay-list li.pay-active{
+	background: url(/static/img/btn_pay1.png) no-repeat;
+	background-size: 100% 100%;
+}
+.weixin-pay,.ali-pay,.person-pay{
+	width: 8.1111rem;
+	height: 1.0556rem;
+	margin-left: 0.6111rem;
+	margin-top: .5rem;
+}
+.weixin-pay img,.ali-pay img,.person-pay img{
+	width: 100%;
+}
+
+/*客服*/
+.service{
+	width: 10rem;
+	height: 100vh;
+	overflow: hidden;
+	display: none;
+}
+.service-pic{
+	width: 8rem;
+    height: 13.7037rem;
+    margin-left: 1rem;
+    padding-top: 2.4rem;
+}
+.service-pic img{
+	width: 100%;
+}
+/*提现页面*/
+.tixian{
+	width: 10rem;
+	height: 100vh;
+	position: absolute;
+	top: 0;
+	left: 0;
+	display: none;
+	overflow: hidden;
+}
+.tixian-top{
+	position: absolute;
+	top: 0;
+	left: 0.2222rem;
+	width: 9.537rem;
+	height: 1.3704rem;
+}
+.tixian-top img{
+	width: 100%;
+	height: 1.3704rem;
+	transform: rotate(180deg);
+}
+.tixian-nav{
+	position: relative;
+	width: 10rem;
+}
+.jinbi,.yongjin{
+	width: 2.3704rem;
+	height: 1.3704rem;
+	float: left;
+}
+.jinbi img,.yongjin img{
+	width: 100%;
+}
+.jinbi{
+	margin-left: 1.9rem;
+    margin-right: 1.5rem;
+}
+.tixian-apply{
+	width:8.4074rem;
+	height: 8.0741rem;
+	background: url(/static/img/tixian_box.png);
+	background-size: 100% 100%;
+	margin-left: 0.7963rem;
+	margin-top: 0.25rem;
+}
+.tixian-list{
+	height: 6.6rem;
+}
+.tixian-list li{
+	height: 1.1111rem;
+	line-height: 1.1111rem;
+	font-size: 14px;
+	color: #fff;
+}
+.tixian-list li:nth-of-type(1){
+	height: 0.8rem;
+    line-height: 0.8rem;
+    text-align: center;
+    font-size: 16px;
+}
+.tixian-list li span.li-left{
+	 margin: 0 0.3rem 0 0.5rem;
+}
+
+.commit-tixian{
+	width: 7.4444rem;
+	height: 1.2222rem;
+	margin-left: 0.4815rem;
+	background: url(/static/img/tixian_btn.png) no-repeat;
+	background-size: 100% 100%;
+}
+.tixian-info{
+	width: 8.4074rem;
+	height: 4.0rem;
+	margin-left: 0.7963rem;
+	margin-top: 0.3704rem;
+	background: url(/static/img/tixian_notice.png) no-repeat;
+	background-size: 100% 100%;
+}
+.tixian-input,.yongjin-input{
+	background: rgb(52,49,94);
+    border: none;
+    outline: none;
+    padding: 0.2rem;
+    color: #fff;
+    font-size: 14px;
+	margin-top: 0.15rem;
+    width: 4.6rem;
+}
+.yongjin-tixian{
+	display: none;
+}
+.tixian-back{
+	position: absolute;
+	bottom: 0;
+	left: 0.2222rem;
+	width: 9.537rem;
+	height: 1.1111rem;
+	background: url(/static/img/back.png) no-repeat;
+	background-size: 100% 100%;
+}
+.tixian-back img{
+	width: 3.4074rem;
+	height: 1.0741rem;
+	margin-left: 3.0556rem;
+}
+.money-info-com{
+	display: none;
+}
+.tixian-prompt{
+	position: absolute;
+	width: 10rem;
+	height: 100vh;
+	background: rgba(0,0,0,0.6);
+	z-index: 2;
+	display: none;
+}
+.prompt-box{
+	width: 8.3333rem;
+    height: 3.5rem;
+    margin-left: 0.8333rem;
+    margin-top: 6.5rem;
+    background: #fff;
+    border-radius: 0.0926rem;
+}
+.prompt-title{
+	font-size: 16px;
+    text-align: center;
+    font-weight: 1000;
+    height: 1rem;
+    line-height: 1rem;
+}
+.prompt-message{
+	text-align: center;
+    font-size: 16px;
+    color: #aaa;
+    height: 1.3rem;
+    line-height: .8rem;
+}
+.prompt-commit{
+	width: 100%;
+    border-top: 1px solid #e8e8e8;
+    text-align: center;
+    color: #3c9ee1;
+    font-size: 15px;
+    height: 1.2rem;
+    line-height: 1rem;
+}
+.gold-tixian{
+	margin-top: 0.23rem;
+}
+.yongjin-tixian-btn{
+	margin-top: 1.32rem;
+}
+
+
+/*资金明细*/
+.money-info{
+	width: 10rem;
+	height: 100vh;
+	display: none;
+}
+.money-info-top{
+	width: 10.0rem;
+	height: 2.3889rem;
+	background: url(/static/img/game_record.png) no-repeat;
+	background-size: 100% 100%;
+}
+.money-info-list{
+	width: 10rem;
+	height: 1.2963rem;	
+}
+.money-info-list li{
+	width: 2.5rem;
+	height: 1.2963rem;
+	float: left;
+}
+.award-info{
+	width: 10rem;
+	height: 11.2963rem;
+	background:url(/static/img/record_pic.png) no-repeat;
+	background-size: 100% 100%;
+}
+.award-info-list{
+	width: 10rem;
+	height: 11.2963rem;
+	display: block;
+}
+.award-info-list li{
+	width: 10rem;
+	height: 0.9259rem;
+	font-size: 12px;
+	display: flex;
+}
+.award-info-list li div{
+	float: left;
+}
+.award-info-list li div:nth-of-type(1),
+.award-info-list li div:nth-of-type(5){
+	width: 1.8519rem;
+	text-align: center;
+	line-height: 0.9259rem;
+}
+.award-info-list li div:nth-of-type(2){
+	width: 1.8519rem;
+	text-align: center;
+}
+.award-info-list li div:nth-of-type(3){
+	width: 2.5rem;
+	text-align: center;
+	line-height: 0.9259rem;
+}
+.award-info-list li div:nth-of-type(4){
+	width: 1.9445rem;
+	text-align: center;
+	line-height: 0.9259rem;
+}
+.award-info-list li div:nth-of-type(5){
+	color: red;
+}
+.award-12{
+	width: 3.6667rem;
+	height: 0.4074rem;
+	margin-left: 3.1667rem;
+	background: url(/static/img/record_notice.png) no-repeat;
+	background-size: 100% 100%;
+	margin-top:0.6rem;
+}
+
+
+/*充值记录*/
+.pay-record{
+	width: 10rem;
+	height: 11.2963rem;
+}
+.pay-record li{
+	width: 10rem;
+	height: 0.9259rem;
+	font-size: 12px;
+}
+
+.pay-record li div{
+	float: left;
+	text-align: center;
+	width: 2.2222rem;
+	height: 0.9259rem;
+	line-height: 0.9259rem;
+}
+
+.pay-record li div:nth-of-type(1){
+	line-height: 0.5rem;
+}
+.pay-record li div:nth-of-type(2){
+	width: 3.3333rem;
+}
+
+/*提现记录*/
+.tixian-record{
+	width: 10rem;
+	height: 11.2963rem;
+}
+.tixian-record li{
+	width: 10rem;
+	height: 0.9259rem;
+	font-size: 12px;
+}
+.tixian-record li div{
+	float: left;
+	width: 2.0926rem;
+	height: 0.9259rem;
+	line-height: 0.9259rem;
+	text-align: center;
+}
+.tixian-record li div:nth-of-type(1){
+	width: 3rem;
+	line-height: 0.9259rem;
+}
+.tixian-record li div:nth-of-type(3){
+	margin-left: 0.6rem;
+}
+.tixian-record li div:nth-of-type(4){
+	float: right;
+}
+
+/*佣金记录*/
+.yongjin-record{
+	width: 10rem;
+	height: 11.2963rem;
+}
+.yongjin-record li{
+	width: 10rem;
+	height: 0.9259rem;
+	font-size: 12px;
+}
+.yongjin-record li div{
+	float: left;
+	width: 3.3333rem;
+	height: 0.9259rem;
+	line-height: 0.9259rem;
+	text-align: center;
+}
+.yongjin-record li div:nth-of-type(3){
+	text-indent: 0.7rem;
+}
+
+
+
+@media (max-width:320px) {
+ 	.notice-text{
+	    margin-top: 0.07rem;
+	}
+	.tixian-record li div:nth-of-type(1){
+		width: 3rem;
+		line-height: 0.5rem;
+	}
+}

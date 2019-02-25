@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+
+    <class name="com.mdmd.entity.UserDetailEntity" table="user_detail" schema="happyfish">
+        <id name="id">
+            <column name="id" sql-type="int(11)"/>
+            <generator class="identity"/>
+        </id>
+        <property name="createTime">
+            <column name="createTime" sql-type="timestamp" />
+        </property>
+        <property name="firstGameTime">
+            <column name="firstGameTime" sql-type="datetime" not-null="false"/>
+        </property>
+        <many-to-one name="userEntity"  class="com.mdmd.entity.UserEntity" cascade="none">
+            <column name="userId"/>
+        </many-to-one>
+    </class>
+</hibernate-mapping>

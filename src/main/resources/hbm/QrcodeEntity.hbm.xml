@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+
+    <class name="com.mdmd.entity.QrcodeEntity" table="qrcode" schema="happyfish">
+        <id name="id">
+            <column name="id" sql-type="int(11)"/>
+            <generator class="identity"/>
+        </id>
+        <property name="userId">
+            <column name="userId" sql-type="int(11)"/>
+        </property>
+        <property name="ticket">
+            <column name="ticket" sql-type="varchar(99)" length="99" not-null="true"/>
+        </property>
+        <property name="sceneId">
+            <column name="sceneId" sql-type="int(11)"/>
+        </property>
+    </class>
+</hibernate-mapping>
