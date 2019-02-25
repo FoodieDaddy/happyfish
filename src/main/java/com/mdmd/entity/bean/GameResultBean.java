@@ -3,7 +3,7 @@ package com.mdmd.entity.bean;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import static com.mdmd.constant.SystemConstant.DATEFORMEN__yyyyMMddHHmmss;
+import static com.mdmd.constant.SystemConstant.DATEFORMAT__yyyyMMddHHmmss;
 
 public class GameResultBean {
 
@@ -14,7 +14,7 @@ public class GameResultBean {
     public GameResultBean(boolean gameResult, double gameCost) {
         this.gameResult = gameResult;
         this.gameCost = gameCost;
-        this.gameTime = new SimpleDateFormat(DATEFORMEN__yyyyMMddHHmmss).format(new Date());
+        this.gameTime = new SimpleDateFormat(DATEFORMAT__yyyyMMddHHmmss).format(new Date());
     }
 
     public boolean getGameResult() {

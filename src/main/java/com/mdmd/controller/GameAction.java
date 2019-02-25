@@ -56,7 +56,7 @@ public class GameAction {
                 result.put(SUCCESS,false);
                 return result;
             }
-            int userId = (int)session.getAttribute("userId");
+            int userId = (int)session.getAttribute(SESSION_USERID);
 
             int g = 0,c=0;
             boolean flag = true;
@@ -69,7 +69,7 @@ public class GameAction {
                 result.put(MSG,"数据异常");
                 flag = false;
             }
-            if(g<=0 || c<=0)
+            if(g<=0 || c<0)
             {
                 LOGGER.warn("来自"+userId+"的非法数据guess_num="+guess_num+",catch_num="+catch_num+"!!!");
                 result.put(SUCCESS,false);
@@ -104,13 +104,15 @@ public class GameAction {
         return result;
     }
 
-
+    /*
+     * 夺宝
+     */
     @RequestMapping(value = "/seize_treasure.do")
     @ResponseBody
     public Map<String,Object> seizeTreasure(HttpServletRequest request, HttpSession session,HttpServletResponse response,String treasure_type, String treasure_num) {
         Map<String, Object> result = new HashMap<>();
         try {
-            int userId = (int)session.getAttribute("userId");
+            int userId = (int)session.getAttribute(SESSION_USERID);
             String treasureType = treasure_type.trim();
             String treasureNum = treasure_num.trim();
             int type = Integer.valueOf(treasure_type);

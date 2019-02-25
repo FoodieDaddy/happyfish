@@ -14,6 +14,13 @@ public interface UserService {
      */
     UserEntity getUserWithOpenId(String openId) throws RuntimeException;
 
+    /**
+     * 只获取user对象，或获取所有关联对象
+     * @param userId
+     * @param onlySelf
+     * @return
+     * @throws RuntimeException
+     */
     UserEntity getUserWithUserId_self_or_cascade(int userId,boolean onlySelf) throws RuntimeException;
 
     UserEntity addUserInfo(String openId) throws Exception;
@@ -21,4 +28,6 @@ public interface UserService {
     UserEntity addUserInfo(String openId,int superUserId) throws Exception;
 
     UserEntity handlerTopup(int userId,int quantity) throws RuntimeException;
+
+
 }

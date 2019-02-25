@@ -31,5 +31,11 @@ public interface SysPropService {
      */
     List<SysPropEntity> getAllSysprop();
 
+    /**
+     * 是否为双倍佣金时间
+     * @return
+     */
+    boolean isDoubleCommissionTime();
+
 
 }

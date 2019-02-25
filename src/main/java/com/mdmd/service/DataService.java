@@ -6,11 +6,15 @@ import java.util.List;
 
 public interface DataService {
 
-
     /**
      * tomcat启动时加载数据到缓存
      */
     void initCache();
+
+    /**
+     * 定时
+     */
+    void calcYesterdayCommissionList_Schedule();
 
     /**
      * 获取一个用户的4个父级

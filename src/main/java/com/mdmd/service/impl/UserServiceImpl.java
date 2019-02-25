@@ -15,7 +15,7 @@ import java.text.SimpleDateFormat;
 import java.util.HashSet;
 import java.util.Set;
 
-import static com.mdmd.constant.SystemConstant.DATEFORMEN__yyyyMMddHHmmss;
+import static com.mdmd.constant.SystemConstant.DATEFORMAT__yyyyMMddHHmmss;
 import static com.mdmd.constant.SystemConstant.QRCODE_PREFIX;
 
 @Component

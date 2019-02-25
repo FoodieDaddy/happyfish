@@ -4,7 +4,7 @@ package com.mdmd.entity;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import static com.mdmd.constant.SystemConstant.DATEFORMET__yyMMdd;
+import static com.mdmd.constant.SystemConstant.DATEFORMAT__yyMMdd;
 
 
 public class GoldEntity {
@@ -15,7 +15,7 @@ public class GoldEntity {
     private double todayGold;
 
     public GoldEntity() {
-       this.calcDate = Integer.valueOf(new SimpleDateFormat(DATEFORMET__yyMMdd).format(new Date()));
+       this.calcDate = Integer.valueOf(new SimpleDateFormat(DATEFORMAT__yyMMdd).format(new Date()));
     }
 
     public int getId() {

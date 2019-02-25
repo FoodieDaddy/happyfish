@@ -9,6 +9,7 @@ import com.mdmd.entity.bean.FishProbabilityBean;
 import com.mdmd.entity.bean.GameResultBean;
 import com.mdmd.service.DataService;
 import com.mdmd.service.GameRuleService;
+import com.mdmd.service.SysPropService;
 import com.mdmd.util.CommonUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -19,7 +20,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static com.mdmd.constant.GameConstant.*;
-import static com.mdmd.constant.SystemConstant.DATEFORMET__yyMMdd;
+import static com.mdmd.constant.SystemConstant.DATEFORMAT__yyMMdd;
 
 @Component
 public class GameRuleSerciceImpl implements GameRuleService {
@@ -31,6 +32,8 @@ public class GameRuleSerciceImpl implements GameRuleService {
     private DataService dataService;
     @Autowired
     private RedisCacheManager redisCacheManager;
+    @Autowired
+    private SysPropService sysPropService;
 
     private Map<Integer, Map<Integer, FishProbabilityBean>>  fishRules = null;
 
@@ -123,8 +126,8 @@ public class GameRuleSerciceImpl implements GameRuleService {
 
         //更新金币类记录
         this.calcuGoldForGoldEntity(userId,price,gameCost,goldEntity);
-        //记录游戏记录
 
+        //记录游戏记录
         GameRecordEntity gameRecordEntity = new GameRecordEntity();
         gameRecordEntity.setGameType(GAME_FISH_RECORD + "/" + price );
         gameRecordEntity.setGameContent("目标：" + targetValue);
@@ -229,6 +232,7 @@ public class GameRuleSerciceImpl implements GameRuleService {
         return new GameResultJO(win,num * 10, userEntity.getGold(),userEntity.getCommission(),orderNumber);
     }
 
+
     /**
      * 初始化捕鱼规则
      */
@@ -280,9 +284,14 @@ public class GameRuleSerciceImpl implements GameRuleService {
                 UserEntity superUser = superUserEntityList.get(i);
                 if(i > 4)
                     break;
-                //获取当前级别佣金万分比
+                //获取当前级别佣金千分比
                 int awardNum = NODE_VALUES[i];
-                double resultCommission = CommonUtil.formatDouble_three(price *awardNum/10000);
+                //是否是双倍佣金时间
+                if(sysPropService.isDoubleCommissionTime())
+                {
+                    awardNum += awardNum;
+                }
+                double resultCommission = CommonUtil.formatDouble_three(price *awardNum/1000);
                 //修改父类的佣金对象
                 this.calcuCommissionForCommissionEntity(superUser.getUserid(),resultCommission,superUser.singleCommissionEntity());
                 //修改父类的user对象
@@ -309,7 +318,7 @@ public class GameRuleSerciceImpl implements GameRuleService {
      */
     private void calcuCommissionForCommissionEntity(int userId,double addCommiss,CommissionEntity commissionEntity){
         int calcDate = commissionEntity.getCalcuDate();
-        int today = Integer.valueOf(new SimpleDateFormat(DATEFORMET__yyMMdd).format(new Date()));
+        int today = Integer.valueOf(new SimpleDateFormat(DATEFORMAT__yyMMdd).format(new Date()));
         //如果不是今天算的 就将今天以前,上次计算之后的重新算一次并记录
         if(today != calcDate)
         {
@@ -334,7 +343,7 @@ public class GameRuleSerciceImpl implements GameRuleService {
      */
     private void calcuGoldForGoldEntity(int userId,double price,double addGold, GoldEntity goldEntity){
         int calcDate = goldEntity.getCalcDate();
-        int today = Integer.valueOf(new SimpleDateFormat(DATEFORMET__yyMMdd).format(new Date()));
+        int today = Integer.valueOf(new SimpleDateFormat(DATEFORMAT__yyMMdd).format(new Date()));
         double todayWater = goldEntity.getTodayWater();
         double todayGold = goldEntity.getTodayGold();
         //如果不是今天算的 就将今天以前,上次计算之后的重新算一次并记录

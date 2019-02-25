@@ -10,10 +10,10 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
+
+import static com.mdmd.constant.SystemConstant.DATEFORMAT__HH;
 
 @Component
 public class SysPropServiceImpl implements SysPropService {
@@ -66,6 +66,34 @@ public class SysPropServiceImpl implements SysPropService {
 
     public List<SysPropEntity> getAllSysprop() {
         return new ArrayList<>(sysPropMap.values());
+    }
+
+    public  boolean isDoubleCommissionTime() {
+        try {
+
+            SysPropEntity catchDouSys = sysPropMap.get(3);
+            String sysValue = catchDouSys.getSysValue();
+            String now = new SimpleDateFormat(DATEFORMAT__HH).format(new Date());
+            //是否开启双倍佣金
+            if(sysValue.contains("1"))
+            {
+                SysPropEntity doubleTimeSys = sysPropMap.get(2);
+                String timeString = doubleTimeSys.getSysValue().trim();
+                if(timeString.contains("-"))
+                {
+                    String[] split = timeString.split("-");
+                    for (int i = 0; i < split.length; i++) {
+                        if(now.equals(split[i]))
+                            return true;
+                    }
+                }
+                else if(now.equals(timeString))
+                    return true;
+            }
+        } catch (Exception e) {
+            return false;
+        }
+        return false;
     }
 
 }

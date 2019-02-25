@@ -27,7 +27,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.mdmd.constant.SystemConstant.DATEFORMEN__yyyyMMddHHmmss;
+import static com.mdmd.constant.SystemConstant.DATEFORMAT__yyyyMMddHHmmss;
 import static com.mdmd.constant.WeiXinPublicContant.WEIXIN_APPID;
 import static com.mdmd.constant.WeiXinPublicContant.WEIXIN_APPSECRET;
 import static com.mdmd.util.CommonUtil.SIMPLEDATEFORMATE;

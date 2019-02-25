@@ -12,12 +12,17 @@ import com.mdmd.util.WeiXinMenuUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import static com.mdmd.constant.SystemConstant.DATEFORMAT__yyyyMMddHHmmss;
 import static com.mdmd.constant.SystemConstant.ENTITYPATH;
 
 
@@ -37,16 +42,28 @@ public class DataServiceImpl implements DataService {
 
 
     public  void initCache() {
-        //清空缓存 todo
-        LOGGER.info("初始化缓存");
-
-        //存储所有用户的userId和super的userId到redis中 缓存无限时间
-        List<UserEntity> userEntities = userDao.listAllEntity(UserEntity.class);
-        for (int i = 0; i < userEntities.size(); i++) {
-            UserEntity userEntity = userEntities.get(i);
-            Integer superUserId = userEntity.getSuperUserId();
-            redisCacheManager.set("super"+userEntity.getUserid(),superUserId+"");
+        try {
+            redisCacheManager.clear();
+            LOGGER.info("初始化缓存");
+            //存储所有用户的userId和super的userId到redis中 缓存无限时间
+            List<UserEntity> userEntities = userDao.listAllEntity(UserEntity.class);
+            for (int i = 0; i < userEntities.size(); i++) {
+                UserEntity userEntity = userEntities.get(i);
+                Integer superUserId = userEntity.getSuperUserId();
+                redisCacheManager.set("super"+userEntity.getUserid(),superUserId+"");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            LOGGER.error("读取系统配置文件失败,终止服务!");
+            LOGGER.error(e.getMessage());
+            System.exit(0);
         }
+    }
+
+    @Scheduled(cron = "0 59 23 ? * *")
+    public void calcYesterdayCommissionList_Schedule() {
+       //todo 每日自动计算昨天排行榜放入缓存中
+       LOGGER.info("执行缓存" + new SimpleDateFormat(DATEFORMAT__yyyyMMddHHmmss).format(new Date()));
     }
 
     public List<UserEntity> get4_SuperUserEntity(int userId) throws RuntimeException{
@@ -112,8 +129,8 @@ public class DataServiceImpl implements DataService {
             UserEntity superUser = (UserEntity) userDao.getEntity(UserEntity.class,superUserId);
             if(superUser == null)
             {
-                LOGGER.error("不存在的用户id："+superUserId);
-                throw new RuntimeException();
+                LOGGER.error("用户"+userId+"不存在的父类用户id："+superUserId);
+                return userEntityList;
             }
             userEntityList.add(superUser);
             if(userEntityList.size() < 4)
@@ -129,8 +146,8 @@ public class DataServiceImpl implements DataService {
         UserEntity superUser = (UserEntity) userDao.getEntity(UserEntity.class,superUserId);
         if(superUser == null)
         {
-            LOGGER.error("不存在的用户id："+superUserId);
-            throw new RuntimeException();
+            LOGGER.error("用户"+userId+"不存在的父类用户id："+superUserId);
+            return userEntityList;
         }
         userEntityList.add(superUser);
         if(userEntityList.size() < 4)

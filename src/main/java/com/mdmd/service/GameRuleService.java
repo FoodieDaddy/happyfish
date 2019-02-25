@@ -30,4 +30,5 @@ public interface GameRuleService {
 
 
     GameResultJO getTreasureResult(int type, int num, int userId);
+
 }

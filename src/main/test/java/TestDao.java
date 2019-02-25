@@ -32,8 +32,6 @@ public class TestDao extends TestBase{
 
     @Test
     public void testRedis(){
-        Map<Object,Object> allnode = redisCacheManager.hmget("allnode");
-        System.out.println(allnode);
     }
 
     @Test
@@ -51,7 +49,7 @@ public class TestDao extends TestBase{
 
 
     @Test
-    public void testDao(){
-
+    public void testService2(){
+        sysPropService.isDoubleCommissionTime();
     }
 }

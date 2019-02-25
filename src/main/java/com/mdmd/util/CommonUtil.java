@@ -3,14 +3,14 @@ package com.mdmd.util;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 
-import static com.mdmd.constant.SystemConstant.DATEFORMEN__yyyyMMddHHmmss;
+import static com.mdmd.constant.SystemConstant.DATEFORMAT__yyyyMMddHHmmss;
 
 public class CommonUtil {
     private static  DecimalFormat DF_TWO = new DecimalFormat("0.00");
     private static  DecimalFormat DF_THREE = new DecimalFormat("0.000");
     public static SimpleDateFormat SIMPLEDATEFORMATE = null;
     static {
-        SIMPLEDATEFORMATE = new SimpleDateFormat(DATEFORMEN__yyyyMMddHHmmss);
+        SIMPLEDATEFORMATE = new SimpleDateFormat(DATEFORMAT__yyyyMMddHHmmss);
     }
 
 

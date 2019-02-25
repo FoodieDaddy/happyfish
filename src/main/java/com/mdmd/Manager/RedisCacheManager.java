@@ -29,6 +29,10 @@ public class RedisCacheManager {
     }
 
 
+    public void clear() throws Exception{
+        redisTemplate.delete(redisTemplate.keys("*"));
+    }
+
     /**
      * 指定缓存失效时间
      *

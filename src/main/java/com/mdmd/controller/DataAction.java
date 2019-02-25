@@ -96,10 +96,15 @@ public class DataAction {
 
             if(userEntity != null)
             {
-                //将userId加密传输到前端
-                String encrypt = RSAUtil.encrypt(userEntity.getUserid() + "");
-                System.out.println("<<数据加密了>>"+encrypt+"--------user:"+userEntity+"----????");
-                response.sendRedirect("../stc/index.html?token="+encrypt);
+                int userid = userEntity.getUserid();
+                if(userEntity.getLoginBan() == 0)
+                {
+                    //将userId加密传输到前端
+                    String encrypt = RSAUtil.encrypt( userid+ "");
+                    response.sendRedirect("../stc/index.html?token="+encrypt);
+                }
+                response.sendRedirect("http://www.baidu,com");
+
             }
         } catch (Exception e) {
             LOGGER.warn(e.getMessage());
@@ -122,7 +127,7 @@ public class DataAction {
         System.out.println("获取u------" + u);
         LOGGER.info("获取u------" + u);
         try {
-            int userId = (int) session.getAttribute("userId");
+            int userId = (int) session.getAttribute(SESSION_USERID);
             System.out.println("获取user--"+userId);
             UserEntity userEntity = userService.getUserWithUserId_self_or_cascade(userId, true);
             LOGGER.info("------user是:"+userId);
@@ -149,7 +154,7 @@ public class DataAction {
     public Map<String,Object> catchFish(HttpServletRequest request, HttpSession session,HttpServletResponse response){
         Map<String, Object> result = new HashMap<>();
         try {
-            int userId = (int) session.getAttribute("userId");
+            int userId = (int) session.getAttribute(SESSION_USERID);
             QrcodeUtil.createQrcode(QRCODE_PREFIX+userId,userId+"");
             result.put(SUCCESS,Boolean.TRUE);
         } catch (Exception e) {
@@ -186,22 +191,6 @@ public class DataAction {
 
 
 
-    /**
-     * 获取所有奖励节点的信息
-     * @param request
-     * @param response
-     * @return
-     */
-    @RequestMapping(value = "/nodeValues.do")
-    @ResponseBody
-    public Map<String,Object> getNodeValues(HttpServletRequest request, HttpServletResponse response){
-        Map<String, Object> result = new HashMap<>();
-//        Map<Integer, Integer> allNodeValueMap = backgroundHDService.getAllNodeValueMap();
-//        result.put("list",allNodeValueMap);
-        result.put(SUCCESS,Boolean.TRUE);
-        return result;
-    }
-
 
 
 
@@ -235,7 +224,7 @@ public class DataAction {
 
 
     /**
-     * 获取公钥
+     * 获取游戏记录等数据信息
      * @param request
      * @param session
      * @param response
@@ -243,7 +232,7 @@ public class DataAction {
      */
     @RequestMapping(value = "/listData.do")
     @ResponseBody
-    public Map<String,Object> getPublicKey(String type,HttpServletRequest request, HttpSession session,HttpServletResponse response) {
+    public Map<String,Object> listGameData(String type,HttpServletRequest request, HttpSession session,HttpServletResponse response) {
         Map<String, Object> result = new HashMap<>();
 
         try {
