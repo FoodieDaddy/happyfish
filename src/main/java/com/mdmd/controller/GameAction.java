@@ -24,19 +24,12 @@ import static com.mdmd.constant.ActionConstant.*;
 @RequestMapping("/gm")
 public class GameAction {
 
-
-
-
     @Autowired
     private GameRuleService gameRuleService;
     @Autowired
     private UserService userService;
 
     private static final Logger LOGGER = LogManager.getLogger(GameAction.class);
-
-
-
-
 
 
     /**

@@ -48,7 +48,7 @@ public class WeiXinMessageUtil {
      * 拓展xstream 使得支持CDATA块
      * 支持<（书名）标签
      */
-    private static XStream xmStream =new XStream(new XppDriver(){
+    public static XStream xmStream =new XStream(new XppDriver(){
         public HierarchicalStreamWriter createWriter(Writer out) {
             return new PrettyPrintWriter(out){
                 //对所有的xml节点的转换都增加CDATA标记
