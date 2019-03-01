@@ -108,12 +108,12 @@ public class GameAction {
             int userId = (int)session.getAttribute(SESSION_USERID);
             String treasureType = treasure_type.trim();
             String treasureNum = treasure_num.trim();
-            int type = Integer.valueOf(treasure_type);
-            int num = Integer.valueOf(treasure_num);
-            if(type >= 0 && type <14 && num > 1 && num < 101)
+            int type = Integer.valueOf(treasureType);
+            int num = Integer.valueOf(treasureNum);
+            if(type > 9 && type <14 && num > 0 && num < 101)
             {
                 GameResultJO treasureResult = gameRuleService.getTreasureResult(type, num, userId);
-                result.put("data",gameRuleService);
+                result.put("data",treasureResult);
                 result.put(SUCCESS,true);
             }
             else
@@ -124,8 +124,8 @@ public class GameAction {
             }
 
         } catch (Exception e) {
-            LOGGER.warn(e.getMessage());
             e.printStackTrace();
+            LOGGER.warn(e.getMessage());
             result.put(SUCCESS,false);
             result.put(MSG,"意外的错误");
         }

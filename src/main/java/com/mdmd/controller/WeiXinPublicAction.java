@@ -44,7 +44,6 @@ public class WeiXinPublicAction {
     @RequestMapping(value = "/home.do")
     public void wxHome(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         String method = request.getMethod();
-        System.out.println("-------------进来了-----"+method);
 
         if(method.equalsIgnoreCase("get"))
         {
@@ -68,7 +67,7 @@ public class WeiXinPublicAction {
             String toUserName = "";
             String msgType = "";
             try {
-                Map<String, String> requestMap = WeiXinMessageUtil.pareXml(request);
+                Map<String, String> requestMap = WeiXinMessageUtil.pareXml(request.getInputStream());
                 System.out.println("------解析消息-"+ requestMap);
                 fromUserName = requestMap.get("FromUserName");
                 toUserName = requestMap.get("ToUserName");

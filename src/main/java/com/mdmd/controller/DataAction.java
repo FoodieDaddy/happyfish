@@ -20,6 +20,7 @@ import javax.servlet.http.HttpSession;
 
 import java.security.interfaces.RSAPublicKey;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static com.mdmd.constant.ActionConstant.*;
@@ -103,8 +104,10 @@ public class DataAction {
                     String encrypt = RSAUtil.encrypt( userid+ "");
                     response.sendRedirect("../stc/index.html?token="+encrypt);
                 }
-                response.sendRedirect("http://www.baidu,com");
-
+                else
+                {
+                    response.sendRedirect("http://www.baidu,com");
+                }
             }
         } catch (Exception e) {
             LOGGER.warn(e.getMessage());
@@ -240,8 +243,9 @@ public class DataAction {
             int userId = (int) session.getAttribute("userId");
             if(t > 0 && t < 5)
             {
-                dataService.listDatas(t,userId);
+                List list = dataService.listDatas(t, userId);
                 result.put(SUCCESS,true);
+                result.put("data",list);
             }
             else
             {
@@ -250,6 +254,7 @@ public class DataAction {
             }
         } catch (Exception e) {
           LOGGER.error(e.getMessage());
+          e.printStackTrace();
           result.put(SUCCESS,false);
           result.put(MSG,"意外错误");
         }

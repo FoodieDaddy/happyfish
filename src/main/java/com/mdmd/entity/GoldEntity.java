@@ -1,13 +1,14 @@
 package com.mdmd.entity;
 
 
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import static com.mdmd.constant.SystemConstant.DATEFORMAT__yyMMdd;
 
 
-public class GoldEntity {
+public class GoldEntity implements Serializable {
     private int id;
     private Integer calcDate;
     private double preGold;

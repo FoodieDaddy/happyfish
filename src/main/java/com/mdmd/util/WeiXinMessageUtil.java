@@ -28,10 +28,9 @@ public class WeiXinMessageUtil {
         public static final String RESP_EVENT_SUBSCRIBE = "subscribe";
 
 
-    public static Map<String,String> pareXml(HttpServletRequest request) throws Exception{
+    public static Map<String,String> pareXml(InputStream inputStream) throws Exception{
         //记录解析结果
         Map<String, String> reqMap = new HashMap<>();
-        InputStream inputStream = request.getInputStream();
         SAXReader reader = new SAXReader();
         Document document = reader.read(inputStream);
         Element rootElement = document.getRootElement();

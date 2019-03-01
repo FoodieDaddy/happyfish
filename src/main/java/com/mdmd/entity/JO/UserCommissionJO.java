@@ -1,10 +1,12 @@
-package com.mdmd.entity;
+package com.mdmd.entity.JO;
+
+import com.mdmd.entity.UserCommissionEntity;
+import com.mdmd.entity.UserEntity;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
 
-
-public class UserCommissionEntity{
+public class UserCommissionJO implements Serializable {
     private int id;
     private Timestamp time;
     private String commissionType;
@@ -13,7 +15,19 @@ public class UserCommissionEntity{
     private double baseNumber;
     private int baseScale;
     private int childNodeIndex;
-    private UserEntity userEntity;
+    private int userId;
+
+    public UserCommissionJO(UserCommissionEntity userCommissionEntity) {
+        this.id = userCommissionEntity.getId();
+        this.time = userCommissionEntity.getTime();
+        this.commissionType = userCommissionEntity.getCommissionType();
+        this.commissionResult = userCommissionEntity.getCommissionResult();
+        this.nodeUserId = userCommissionEntity.getNodeUserId();
+        this.baseNumber = userCommissionEntity.getBaseNumber();
+        this.baseScale = userCommissionEntity.getBaseScale();
+        this.childNodeIndex = userCommissionEntity.getChildNodeIndex();
+        this.userId = userCommissionEntity.getUserEntity().getUserid();
+    }
 
     public int getId() {
         return id;
@@ -23,12 +37,12 @@ public class UserCommissionEntity{
         this.id = id;
     }
 
-    public UserEntity getUserEntity() {
-        return userEntity;
+    public int getUserId() {
+        return userId;
     }
 
-    public void setUserEntity(UserEntity userEntity) {
-        this.userEntity = userEntity;
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
     public Timestamp getTime() {

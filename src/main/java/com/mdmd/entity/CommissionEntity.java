@@ -1,6 +1,8 @@
 package com.mdmd.entity;
 
-public class CommissionEntity {
+import java.io.Serializable;
+
+public class CommissionEntity implements Serializable {
     private int id;
     private double preCommission;
     private double todayCommission;

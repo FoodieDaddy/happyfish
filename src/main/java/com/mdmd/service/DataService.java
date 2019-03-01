@@ -1,7 +1,9 @@
 package com.mdmd.service;
 
+import com.mdmd.entity.GameRecordEntity;
 import com.mdmd.entity.UserEntity;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 public interface DataService {
@@ -36,6 +38,15 @@ public interface DataService {
      * @param userId
      * @return
      */
+
+    /**
+     * 添加以user外关联的数据在list中进行添加数据
+     * @param addRedisObj
+     * @param userId
+     * @return
+     */
+    boolean addRecordListForRedis(Object addRedisObj,int userId);
+
     String getQRCodeTicketWithUserId(int userId) throws Exception;
 
     UserEntity getUserWithQrcodeSceneId(int sceneId)throws Exception;

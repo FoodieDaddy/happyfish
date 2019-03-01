@@ -1,9 +1,13 @@
-package com.mdmd.entity;
+package com.mdmd.entity.JO;
+
+import com.mdmd.entity.GameRecordEntity;
+import com.mdmd.entity.UserEntity;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
 
-public class GameRecordEntity{
+public class GameRecordJO implements Serializable {
+
     private int id;
     private Timestamp time;
     private String gameType;
@@ -11,7 +15,21 @@ public class GameRecordEntity{
     private String gameContent;
     private double gameCost;
     private double principal;
-    private UserEntity userEntity;
+    private int userId;
+
+    public GameRecordJO() {
+    }
+
+    public GameRecordJO(GameRecordEntity gameRecordEntity) {
+        this.id = gameRecordEntity.getId();
+        this.time = gameRecordEntity.getTime();
+        this.gameType = gameRecordEntity.getGameType();
+        this.gameResult = gameRecordEntity.getGameResult();
+        this.gameContent = gameRecordEntity.getGameContent();
+        this.gameCost = gameRecordEntity.getGameCost();
+        this.principal = gameRecordEntity.getPrincipal();
+        this.userId = gameRecordEntity.getUserEntity().getUserid();
+    }
 
     public int getId() {
         return id;
@@ -69,12 +87,11 @@ public class GameRecordEntity{
         this.principal = principal;
     }
 
-    public UserEntity getUserEntity() {
-        return userEntity;
+    public int getUserId() {
+        return userId;
     }
 
-    public void setUserEntity(UserEntity userEntity) {
-        this.userEntity = userEntity;
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
-
 }

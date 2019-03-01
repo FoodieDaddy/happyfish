@@ -29,6 +29,13 @@ public interface GameRuleService {
     GameResultJO getFishResult(int price, int targetValue, int userId) throws RuntimeException;
 
 
+    /**
+     * 获取德宝结果和返回数据
+     * @param type
+     * @param num
+     * @param userId
+     * @return
+     */
     GameResultJO getTreasureResult(int type, int num, int userId);
 
 }

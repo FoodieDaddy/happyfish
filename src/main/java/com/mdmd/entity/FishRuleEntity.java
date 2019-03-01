@@ -1,6 +1,8 @@
 package com.mdmd.entity;
 
-public class FishRuleEntity {
+import java.io.Serializable;
+
+public class FishRuleEntity implements Serializable {
     private int id;
     private int price;
     private int targetValue;

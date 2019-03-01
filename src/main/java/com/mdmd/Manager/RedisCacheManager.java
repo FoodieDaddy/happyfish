@@ -563,7 +563,7 @@ public class RedisCacheManager {
     }
 
     /**
-     * 将list放入缓存
+     * 将list放入缓存(从左加)
      *
      * @param key
      *            键
@@ -574,7 +574,7 @@ public class RedisCacheManager {
      */
     public boolean lSet(String key, Object value) {
         try {
-            redisTemplate.opsForList().rightPush(key, value);
+            redisTemplate.opsForList().leftPush(key, value);
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -583,7 +583,7 @@ public class RedisCacheManager {
     }
 
     /**
-     * 将list放入缓存
+     * 将list放入缓存（从左加）
      *
      * @param key
      *            键
@@ -595,7 +595,7 @@ public class RedisCacheManager {
      */
     public boolean lSet(String key, Object value, long time) {
         try {
-            redisTemplate.opsForList().rightPush(key, value);
+            redisTemplate.opsForList().leftPush(key, value);
             if (time > 0)
                 expire(key, time);
             return true;
@@ -642,6 +642,7 @@ public class RedisCacheManager {
                 expire(key, time);
             return true;
         } catch (Exception e) {
+            e.printStackTrace();
             LOGGER.error(e.getMessage());
             return false;
         }
@@ -673,18 +674,18 @@ public class RedisCacheManager {
      * @param key
      * @return
      */
-    public boolean lLeftPopAndRightPush_IfSize(String key,Object value,int size){
+    public boolean lRightPopAndLeftPush_IfSize(String key,Object value,int size){
         try {
             ListOperations<String, Object> list = redisTemplate.opsForList();
             Long s = list.size(key);
             if(s == size)
             {
-                list.leftPop(key);
-                list.rightPush(key,value);
+                list.rightPop(key);
+                list.leftPush(key,value);
             }
             else if(s < size)
             {
-                list.rightPush(key,value);
+                list.leftPush(key,value);
             }
             else
             {

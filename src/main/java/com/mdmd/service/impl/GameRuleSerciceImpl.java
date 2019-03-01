@@ -4,10 +4,12 @@ import com.mdmd.Manager.RedisCacheManager;
 import com.mdmd.dao.GameRuleDao;
 import com.mdmd.dao.UserDao;
 import com.mdmd.entity.*;
+import com.mdmd.entity.JO.GameRecordJO;
 import com.mdmd.entity.JO.GameResultJO;
 import com.mdmd.entity.bean.FishProbabilityBean;
 import com.mdmd.entity.bean.GameResultBean;
 import com.mdmd.service.DataService;
+import com.mdmd.service.DealService;
 import com.mdmd.service.GameRuleService;
 import com.mdmd.service.SysPropService;
 import com.mdmd.util.CommonUtil;
@@ -34,6 +36,8 @@ public class GameRuleSerciceImpl implements GameRuleService {
     private RedisCacheManager redisCacheManager;
     @Autowired
     private SysPropService sysPropService;
+    @Autowired
+    private DealService dealService;
 
     private Map<Integer, Map<Integer, FishProbabilityBean>>  fishRules = null;
 
@@ -109,16 +113,6 @@ public class GameRuleSerciceImpl implements GameRuleService {
         boolean gameResult = gameResultBean.getGameResult();
         //根据输赢计算金币总额
         GoldEntity goldEntity = userEntity.singleGoldEntity();
-        //todo  后期可删除这个判断
-        if(goldEntity == null)
-        {
-            LOGGER.info("用户"+userId+"没有gold表数据,已重新创建");
-            goldEntity = new GoldEntity();
-            Set<GoldEntity> goldEntities = new HashSet<>();
-            goldEntities.add(goldEntity);
-            userEntity.setGoldEntitySet(goldEntities);
-        }
-
 
         double currentGold = CommonUtil.formatDouble_two(balance - price + gameCost);
         //金币余额
@@ -136,6 +130,8 @@ public class GameRuleSerciceImpl implements GameRuleService {
         gameRecordEntity.setPrincipal(price);
         gameRecordEntity.setUserEntity(userEntity);
         userDao.addEntity(gameRecordEntity);
+        //将新记录加进缓存
+        dataService.addRecordListForRedis(new GameRecordJO(gameRecordEntity),userId);
 
         //佣金结算 记录佣金明细 每个人佣金总表 和 用户表中的余额
         this.calcuCommission(userId,price);
@@ -153,6 +149,7 @@ public class GameRuleSerciceImpl implements GameRuleService {
         int allCost = num * 11 + TREASURE_INFORMCOST;
         //查看这个用户有没有金币玩游戏
         UserEntity userEntity = (UserEntity) userDao.getEntity(UserEntity.class,userId);
+        String openid = userEntity.getUserOpenid();
         double balance = userEntity.getGold();
         if(balance < allCost)
         {
@@ -160,6 +157,8 @@ public class GameRuleSerciceImpl implements GameRuleService {
             return new GameResultJO(msg);
         }
         //todo 支付给用户一块钱并获取订单编号
+        Map<String, String> result = dealService.payToUser(userId,openid, 100, "夺宝凭证");
+        LOGGER.info("夺宝"+result);
         String orderNumber = new Random().nextInt(9999)+"";
         int resultNUmber = orderNumber.charAt(orderNumber.length() - 1);
         int get = 0;
@@ -223,6 +222,9 @@ public class GameRuleSerciceImpl implements GameRuleService {
         gameRecordEntity.setPrincipal(allCost);
         gameRecordEntity.setUserEntity(userEntity);
         userDao.addEntity(gameRecordEntity);
+
+        //将新记录加进缓存
+        dataService.addRecordListForRedis(new GameRecordJO(gameRecordEntity),userId);
 
         //佣金结算 记录佣金明细 每个人佣金总表 和 用户表中的余额
         this.calcuCommission(userId,num * 10);
@@ -299,6 +301,7 @@ public class GameRuleSerciceImpl implements GameRuleService {
                 userDao.updateEntity(superUser);
                 //增加佣金记录
                 UserCommissionEntity userCommissionEntity = new UserCommissionEntity();
+                userCommissionEntity.setUserEntity(superUser);
                 userCommissionEntity.setBaseNumber(price);
                 userCommissionEntity.setBaseScale(awardNum);
                 userCommissionEntity.setChildNodeIndex( ++i );

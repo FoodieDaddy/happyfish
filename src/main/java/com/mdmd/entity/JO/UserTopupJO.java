@@ -1,16 +1,32 @@
-package com.mdmd.entity;
+package com.mdmd.entity.JO;
+
+import com.mdmd.entity.UserEntity;
+import com.mdmd.entity.UserTopupEntity;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
 
-public class UserTopupEntity{
+public class UserTopupJO implements Serializable {
     private int id;
     private Timestamp time;
     private String orderNumber;
     private String topupType;
     private String topupResult;
     private int topupQuantity;
-    private UserEntity userEntity;
+    private int userId;
+
+    public UserTopupJO() {
+    }
+
+    public UserTopupJO(UserTopupEntity userTopupEntity) {
+        this.id = userTopupEntity.getId();
+        this.time = userTopupEntity.getTime();
+        this.orderNumber = userTopupEntity.getOrderNumber();
+        this.topupType = userTopupEntity.getTopupType();
+        this.topupResult = userTopupEntity.getTopupResult();
+        this.topupQuantity = userTopupEntity.getTopupQuantity();
+        this.userId = userTopupEntity.getUserEntity().getUserid();
+    }
 
     public int getId() {
         return id;
@@ -60,11 +76,11 @@ public class UserTopupEntity{
         this.topupQuantity = topupQuantity;
     }
 
-    public UserEntity getUserEntity() {
-        return userEntity;
+    public int getUserId() {
+        return userId;
     }
 
-    public void setUserEntity(UserEntity userEntity) {
-        this.userEntity = userEntity;
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 }

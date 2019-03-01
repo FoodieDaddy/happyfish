@@ -30,5 +30,8 @@
         <property name="childNodeIndex">
             <column name="childNodeIndex" sql-type="int(11)"/>
         </property>
+        <many-to-one name="userEntity" class="com.mdmd.entity.UserEntity" cascade="none" lazy="false">
+            <column name="userId"/>
+        </many-to-one>
     </class>
 </hibernate-mapping>

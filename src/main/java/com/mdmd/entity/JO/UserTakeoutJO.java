@@ -1,15 +1,30 @@
-package com.mdmd.entity;
+package com.mdmd.entity.JO;
+
+import com.mdmd.entity.UserEntity;
+import com.mdmd.entity.UserTakeoutEntity;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
 
-public class UserTakeoutEntity{
+public class UserTakeoutJO implements Serializable {
     private int id;
     private Timestamp time;
     private String takeoutType;
     private String takeoutResult;
     private int takeoutQuantity;
-    private UserEntity userEntity;
+    private int userId;
+
+    public UserTakeoutJO() {
+    }
+
+    public UserTakeoutJO(UserTakeoutEntity userTakeoutEntity) {
+        this.id = userTakeoutEntity.getId();
+        this.time = userTakeoutEntity.getTime();
+        this.takeoutType = userTakeoutEntity.getTakeoutType();
+        this.takeoutResult = userTakeoutEntity.getTakeoutResult();
+        this.takeoutQuantity = userTakeoutEntity.getTakeoutQuantity();
+        this.userId = userTakeoutEntity.getUserEntity().getUserid();
+    }
 
     public int getId() {
         return id;
@@ -51,11 +66,11 @@ public class UserTakeoutEntity{
         this.takeoutQuantity = takeoutQuantity;
     }
 
-    public UserEntity getUserEntity() {
-        return userEntity;
+    public int getUserId() {
+        return userId;
     }
 
-    public void setUserEntity(UserEntity userEntity) {
-        this.userEntity = userEntity;
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 }
