@@ -1,7 +1,6 @@
 package com.mdmd.util;
 
 import com.mdmd.constant.WeiXinPublicContant;
-import com.mdmd.entity.bean.Transfers;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -22,7 +21,6 @@ import java.security.KeyStore;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import static com.mdmd.constant.WeiXinPublicContant.WEIXIN_COMPAPY_PAY_URL;
 import static com.mdmd.util.WeiXinMessageUtil.xmStream;
 
 public class WeixinConfigUtils {
@@ -47,26 +45,22 @@ public class WeixinConfigUtils {
      /** 构造企业付款xml参数
      * @return
       */
-    public static String transferXml(Transfers transfers) {
+    public static String transferXml(Object data) {
         xmStream.autodetectAnnotations(true);
-        xmStream.alias("xml", Transfers.class);
-        return xmStream.toXML(transfers);
+        xmStream.alias("xml", data.getClass());
+        //在使用封装对象时出现了__
+        return xmStream.toXML(data).replace("__","_");
 
-    }
-    public static String transferXml(SortedMap m){
-        xmStream.autodetectAnnotations(true);
-        xmStream.alias("xml", SortedMap.class);
-        return xmStream.toXML(m);
     }
 
     /**
      * 给微信发送post请求
      *
      */
-    public static String Post(String reqStr) throws Exception {
+    public static String weiXinPost(String reqStr,String url) throws Exception {
         CloseableHttpClient httpclient = certificateValidation(WeiXinPublicContant.WEIXIN_mch_id);
         //加载证书
-        HttpPost httppost = new HttpPost(WEIXIN_COMPAPY_PAY_URL);
+        HttpPost httppost = new HttpPost(url);
         StringEntity myEntity = new StringEntity(reqStr, "UTF-8");
         httppost.setEntity(myEntity);
 

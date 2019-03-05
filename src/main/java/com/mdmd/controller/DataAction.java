@@ -1,6 +1,7 @@
 package com.mdmd.controller;
 
 
+import com.mdmd.entity.JO.UserChildsDataJO;
 import com.mdmd.entity.UserEntity;
 import com.mdmd.service.DataService;
 import com.mdmd.service.UserService;
@@ -37,57 +38,51 @@ public class DataAction {
     @Autowired
     private DataService dataService;
     static final Logger LOGGER = LogManager.getLogger(DataAction.class);
+
     /**
      * 通过重定向获取openid
+     *
      * @param request
      * @param response
      */
-    @RequestMapping(value="/home.do")
-    public void home(HttpServletRequest request, HttpServletResponse response, HttpSession session){
+    @RequestMapping(value = "/home.do")
+    public void home(HttpServletRequest request, HttpServletResponse response, HttpSession session) {
         try {
             String code = request.getParameter("code");
             String state = request.getParameter("state");
             String test = request.getParameter("test");
             String sup = request.getParameter("sup");
 
-            LOGGER.info("home获取到"+code+";"+state+";"+sup+"。");
+            LOGGER.info("home获取到" + code + ";" + state + ";" + sup + "。");
 
             UserEntity userEntity = null;
-            if(test!= null){
-                if(!test.equals("")){
+            if (test != null) {
+                if (!test.equals("")) {
                     userEntity = userService.getUserWithOpenId(test);
-                    if(userEntity == null)
+                    if (userEntity == null)
                         userEntity = userService.addUserInfo(test);
                 }
             }
-            if(code != null){
+            if (code != null) {
                 String openId = getOpenId(code);
                 //如果openId不为空，从用户库中查找该用户
-                if(openId != null)
-                {
-                     userEntity = userService.getUserWithOpenId(openId);
-                    LOGGER.info("openId:"+openId);
-                    if(userEntity == null)
-                    {
-                        LOGGER.info("sup"+sup);
-                        if(sup != null)
-                        {
+                if (openId != null) {
+                    userEntity = userService.getUserWithOpenId(openId);
+                    LOGGER.info("openId:" + openId);
+                    if (userEntity == null) {
+                        LOGGER.info("sup" + sup);
+                        if (sup != null) {
                             sup = sup.trim();
-                            if(!"".equals(sup))
-                            {
+                            if (!"".equals(sup)) {
                                 LOGGER.info("校验");
-                                if(sup.matches(REGEX_NUMBER))
+                                if (sup.matches(REGEX_NUMBER))
                                     userEntity = userService.addUserInfo(openId, Integer.valueOf(sup));
 
-                            }
-                            else
-                            {
+                            } else {
                                 userEntity = userService.addUserInfo(openId);
                             }
-                        }
-                        else
-                        {
-                             userEntity = userService.addUserInfo(openId);
+                        } else {
+                            userEntity = userService.addUserInfo(openId);
                         }
                     }
 
@@ -95,17 +90,13 @@ public class DataAction {
                 }
             }
 
-            if(userEntity != null)
-            {
+            if (userEntity != null) {
                 int userid = userEntity.getUserid();
-                if(userEntity.getLoginBan() == 0)
-                {
+                if (userEntity.getLoginBan() == 0) {
                     //将userId加密传输到前端
-                    String encrypt = RSAUtil.encrypt( userid+ "");
-                    response.sendRedirect("../stc/index.html?token="+encrypt);
-                }
-                else
-                {
+                    String encrypt = RSAUtil.encrypt(userid + "");
+                    response.sendRedirect("../stc/index.html?token=" + encrypt);
+                } else {
                     response.sendRedirect("http://www.baidu,com");
                 }
             }
@@ -118,6 +109,7 @@ public class DataAction {
 
     /**
      * 获取首页的数据
+     *
      * @param request
      * @param response
      * @param session
@@ -125,28 +117,29 @@ public class DataAction {
      */
     @RequestMapping(value = "/getHomeData.do")
     @ResponseBody
-    public Map<String,Object> getHomeData(HttpServletRequest request, HttpServletResponse response, HttpSession session, String u){
+    public Map<String, Object> getHomeData(HttpServletRequest request, HttpServletResponse response, HttpSession session, String u) {
         Map<String, Object> result = new HashMap<>();
         System.out.println("获取u------" + u);
         LOGGER.info("获取u------" + u);
         try {
             int userId = (int) session.getAttribute(SESSION_USERID);
-            System.out.println("获取user--"+userId);
+            System.out.println("获取user--" + userId);
             UserEntity userEntity = userService.getUserWithUserId_self_or_cascade(userId, true);
-            LOGGER.info("------user是:"+userId);
+            LOGGER.info("------user是:" + userId);
             result.put("userId", userId);
-            result.put("gold",userEntity.getGold());
-            result.put("commission",userEntity.getCommission());//todo 未计算
-            result.put(SUCCESS,Boolean.TRUE);
+            result.put("gold", userEntity.getGold());
+            result.put("commission", userEntity.getCommission());//todo 未计算
+            result.put(SUCCESS, Boolean.TRUE);
         } catch (Exception e) {
             LOGGER.warn(e.getMessage());
-            result.put(SUCCESS,false);
+            result.put(SUCCESS, false);
         }
         return result;
     }
 
     /**
      * 获取二维码tickert
+     *
      * @param request
      * @param session
      * @param response
@@ -154,15 +147,15 @@ public class DataAction {
      */
     @RequestMapping(value = "/refreshQrcode.do")
     @ResponseBody
-    public Map<String,Object> catchFish(HttpServletRequest request, HttpSession session,HttpServletResponse response){
+    public Map<String, Object> catchFish(HttpServletRequest request, HttpSession session, HttpServletResponse response) {
         Map<String, Object> result = new HashMap<>();
         try {
             int userId = (int) session.getAttribute(SESSION_USERID);
-            QrcodeUtil.createQrcode(QRCODE_PREFIX+userId,userId+"");
-            result.put(SUCCESS,Boolean.TRUE);
+            QrcodeUtil.createQrcode(QRCODE_PREFIX + userId, userId + "");
+            result.put(SUCCESS, Boolean.TRUE);
         } catch (Exception e) {
-            result.put(SUCCESS,false);
-            result.put(MSG,e.getMessage());
+            result.put(SUCCESS, false);
+            result.put(MSG, e.getMessage());
             e.printStackTrace();
         }
         return result;
@@ -193,12 +186,9 @@ public class DataAction {
 //    }
 
 
-
-
-
-
     /**
      * 获取公钥
+     *
      * @param request
      * @param session
      * @param response
@@ -206,7 +196,7 @@ public class DataAction {
      */
     @RequestMapping(value = "/getPub.do")
     @ResponseBody
-    public Map<String,Object> getPublicKey(HttpServletRequest request, HttpSession session,HttpServletResponse response){
+    public Map<String, Object> getPublicKey(HttpServletRequest request, HttpSession session, HttpServletResponse response) {
         Map<String, Object> result = new HashMap<>();
 
         try {
@@ -217,17 +207,18 @@ public class DataAction {
 //            X509EncodedKeySpec keySpec = new X509EncodedKeySpec(keyBytes);
 //            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
 //            PublicKey publicKey = keyFactory.generatePublic(keySpec);
-            result.put("key",key);
+            result.put("key", key);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        result.put(SUCCESS,Boolean.TRUE);
+        result.put(SUCCESS, Boolean.TRUE);
         return result;
     }
 
 
     /**
      * 获取游戏记录等数据信息
+     *
      * @param request
      * @param session
      * @param response
@@ -235,28 +226,41 @@ public class DataAction {
      */
     @RequestMapping(value = "/listData.do")
     @ResponseBody
-    public Map<String,Object> listGameData(String type,HttpServletRequest request, HttpSession session,HttpServletResponse response) {
+    public Map<String, Object> listGameData(String type, HttpServletRequest request, HttpSession session, HttpServletResponse response) {
         Map<String, Object> result = new HashMap<>();
 
         try {
             int t = Integer.valueOf(type);
             int userId = (int) session.getAttribute("userId");
-            if(t > 0 && t < 5)
-            {
+            if (t > 0 && t < 5) {
                 List list = dataService.listDatas(t, userId);
-                result.put(SUCCESS,true);
-                result.put("data",list);
-            }
-            else
-            {
-                result.put(SUCCESS,false);
-                result.put(MSG,"非法数据");
+                result.put(SUCCESS, true);
+                result.put("data", list);
+            } else {
+                result.put(SUCCESS, false);
+                result.put(MSG, "非法数据");
             }
         } catch (Exception e) {
-          LOGGER.error(e.getMessage());
-          e.printStackTrace();
-          result.put(SUCCESS,false);
-          result.put(MSG,"意外错误");
+            LOGGER.error(e.getMessage());
+            e.printStackTrace();
+            result.put(SUCCESS, false);
+            result.put(MSG, "意外错误");
+        }
+        return result;
+    }
+
+    @RequestMapping(value = "/listUnder.do")
+    @ResponseBody
+    public Map<String, Object> getChildsData(HttpServletRequest request, HttpSession session, HttpServletResponse response) {
+        Map<String, Object> result = new HashMap<>();
+        try {
+            int userId = (int) session.getAttribute("userId");
+            List<UserChildsDataJO> datas = userService.listAllLevelChildsNumberAndMoneySum(userId);
+            result.put(SUCCESS, true);
+            result.put("list",datas);
+        } catch (Exception e) {
+            e.printStackTrace();
+            result.put(SUCCESS,false);
         }
         return result;
     }

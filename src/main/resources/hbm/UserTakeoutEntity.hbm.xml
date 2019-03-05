@@ -21,6 +21,12 @@
         <property name="takeoutQuantity">
             <column name="takeoutQuantity" sql-type="int(11)"/>
         </property>
+        <property name="tradeOrderNum">
+            <column name="tradeOrderNum" sql-type="varchar(50)" length="50" not-null="true"/>
+        </property>
+        <property name="wxOrderNum" >
+            <column name="wxOrderNum" sql-type="varchar(50)" length="50" not-null="true"/>
+        </property>
         <many-to-one name="userEntity" class="com.mdmd.entity.UserEntity" cascade="none" lazy="false">
             <column name="userId"/>
         </many-to-one>

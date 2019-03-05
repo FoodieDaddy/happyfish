@@ -9,6 +9,8 @@ public class UserTakeoutEntity{
     private String takeoutType;
     private String takeoutResult;
     private int takeoutQuantity;
+    private String tradeOrderNum;
+    private String wxOrderNum;
     private UserEntity userEntity;
 
     public int getId() {
@@ -57,5 +59,21 @@ public class UserTakeoutEntity{
 
     public void setUserEntity(UserEntity userEntity) {
         this.userEntity = userEntity;
+    }
+
+    public String getTradeOrderNum() {
+        return tradeOrderNum;
+    }
+
+    public void setTradeOrderNum(String tradeOrderNum) {
+        this.tradeOrderNum = tradeOrderNum;
+    }
+
+    public String getWxOrderNum() {
+        return wxOrderNum;
+    }
+
+    public void setWxOrderNum(String wxOrderNum) {
+        this.wxOrderNum = wxOrderNum;
     }
 }

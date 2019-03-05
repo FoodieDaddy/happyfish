@@ -3,28 +3,32 @@ package com.mdmd.entity.bean;
 
 import java.io.Serializable;
 
-public class Transfers implements Serializable {
+/**
+ * 微信企业支付时使用的参数对象
+ */
+public class CompanyPayBean implements Serializable {
     private static final long serialVersionUID = 1L;
     /** 商户账号appid*/
-    public String mch_appid;
+    private String mch_appid;
     /** 微信支付商户号*/
-    public String mchid;
+    private String mchid;
     /** 随机串*/
-    public String nonce_str;
+    private String nonce_str;
     /** 签名*/
-    public String sign;
+    private String sign;
     /** 商户订单号*/
-    public String partner_trade_no;
+    private String partner_trade_no;
     /** 用户id*/
-    public String openid;
+    private String openid;
     /** 是否校验用户姓名 NO_CHECK：不校验真实姓名  FORCE_CHECK：强校验真实姓名*/
-    public String check_name;
+    private String check_name;
     /** 金额 单位：分*/
-    public Integer amount;
+    private Integer amount;
     /** 企业付款描述信息*/
-    public String desc;
+    private String desc;
     /** ip地址*/
-    public String spbill_create_ip;
+    private String spbill_create_ip;
+
     public String getMch_appid() {
         return mch_appid;
     }

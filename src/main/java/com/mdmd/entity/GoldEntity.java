@@ -14,6 +14,7 @@ public class GoldEntity implements Serializable {
     private double preGold;
     private double todayWater;
     private double todayGold;
+    private int takeoutGold;
 
     public GoldEntity() {
        this.calcDate = Integer.valueOf(new SimpleDateFormat(DATEFORMAT__yyMMdd).format(new Date()));
@@ -59,4 +60,11 @@ public class GoldEntity implements Serializable {
         this.todayGold = todayGold;
     }
 
+    public int getTakeoutGold() {
+        return takeoutGold;
+    }
+
+    public void setTakeoutGold(int takeoutGold) {
+        this.takeoutGold = takeoutGold;
+    }
 }

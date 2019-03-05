@@ -21,61 +21,62 @@ public class WXInterceptor implements HandlerInterceptor {
     private UserService userService;
 
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        HttpSession session = request.getSession();
-        String requestURI = request.getRequestURI();
-        if(requestURI.contains("/gm/")||requestURI.contains("/qx/")){
-            Object userId = session.getAttribute(SESSION_USERID);
-            if(userId == null)
-            {
-                if(requestURI.contains("/home.do"))
-                {
-                    return true;
-                }
-                if(requestURI.contains("/getHomeData.do"))
-                {
-                    String u = request.getParameter("u");
-                    if(u!=null&&!u.equals(""))
-                    {
-                        try {
-                            String user = RSAUtil.decryptByHttpRequestValue(u);
-                            int userIdInt = Integer.valueOf(user);
-                            UserEntity userEntity = userService.getUserWithUserId_self_or_cascade(userIdInt, true);
-                            byte loginBan = userEntity.getLoginBan();
-                            if(loginBan == 0)
-                            {
-                                session.setAttribute(SESSION_USERID,userIdInt);
-                                return true;
-                            }
-                        } catch (Exception e) {
-                            return false;
-                        }
-
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                }
-                return false;
-            }
-            return true;
-        }
-        //不需要做session判断的方法
-        else if(requestURI.contains("/MP_verify_bvG4JnJzyk7M3RNH.txt")||requestURI.contains("/red.do"))
-        {
-            return true;
-        }
-        //不需要做session的命名空间
-        else if(requestURI.contains("/wx/"))
-        {
-            return true;
-        }
-        //todo 后台登录验证 也要验证user
-        else if(requestURI.contains("/sysprop/"))
-        {
-            return true;
-        }
-        return false;
+        return true;
+//        HttpSession session = request.getSession();
+//        String requestURI = request.getRequestURI();
+//        if(requestURI.contains("/gm/")||requestURI.contains("/qx/")){
+//            Object userId = session.getAttribute(SESSION_USERID);
+//            if(userId == null)
+//            {
+//                if(requestURI.contains("/home.do"))
+//                {
+//                    return true;
+//                }
+//                if(requestURI.contains("/getHomeData.do"))
+//                {
+//                    String u = request.getParameter("u");
+//                    if(u!=null&&!u.equals(""))
+//                    {
+//                        try {
+//                            String user = RSAUtil.decryptByHttpRequestValue(u);
+//                            int userIdInt = Integer.valueOf(user);
+//                            UserEntity userEntity = userService.getUserWithUserId_self_or_cascade(userIdInt, true);
+//                            byte loginBan = userEntity.getLoginBan();
+//                            if(loginBan == 0)
+//                            {
+//                                session.setAttribute(SESSION_USERID,userIdInt);
+//                                return true;
+//                            }
+//                        } catch (Exception e) {
+//                            return false;
+//                        }
+//
+//                    }
+//                    else
+//                    {
+//                        return false;
+//                    }
+//                }
+//                return false;
+//            }
+//            return true;
+//        }
+//        //不需要做session判断的方法
+//        else if(requestURI.contains("/MP_verify_bvG4JnJzyk7M3RNH.txt")||requestURI.contains("/red.do"))
+//        {
+//            return true;
+//        }
+//        //不需要做session的命名空间
+//        else if(requestURI.contains("/wx/"))
+//        {
+//            return true;
+//        }
+//        //todo 后台登录验证 也要验证user
+//        else if(requestURI.contains("/sysprop/"))
+//        {
+//            return true;
+//        }
+//        return false;
     }
 
     @Override

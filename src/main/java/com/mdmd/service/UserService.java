@@ -1,9 +1,11 @@
 package com.mdmd.service;
 
 import com.google.zxing.WriterException;
+import com.mdmd.entity.JO.UserChildsDataJO;
 import com.mdmd.entity.UserEntity;
 
 import java.io.IOException;
+import java.util.List;
 
 public interface UserService {
 
@@ -22,6 +24,9 @@ public interface UserService {
      * @throws RuntimeException
      */
     UserEntity getUserWithUserId_self_or_cascade(int userId,boolean onlySelf) throws RuntimeException;
+
+
+    List<UserChildsDataJO> listAllLevelChildsNumberAndMoneySum(int userId);
 
     UserEntity addUserInfo(String openId) throws Exception;
 

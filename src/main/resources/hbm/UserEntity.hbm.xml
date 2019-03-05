@@ -18,8 +18,20 @@
         <property name="commission">
             <column name="commission" sql-type="double" precision="-1"/>
         </property>
-        <property name="superUserId">
-            <column name="superUserId" sql-type="int(11)"/>
+        <property name="superUserId_a">
+            <column name="superUserId_a" sql-type="int(11)"/>
+        </property>
+        <property name="superUserId_b">
+            <column name="superUserId_b" sql-type="int(11)"/>
+        </property>
+        <property name="superUserId_c">
+            <column name="superUserId_c" sql-type="int(11)"/>
+        </property>
+        <property name="superUserId_d">
+            <column name="superUserId_d" sql-type="int(11)"/>
+        </property>
+        <property name="superUserId_e">
+            <column name="superUserId_e" sql-type="int(11)"/>
         </property>
         <property name="loginBan">
             <column name="loginBan" sql-type="tinyint(1)"/>

@@ -1,6 +1,7 @@
 package com.mdmd.service.impl;
 
 import com.mdmd.Manager.RedisCacheManager;
+import com.mdmd.dao.CommonDao;
 import com.mdmd.dao.GameRuleDao;
 import com.mdmd.dao.UserDao;
 import com.mdmd.entity.*;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Component;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import static com.mdmd.constant.ActionConstant.MSG;
 import static com.mdmd.constant.GameConstant.*;
 import static com.mdmd.constant.SystemConstant.DATEFORMAT__yyMMdd;
 
@@ -38,6 +40,8 @@ public class GameRuleSerciceImpl implements GameRuleService {
     private SysPropService sysPropService;
     @Autowired
     private DealService dealService;
+    @Autowired
+    private CommonDao commonDao;
 
     private Map<Integer, Map<Integer, FishProbabilityBean>>  fishRules = null;
 
@@ -76,7 +80,7 @@ public class GameRuleSerciceImpl implements GameRuleService {
         }
 
         //查看这个用户有没有金币玩游戏
-        UserEntity userEntity = (UserEntity) userDao.getEntity(UserEntity.class,userId);
+        UserEntity userEntity = (UserEntity) commonDao.getEntity(UserEntity.class,userId);
         double balance = userEntity.getGold();
         System.out.println("用户余额："+balance+",倍率:"+price+",红包数值："+targetValue);
         if(balance < price)
@@ -129,26 +133,24 @@ public class GameRuleSerciceImpl implements GameRuleService {
         gameRecordEntity.setGameResult(gameResult ? "赢" : "输");
         gameRecordEntity.setPrincipal(price);
         gameRecordEntity.setUserEntity(userEntity);
-        userDao.addEntity(gameRecordEntity);
+        commonDao.addEntity(gameRecordEntity);
         //将新记录加进缓存
         dataService.addRecordListForRedis(new GameRecordJO(gameRecordEntity),userId);
 
         //佣金结算 记录佣金明细 每个人佣金总表 和 用户表中的余额
         this.calcuCommission(userId,price);
 
-        userDao.updateEntity(userEntity);
+        commonDao.updateEntity(userEntity);
 
         return new GameResultJO(gameResultBean.getGameResult(),gameResultBean.getGameCost(),currentGold,0);
 
     }
 
     public GameResultJO getTreasureResult(int type, int num, int userId) {
-        //下单费用
-        int orderCost = num;
         //总计花费
         int allCost = num * 11 + TREASURE_INFORMCOST;
         //查看这个用户有没有金币玩游戏
-        UserEntity userEntity = (UserEntity) userDao.getEntity(UserEntity.class,userId);
+        UserEntity userEntity = (UserEntity) commonDao.getEntity(UserEntity.class,userId);
         String openid = userEntity.getUserOpenid();
         double balance = userEntity.getGold();
         if(balance < allCost)
@@ -156,53 +158,90 @@ public class GameRuleSerciceImpl implements GameRuleService {
             String msg = "您的金币不足哦~";
             return new GameResultJO(msg);
         }
-        //todo 支付给用户一块钱并获取订单编号
-        Map<String, String> result = dealService.payToUser(userId,openid, 100, "夺宝凭证");
-        LOGGER.info("夺宝"+result);
-        String orderNumber = new Random().nextInt(9999)+"";
-        int resultNUmber = orderNumber.charAt(orderNumber.length() - 1);
+        //订单号
+        String orderNumber ;
+        //支付给用户一块钱并获取订单编号
+        Map<String, String> record = dealService.companyPayToUser(userId,openid, 100, "夺宝凭证");
+        //是否有订单编号，没有则为失败
+        if(record.containsKey("payment_no"))
+        {
+            orderNumber = record.get("payment_no");
+        }
+        else
+        {
+            return new GameResultJO(record.get(MSG));
+        }
+        //charAt返回char 变为int型的必要转换
+        int resultNumber = orderNumber.charAt(orderNumber.length() - 1) - '0';
         int get = 0;
         String gameType = "",gameContent = "";
         switch (type) {
             case 10 ://大
-                if(resultNUmber >= 5)
+                if(resultNumber >= 5)
                 {
-                    get = num * 50;
-                    gameType = TREASURE_TYPE_BIGSMALL;
+                    get = num * 20;
+                    gameType = TREASURE_TYPE_BIGSMALL_1;
                     gameContent = TREASURE_CONTENT_BIG;
                 }
                 break;
             case 11 ://小
-                if(resultNUmber < 5)
+                if(resultNumber < 5)
                 {
-                    get = num * 50;
-                    gameType = TREASURE_TYPE_BIGSMALL;
+                    get = num * 20;
+                    gameType = TREASURE_TYPE_BIGSMALL_1;
                     gameContent = TREASURE_CONTENT_SMALL;
                 }
                 break;
             case 12 ://单
-                if(resultNUmber % 2 == 1)
+                if(resultNumber % 2 == 1)
                 {
-                    get = num * 50;
-                    gameType = TREASURE_TYPE_BIGSMALL;
+                    get = num * 20;
+                    gameType = TREASURE_TYPE_BIGSMALL_1;
                     gameContent = TREASURE_CONTENT_SINGLE;
                 }
                 break;
             case 13 ://双
-                if(resultNUmber % 2 == 0)
+                if(resultNumber % 2 == 0)
                 {
-                    get = num * 50;
-                    gameType = TREASURE_TYPE_BIGSMALL;
+                    get = num * 20;
+                    gameType = TREASURE_TYPE_BIGSMALL_1;
                     gameContent = TREASURE_CONTENT_DOUBLE;
                 }
                 break;
-            default://一赔五 0-9
-                if(resultNUmber == type)
+            case 14 : //大单
+                if(resultNumber >= 5 && resultNumber % 2 == 1)
                 {
-                    get = num * 20;
-                    gameType = TREASURE_TYPE_LASTNUM;
-                    gameContent = "尾" + type;
+                    get = num * 45;
+                    gameType = TREASURE_TYPE_BIGSMALL_2;
+                    gameContent = TREASURE_CONTENT_BIG_SINGLE;
                 }
+                break;
+            case 15 : //小单
+                if(resultNumber < 5 && resultNumber % 2 == 1)
+                {
+                    get = num * 45;
+                    gameType = TREASURE_TYPE_BIGSMALL_2;
+                    gameContent = TREASURE_CONTENT_SMALL_SINGLE;
+                }
+                break;
+            case 16 : //大双
+                if(resultNumber >= 5 && resultNumber % 2 == 0)
+                {
+                    get = num * 45;
+                    gameType = TREASURE_TYPE_BIGSMALL_2;
+                    gameContent = TREASURE_CONTENT_BIG_DOUBLE;
+                }
+                break;
+            case 17 : //小双
+                if(resultNumber < 5 && resultNumber % 2 == 0)
+                {
+                    get = num * 45;
+                    gameType = TREASURE_TYPE_BIGSMALL_2;
+                    gameContent = TREASURE_CONTENT_SMALL_DOUBLE;
+                }
+                break;
+            default://一赔五 0-9
+               //todo 没有这个
                 break;
         }
         boolean win = get > 0 ;
@@ -220,8 +259,9 @@ public class GameRuleSerciceImpl implements GameRuleService {
         gameRecordEntity.setGameCost(get);
         gameRecordEntity.setGameResult(win ? "赢" : "输");
         gameRecordEntity.setPrincipal(allCost);
+        gameRecordEntity.setGameOrder(orderNumber);
         gameRecordEntity.setUserEntity(userEntity);
-        userDao.addEntity(gameRecordEntity);
+        commonDao.addEntity(gameRecordEntity);
 
         //将新记录加进缓存
         dataService.addRecordListForRedis(new GameRecordJO(gameRecordEntity),userId);
@@ -229,9 +269,9 @@ public class GameRuleSerciceImpl implements GameRuleService {
         //佣金结算 记录佣金明细 每个人佣金总表 和 用户表中的余额
         this.calcuCommission(userId,num * 10);
 
-        userDao.updateEntity(userEntity);
+        commonDao.updateEntity(userEntity);
 
-        return new GameResultJO(win,num * 10, userEntity.getGold(),userEntity.getCommission(),orderNumber);
+        return new GameResultJO(win,allCost, userEntity.getGold(),userEntity.getCommission(),orderNumber);
     }
 
 
@@ -239,7 +279,7 @@ public class GameRuleSerciceImpl implements GameRuleService {
      * 初始化捕鱼规则
      */
     private void init(){
-        List<FishRuleEntity> fishRuleEntities = userDao.listAllEntity(FishRuleEntity.class);
+        List<FishRuleEntity> fishRuleEntities = commonDao.listAllEntity(FishRuleEntity.class);
         if(fishRuleEntities.size() == 0){
             fishRules = null;
             return;
@@ -277,7 +317,7 @@ public class GameRuleSerciceImpl implements GameRuleService {
      * @param price
      */
     private void calcuCommission(int userId, double price){
-        List<UserEntity> superUserEntityList = dataService.get4_SuperUserEntity(userId);//index=0为上一级
+        List<UserEntity> superUserEntityList = dataService.get5_SuperUserEntity(userId);//index=0为上一级
         if(superUserEntityList != null)
         {
 
@@ -298,7 +338,7 @@ public class GameRuleSerciceImpl implements GameRuleService {
                 this.calcuCommissionForCommissionEntity(superUser.getUserid(),resultCommission,superUser.singleCommissionEntity());
                 //修改父类的user对象
                 superUser.setCommission(CommonUtil.formatDouble_three(superUser.getCommission() + resultCommission));
-                userDao.updateEntity(superUser);
+                commonDao.updateEntity(superUser);
                 //增加佣金记录
                 UserCommissionEntity userCommissionEntity = new UserCommissionEntity();
                 userCommissionEntity.setUserEntity(superUser);
@@ -308,7 +348,7 @@ public class GameRuleSerciceImpl implements GameRuleService {
                 userCommissionEntity.setCommissionResult(resultCommission);
                 userCommissionEntity.setCommissionType(GAME_FISH_RECORD);
                 userCommissionEntity.setNodeUserId(userId);
-                userDao.addEntity(userCommissionEntity);
+                commonDao.addEntity(userCommissionEntity);
             }
         }
     }

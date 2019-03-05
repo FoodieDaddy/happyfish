@@ -11,7 +11,10 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.*;
+
+import static com.mdmd.constant.SystemConstant.DATEFORMAT__yyMMdd;
 
 @Component
 public class UserDaoImpl  implements UserDao {
@@ -20,36 +23,14 @@ public class UserDaoImpl  implements UserDao {
     @Autowired
     private SessionFactory sessionFactory;
 
-    public void addEntity(Object obj){
-        Session session = sessionFactory.getCurrentSession();
-        session.save(obj);
-    }
-    public void updateEntity(Object obj) {
-        Session session = sessionFactory.getCurrentSession();
-        session.update(obj);
-    }
-    public Object getEntity(Class clazz, int id) {
-        Session session = sessionFactory.getCurrentSession();
-        return session.get(clazz, id);
-    }
-    public List listAllEntity(Class clazz) {
-        String name = clazz.getSimpleName();
-        Session session = sessionFactory.getCurrentSession();
-        String hql= "from  " + name ;
-        Query query = session.createQuery(hql);
-        return query.list();
-    }
-
     public List listForeignWithUserEntity_desc_limit(Class clazz, int number,int userId) {
         String name = clazz.getSimpleName();
         Session session = sessionFactory.getCurrentSession();
-        String hql= "from  " + name + " as s where "+ "s.userEntity.userid =" + userId +" order by id desc";//todo 如果编译器报错 是这种方式不适用于编译器的语法
+        String hql= "from  " + name + " as s where "+ "s.userEntity.userid =" + userId +" order by s.id desc";
         Query query = session.createQuery(hql);
         query.setMaxResults(number);
         return query.list();
     }
-
-
 
     public UserEntity getUserFromOpenId(String openId) {
         Session session = sessionFactory.getCurrentSession();
@@ -60,10 +41,6 @@ public class UserDaoImpl  implements UserDao {
             return (UserEntity) list.get(0);
         return null;
     }
-
-
-
-
 
     public UserDetailEntity addUserDetail(UserEntity user) throws RuntimeException {
         Session session = sessionFactory.getCurrentSession();
@@ -76,9 +53,10 @@ public class UserDaoImpl  implements UserDao {
         Session session = sessionFactory.getCurrentSession();
         Query query = session.createQuery("select new UserEntity(" +
                 "u.userid,u.userOpenid,u.gold,u.commission," +
-                "u.superUserId,u.loginBan,u.takeoutBan," +
-                "u.commissionGiveBan,u.commissionGetBan" +
-                ",u.topupBan,u.takeoutTime,u.calcuDay" +
+                "u.superUserId_a,u.superUserId_b,u.superUserId_c," +
+                "u.superUserId_d,u.superUserId_e,u.loginBan,u.takeoutBan," +
+                "u.commissionGiveBan,u.commissionGetBan," +
+                "u.topupBan,u.takeoutTime,u.calcuDay" +
                 ") from UserEntity as u where userid=:u");
         query.setParameter("u",userId);
         List<UserEntity> list = query.list();
@@ -86,7 +64,48 @@ public class UserDaoImpl  implements UserDao {
         return list.get(0);
     }
 
+    public int getChildsLevelNumberFromUser(int userId, int level) {
+        Session session = sessionFactory.getCurrentSession();
+        String hql = null;
+        if(level == 1)
+        {
+            hql = "select count(u.id) from UserEntity as u where u.superUserId_a = :userId  ";
+        }
+        else if(level == 2)
+        {
+            hql = "select count(u.id) from UserEntity as u where u.superUserId_b =:userId ";
+        }
+        else if(level == 3)
+        {
+            hql = "select count(u.id) from UserEntity as u where u.superUserId_c =:userId ";
+        }
+        else if(level == 4)
+        {
+            hql = "select count(u.id) from UserEntity as u where u.superUserId_d =:userId ";
+        }
+        else if(level == 5)
+        {
+            hql = "select count(u.id) from UserEntity as u where u.superUserId_e =:userId ";
+        }
+        if(hql != null)
+        {
+            Query query = session.createQuery(hql);
+            query.setParameter("userId",userId);
+            Number o = (Number) query.list().get(0);
+            return o.intValue();
+        }
+        return 0;
+    }
 
+    public double getChildsLevelCommissionFormUser(int userId, int level) {
+        Session session = sessionFactory.getCurrentSession();
+        String hql = "select sum(u.commissionResult) from UserCommissionEntity as u  where u.userEntity.userid = :userId and u.childNodeIndex = :level";
+        Query query = session.createQuery(hql);
+        query.setParameter("level",level);
+        query.setParameter("userId",userId);
+        Object o = query.list().get(0);
+        return  o == null ? 0 : (double)o;
+    }
 
 
     public double getGameRecord_costs_betweenTime(int userId, String beginTime, String endTime) {
@@ -137,7 +156,6 @@ public class UserDaoImpl  implements UserDao {
             return 0;
         return (double) o;
     }
-
 
 
 

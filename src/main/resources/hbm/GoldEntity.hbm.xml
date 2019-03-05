@@ -21,5 +21,8 @@
         <property name="todayGold">
             <column name="todayGold" sql-type="double" precision="-1"/>
         </property>
+        <property name="takeoutGold">
+            <column name="takeoutGold" sql-type="int(11)"/>
+        </property>
     </class>
 </hibernate-mapping>

@@ -6,12 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 public  interface UserDao extends BaseRepository{
-    List listAllEntity(Class clazz);
-    void addEntity(Object obj);
 
-    void updateEntity(Object obj);
-
-    Object getEntity(Class clazz,int id);
     /**
      * 通过openId找到用户
      * @param openId
@@ -39,6 +34,21 @@ public  interface UserDao extends BaseRepository{
      */
     UserEntity getUserFromUserId_only(int userId);
 
+    /**
+     * 获取某个级别子类的数量，最多为5级，比如一个user的父类的父类的父类（既第三级父类）level为3，
+     * @param userId
+     * @param level
+     * @return
+     */
+    int getChildsLevelNumberFromUser(int userId, int level);
+
+    /**
+     * 获取某个级别子类的所有提供佣金
+     * @param userId
+     * @param level
+     * @return
+     */
+    double getChildsLevelCommissionFormUser(int userId, int level);
 
 
     /**
@@ -67,7 +77,6 @@ public  interface UserDao extends BaseRepository{
      * @return
      */
     double getTakeout_sum_betweenTime(int userId, String beginTime, String endTime);
-
 
 
 

@@ -2,6 +2,7 @@ import com.mdmd.Manager.RedisCacheManager;
 import com.mdmd.dao.UserDao;
 import com.mdmd.entity.*;
 import com.mdmd.entity.JO.GameResultJO;
+import com.mdmd.entity.JO.UserChildsDataJO;
 import com.mdmd.service.DataService;
 import com.mdmd.service.GameRuleService;
 import com.mdmd.service.SysPropService;
@@ -45,15 +46,7 @@ public class TestDao extends TestBase{
 
     @Test
     public void testService(){
-        try {
-            List<UserEntity> superUserEntity = dataService.get4_SuperUserEntity(34);
-            System.out.println(superUserEntity);
-        } catch (RuntimeException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        System.out.println("sss");
+      gameRuleService.getTreasureResult(10,1,33);
     }
 
 

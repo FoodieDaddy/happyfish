@@ -11,6 +11,7 @@ public class GameRecordEntity{
     private String gameContent;
     private double gameCost;
     private double principal;
+    private String gameOrder;
     private UserEntity userEntity;
 
     public int getId() {
@@ -67,6 +68,14 @@ public class GameRecordEntity{
 
     public void setPrincipal(double principal) {
         this.principal = principal;
+    }
+
+    public String getGameOrder() {
+        return gameOrder;
+    }
+
+    public void setGameOrder(String gameOrder) {
+        this.gameOrder = gameOrder;
     }
 
     public UserEntity getUserEntity() {

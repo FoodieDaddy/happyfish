@@ -1,6 +1,7 @@
 package com.mdmd.service;
 
 import com.mdmd.entity.GameRecordEntity;
+import com.mdmd.entity.JO.RankingListJO;
 import com.mdmd.entity.UserEntity;
 
 import java.lang.reflect.InvocationTargetException;
@@ -18,13 +19,17 @@ public interface DataService {
      */
     void calcYesterdayCommissionList_Schedule();
 
+    List<RankingListJO> calcYesterdayCommissionRankingList();
+
+    void getRanking();
+
     /**
      * 获取一个用户的4个父级
      * @param userId
      * @return
      * @throws RuntimeException
      */
-    List<UserEntity> get4_SuperUserEntity(int userId) throws RuntimeException;
+    List<UserEntity> get5_SuperUserEntity(int userId) throws RuntimeException;
 
     /**
      * 查询一些数据 根据自定义的type返回数据 返回12条
@@ -33,11 +38,7 @@ public interface DataService {
      * @return
      */
     List listDatas(int type,int userId) throws ClassNotFoundException;
-    /**
-     * 通过userId获取二维码ticket
-     * @param userId
-     * @return
-     */
+
 
     /**
      * 添加以user外关联的数据在list中进行添加数据
@@ -47,7 +48,15 @@ public interface DataService {
      */
     boolean addRecordListForRedis(Object addRedisObj,int userId);
 
+    List getAllChilds(int userId);
+
+    /**
+     * 通过userId获取二维码ticket
+     * @param userId
+     * @return
+     */
     String getQRCodeTicketWithUserId(int userId) throws Exception;
+
 
     UserEntity getUserWithQrcodeSceneId(int sceneId)throws Exception;
 

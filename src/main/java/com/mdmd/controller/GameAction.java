@@ -76,7 +76,7 @@ public class GameAction {
             }
             if(fishResult != null)
             {
-                if(fishResult.getMsg() == null)
+                if(fishResult.isSuccess())
                 {
                     result.put(SUCCESS,Boolean.TRUE);
                     result.put("data",fishResult);
@@ -110,11 +110,20 @@ public class GameAction {
             String treasureNum = treasure_num.trim();
             int type = Integer.valueOf(treasureType);
             int num = Integer.valueOf(treasureNum);
-            if(type > 9 && type <14 && num > 0 && num < 101)
+            if(type > 9 && type < 18 && num > 0 && num < 101)
             {
                 GameResultJO treasureResult = gameRuleService.getTreasureResult(type, num, userId);
-                result.put("data",treasureResult);
-                result.put(SUCCESS,true);
+                if(treasureResult.isSuccess())
+                {
+                    result.put("data",treasureResult);
+                    result.put(SUCCESS,true);
+                }
+                else
+                {
+                    result.put(SUCCESS,false);
+                    result.put(MSG,treasureResult.getMsg());
+                }
+
             }
             else
             {

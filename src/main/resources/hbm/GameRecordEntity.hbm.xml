@@ -9,7 +9,6 @@
             <column name="id" sql-type="int(11)"/>
             <generator class="identity"/>
         </id>
-
         <property name="time">
             <column name="time" sql-type="timestamp" not-null="false"/>
         </property>
@@ -27,6 +26,9 @@
         </property>
         <property name="principal">
             <column name="principal" sql-type="double" precision="-1"/>
+        </property>
+        <property name="gameOrder">
+            <column name="gameOrder" sql-type="varchar(50)" length="50"/>
         </property>
         <many-to-one name="userEntity" class="com.mdmd.entity.UserEntity" cascade="none" lazy="false">
             <column name="userId" />

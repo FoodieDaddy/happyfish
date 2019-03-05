@@ -2,13 +2,9 @@ package com.mdmd.service.impl;
 
 import com.mdmd.Manager.RedisCacheManager;
 import com.mdmd.controller.GameAction;
-import com.mdmd.dao.QrcodeDao;
-import com.mdmd.dao.UserDao;
+import com.mdmd.dao.*;
 import com.mdmd.entity.*;
-import com.mdmd.entity.JO.GameRecordJO;
-import com.mdmd.entity.JO.UserCommissionJO;
-import com.mdmd.entity.JO.UserTakeoutJO;
-import com.mdmd.entity.JO.UserTopupJO;
+import com.mdmd.entity.JO.*;
 import com.mdmd.service.DataService;
 import com.mdmd.util.WeiXinMenuUtil;
 import org.apache.logging.log4j.LogManager;
@@ -35,7 +31,12 @@ public class DataServiceImpl implements DataService {
 
     @Autowired
     private UserDao userDao;
-
+    @Autowired
+    private UserCommissionDao userCommissionDao;
+    @Autowired
+    private CommissionDao commissionDao;
+    @Autowired
+    private CommonDao commonDao;
 
     @Autowired
     private RedisCacheManager redisCacheManager;
@@ -54,99 +55,48 @@ public class DataServiceImpl implements DataService {
         }
     }
 
-    @Scheduled(cron = "0 59 23 ? * *")
+    @Scheduled(cron = "30 59 23 ? * *")
     public void calcYesterdayCommissionList_Schedule() {
        //todo 每日自动计算昨天排行榜放入缓存中
        LOGGER.info("执行缓存" + new SimpleDateFormat(DATEFORMAT__yyyyMMddHHmmss).format(new Date()));
     }
 
-    public List<UserEntity> get4_SuperUserEntity(int userId) throws RuntimeException{
-        Object redisVal = redisCacheManager.get("super" + userId);
-        List<UserEntity> superUserEntity;
-        if(redisVal == null || redisVal.equals("null"))
-        {
-            superUserEntity = getSuperUserEntity(userId, new ArrayList<UserEntity>());
-            int size = superUserEntity.size();
-            String val = "";
-            if(size > 0)
+    public List<RankingListJO> calcYesterdayCommissionRankingList() {
+        List<Object[]> commissionEntities = commissionDao.listTopCommissionFromCommission_limit(50);
+        System.out.println(commissionEntities);
+        return null;
+    }
+
+    public void getRanking() {
+        userCommissionDao.listTopCommissionFromUserCommission_limit(50);
+    }
+
+    public List<UserEntity> get5_SuperUserEntity(int userId) throws RuntimeException{
+        UserEntity user = (UserEntity) commonDao.getEntity(UserEntity.class,userId);
+        List<UserEntity> superUserList = new LinkedList<>();
+        int superUserId_a = user.getSuperUserId_a();
+        int superUserId_b = user.getSuperUserId_b();
+        int superUserId_c = user.getSuperUserId_c();
+        int superUserId_d = user.getSuperUserId_d();
+        int superUserId_e = user.getSuperUserId_e();
+        int [] superUserids = {superUserId_a,superUserId_b,superUserId_c,superUserId_d,superUserId_e};
+        for (int i = 0; i < superUserids.length; i++) {
+            int superId = superUserids[i];
+            if(superId > 0)
             {
-                for (int i = 0; i < superUserEntity.size(); i++) {
-                    UserEntity userEntity = superUserEntity.get(i);
-                    val += userEntity.getUserid() + ",";
-                }
+                UserEntity superUser = (UserEntity) commonDao.getEntity(UserEntity.class,superId);
+                if(superUser == null)
+                    break;
+                superUserList.add(superUser);
             }
             else
             {
-                val = "0";
-            }
-            redisCacheManager.set("super"+userId, val, 300);
-        }
-        else
-        {
-            superUserEntity = new ArrayList<>();
-            String v = redisVal.toString();
-            if(v.equals("0"))
-                return superUserEntity;
-            else
-            {
-                String substring = v.substring(0, v.length() - 1);
-                if(substring.contains(","))
-                {
-                    String[] split = substring.split(",");
-                    for (int i = 0; i < split.length; i++) {
-                        UserEntity entity = (UserEntity) userDao.getEntity(UserEntity.class, Integer.valueOf(split[i]));
-                        superUserEntity.add(entity);
-                    }
-                }
-                else
-                {
-                    UserEntity entity = (UserEntity) userDao.getEntity(UserEntity.class, Integer.valueOf(substring));
-                    superUserEntity.add(entity);
-                }
-
+                break;
             }
         }
-        return superUserEntity;
+        return superUserList;
     }
 
-    /**
-     * 递归寻找所有父类
-     * @param userId
-     * @param userEntityList
-     * @return
-     * @throws RuntimeException
-     */
-    private List<UserEntity> getSuperUserEntity(int userId,List<UserEntity> userEntityList) throws RuntimeException{
-
-        UserEntity user = (UserEntity) userDao.getEntity(UserEntity.class,userId);
-        if(user == null)
-        {
-            LOGGER.error("不存在的用户id："+userId);
-            return userEntityList;
-        }
-        Integer superUserId = user.getSuperUserId();
-        if(superUserId == null)
-        {
-            return userEntityList;
-        }
-        if(superUserId == 0)
-        {
-            return userEntityList;
-        }
-
-        UserEntity superUser = (UserEntity) userDao.getEntity(UserEntity.class,superUserId);
-        if(superUser == null)
-        {
-            LOGGER.error("用户"+userId+"不存在的父类用户id："+superUserId);
-            return userEntityList;
-        }
-        userEntityList.add(superUser);
-        if(userEntityList.size() == 5)
-            return getSuperUserEntity(superUserId,userEntityList);
-        else
-            return userEntityList;
-
-    }
 
     public List listDatas(int type,int userId) throws ClassNotFoundException {
         String classPath = ENTITYPATH;
@@ -219,6 +169,12 @@ public class DataServiceImpl implements DataService {
         return list;
     }
 
+    /**
+     * 添加数据到reids中 仅支持上面的4类结果查询
+     * @param addRedisObj
+     * @param userId
+     * @return
+     */
     public boolean addRecordListForRedis(Object addRedisObj,int userId) {
         String keyName = addRedisObj.getClass().getSimpleName()+userId;
         //如果有表示被查询 才加入
@@ -236,6 +192,10 @@ public class DataServiceImpl implements DataService {
             return true;
         }
         return false;
+    }
+
+    public List getAllChilds(int userId) {
+        return null;
     }
 
 

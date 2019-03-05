@@ -1,6 +1,7 @@
 package com.mdmd.service.impl;
 
 import com.mdmd.controller.GameAction;
+import com.mdmd.dao.CommonDao;
 import com.mdmd.dao.SysPropDao;
 import com.mdmd.dao.UserDao;
 import com.mdmd.entity.SysPropEntity;
@@ -19,7 +20,7 @@ import static com.mdmd.constant.SystemConstant.DATEFORMAT__HH;
 public class SysPropServiceImpl implements SysPropService {
 
     @Autowired
-    private UserDao userDao;
+    private CommonDao commonDao;
     @Autowired
     private SysPropDao sysPropDao;
 
@@ -31,7 +32,7 @@ public class SysPropServiceImpl implements SysPropService {
 
     public void initSysProps(){
         try {
-            List<SysPropEntity> list = userDao.listAllEntity(SysPropEntity.class);
+            List<SysPropEntity> list = commonDao.listAllEntity(SysPropEntity.class);
             if(list != null)
             {
                 sysPropMap = new HashMap<>();
@@ -56,7 +57,7 @@ public class SysPropServiceImpl implements SysPropService {
         sysPropEntity.setSysValue(sysValue);
         sysPropMap.put(sysNum,sysPropEntity);
         //更新数据库
-        userDao.updateEntity(sysPropEntity);
+        commonDao.updateEntity(sysPropEntity);
 
     }
 

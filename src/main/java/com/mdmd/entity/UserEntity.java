@@ -1,14 +1,22 @@
 package com.mdmd.entity;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Set;
+
+import static com.mdmd.constant.SystemConstant.DATEFORMAT__yyMMdd;
 
 public class UserEntity implements Serializable {
     private int userid;
     private String userOpenid;
     private double gold;
     private double commission;
-    private Integer superUserId;
+    private Integer superUserId_a;
+    private Integer superUserId_b;
+    private Integer superUserId_c;
+    private Integer superUserId_d;
+    private Integer superUserId_e;
     private byte loginBan;
     private byte takeoutBan;
     private byte commissionGiveBan;
@@ -25,17 +33,26 @@ public class UserEntity implements Serializable {
         this.userOpenid = userOpenid;
     }
 
-    public UserEntity(String userOpenid, Integer superUserId) {
+    public UserEntity(String userOpenid,UserEntity superUser) {
         this.userOpenid = userOpenid;
-        this.superUserId = superUserId;
+        this.superUserId_a = superUser.getUserid();
+        this.superUserId_b = superUser.getSuperUserId_a();
+        this.superUserId_c = superUser.getSuperUserId_b();
+        this.superUserId_d = superUser.getSuperUserId_c();
+        this.superUserId_e = superUser.getSuperUserId_d();
+
     }
 
-    public UserEntity(int userid, String userOpenid, double gold, double commission, Integer superUserId, byte loginBan, byte takeoutBan, byte commissionGiveBan, byte commissionGetBan, byte topupBan, int takeoutTime,int calcuDay) {
+    public UserEntity(int userid, String userOpenid, double gold, double commission,Integer superUserId_a,Integer superUserId_b,Integer superUserId_c,Integer superUserId_d,Integer superUserId_e, byte loginBan, byte takeoutBan, byte commissionGiveBan, byte commissionGetBan, byte topupBan, int takeoutTime,int calcuDay) {
         this.userid = userid;
         this.userOpenid = userOpenid;
         this.gold = gold;
         this.commission = commission;
-        this.superUserId = superUserId;
+        this.superUserId_a = superUserId_a;
+        this.superUserId_b = superUserId_b;
+        this.superUserId_c = superUserId_c;
+        this.superUserId_d = superUserId_d;
+        this.superUserId_e = superUserId_e;
         this.loginBan = loginBan;
         this.takeoutBan = takeoutBan;
         this.commissionGiveBan = commissionGiveBan;
@@ -45,12 +62,16 @@ public class UserEntity implements Serializable {
         this.calcuDay = calcuDay;
     }
 
-    public UserEntity(int userid, String userOpenid, double gold, double commission, Integer superUserId, byte loginBan, byte takeoutBan, byte commissionGiveBan, byte commissionGetBan, byte topupBan, int takeoutTime,int calcuDay , Set<GoldEntity> goldEntitySet,Set<CommissionEntity> commissionEntitySet) {
+    public UserEntity(int userid, String userOpenid, double gold, double commission, Integer superUserId_a,Integer superUserId_b,Integer superUserId_c,Integer superUserId_d,Integer superUserId_e, byte loginBan, byte takeoutBan, byte commissionGiveBan, byte commissionGetBan, byte topupBan, int takeoutTime,int calcuDay , Set<GoldEntity> goldEntitySet,Set<CommissionEntity> commissionEntitySet) {
         this.userid = userid;
         this.userOpenid = userOpenid;
         this.gold = gold;
         this.commission = commission;
-        this.superUserId = superUserId;
+        this.superUserId_a = superUserId_a;
+        this.superUserId_b = superUserId_b;
+        this.superUserId_c = superUserId_c;
+        this.superUserId_d = superUserId_d;
+        this.superUserId_e = superUserId_e;
         this.loginBan = loginBan;
         this.takeoutBan = takeoutBan;
         this.commissionGiveBan = commissionGiveBan;
@@ -95,14 +116,45 @@ public class UserEntity implements Serializable {
         this.commission = commission;
     }
 
-    public Integer getSuperUserId() {
-        return superUserId;
+    public Integer getSuperUserId_a() {
+        return superUserId_a;
     }
 
-    public void setSuperUserId(Integer superUserId) {
-        this.superUserId = superUserId;
+    public void setSuperUserId_a(Integer superUserId_a) {
+        this.superUserId_a = superUserId_a;
     }
 
+    public Integer getSuperUserId_b() {
+        return superUserId_b;
+    }
+
+    public void setSuperUserId_b(Integer superUserId_b) {
+        this.superUserId_b = superUserId_b;
+    }
+
+    public Integer getSuperUserId_c() {
+        return superUserId_c;
+    }
+
+    public void setSuperUserId_c(Integer superUserId_c) {
+        this.superUserId_c = superUserId_c;
+    }
+
+    public Integer getSuperUserId_d() {
+        return superUserId_d;
+    }
+
+    public void setSuperUserId_d(Integer superUserId_d) {
+        this.superUserId_d = superUserId_d;
+    }
+
+    public Integer getSuperUserId_e() {
+        return superUserId_e;
+    }
+
+    public void setSuperUserId_e(Integer superUserId_e) {
+        this.superUserId_e = superUserId_e;
+    }
 
     public byte getLoginBan() {
         return loginBan;
@@ -193,23 +245,19 @@ public class UserEntity implements Serializable {
         return (CommissionEntity) commissionEntitySet.toArray()[0];
     }
 
-    @Override
-    public String toString() {
-        return "UserEntity{" +
-                "userid=" + userid +
-                ", userOpenid='" + userOpenid + '\'' +
-                ", gold=" + gold +
-                ", commission=" + commission +
-                ", superUserId=" + superUserId +
-                ", loginBan=" + loginBan +
-                ", takeoutBan=" + takeoutBan +
-                ", commissionGiveBan=" + commissionGiveBan +
-                ", commissionGetBan=" + commissionGetBan +
-                ", topupBan=" + topupBan +
-                ", takeoutTime=" + takeoutTime +
-                ", calcuDay=" + calcuDay +
-                ", goldEntitySet=" + goldEntitySet +
-                ", commissionEntitySet=" + commissionEntitySet +
-                '}';
+    /**
+     * 获取今日甚于提现次数
+     * @return
+     */
+    public int takeOutTime(){
+        String today = new SimpleDateFormat(DATEFORMAT__yyMMdd).format(new Date());
+        int todayInt = Integer.valueOf(today);
+        if(this.calcuDay != todayInt)
+        {
+            this.calcuDay = todayInt;
+            this.takeoutTime = 0;
+            return 0;
+        }
+        return takeoutTime;
     }
 }

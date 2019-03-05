@@ -15,6 +15,7 @@ public class GameRecordJO implements Serializable {
     private String gameContent;
     private double gameCost;
     private double principal;
+    private String gameOrder;
     private int userId;
 
     public GameRecordJO() {
@@ -28,6 +29,7 @@ public class GameRecordJO implements Serializable {
         this.gameContent = gameRecordEntity.getGameContent();
         this.gameCost = gameRecordEntity.getGameCost();
         this.principal = gameRecordEntity.getPrincipal();
+        this.gameOrder = gameRecordEntity.getGameOrder();
         this.userId = gameRecordEntity.getUserEntity().getUserid();
     }
 
@@ -85,6 +87,14 @@ public class GameRecordJO implements Serializable {
 
     public void setPrincipal(double principal) {
         this.principal = principal;
+    }
+
+    public String getGameOrder() {
+        return gameOrder;
+    }
+
+    public void setGameOrder(String gameOrder) {
+        this.gameOrder = gameOrder;
     }
 
     public int getUserId() {

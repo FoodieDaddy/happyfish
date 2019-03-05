@@ -8,7 +8,7 @@ public class GameResultJO implements Serializable {
     private double gold;//剩余金币
     private double commission;//剩余佣金
     private String gameAccording;//游戏依据（例如：订单号）
-    private String msg;//提示
+    private String msg;//提示 错误时才添加有
 
     public GameResultJO(String msg) {
         this.msg = msg;
@@ -77,5 +77,23 @@ public class GameResultJO implements Serializable {
 
     public void setGameAccording(String gameAccording) {
         this.gameAccording = gameAccording;
+    }
+
+    public boolean isSuccess(){
+        if(this.msg == null)
+            return true;
+        return false;
+    }
+
+    @Override
+    public String toString() {
+        return "GameResultJO{" +
+                "gameResult=" + gameResult +
+                ", gameCost=" + gameCost +
+                ", gold=" + gold +
+                ", commission=" + commission +
+                ", gameAccording='" + gameAccording + '\'' +
+                ", msg='" + msg + '\'' +
+                '}';
     }
 }
