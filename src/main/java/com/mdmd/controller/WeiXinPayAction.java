@@ -1,6 +1,6 @@
 package com.mdmd.controller;
 
-import com.mdmd.service.DealService;
+import com.mdmd.service.TakeoutService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,10 +10,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.*;
 
-import static com.mdmd.constant.ActionConstant.MSG;
-import static com.mdmd.constant.ActionConstant.SUCCESS;
+import static com.mdmd.constant.ActionConstant.*;
 
 
 @Controller
@@ -21,7 +21,7 @@ import static com.mdmd.constant.ActionConstant.SUCCESS;
 public class WeiXinPayAction {
     private static final Logger LOGGER = LogManager.getLogger(WeiXinPayAction.class);
     @Autowired
-    private DealService dealService;
+    private TakeoutService dealService;
 
     /**
      * 提现
@@ -32,7 +32,7 @@ public class WeiXinPayAction {
      */
     @RequestMapping(value = "/takeout.do",method = RequestMethod.POST)
     @ResponseBody
-    public Map takeout(HttpServletRequest request,String type,String num) {
+    public Map takeout(HttpServletRequest request, HttpSession session,String type, String num) {
         Map<String, Object> result = new HashMap<>();
         int type_,num_;
         try {
@@ -41,9 +41,34 @@ public class WeiXinPayAction {
         } catch (NumberFormatException e) {
             result.put(SUCCESS,false);
             result.put(MSG,"提现失败");
+            return result;
+        }
+        if(type_ < 0 || type_ > 1 || num_< 1 || num_ > 3000)
+        {
+            result.put(SUCCESS,false);
+            result.put(MSG,"参数错误");
+            return result;
+        }
+        int userId = (int)session.getAttribute(SESSION_USERID);
+        try {
+            String msg = dealService.takeoutForUser(userId, num_, type_);
+            if(msg == null)
+            {
+                result.put(SUCCESS,true);
+            }
+            else
+            {
+                result.put(SUCCESS,false);
+                result.put(MSG,msg);
+            }
+        } catch (Exception e) {
+            LOGGER.error("用户："+userId +"提现时错误,"+e.getMessage());
+            e.printStackTrace();
+            result.put(SUCCESS,false);
+            result.put(MSG,"系统错误");
         }
 
-        return null;
+        return result;
     }
 
     /**

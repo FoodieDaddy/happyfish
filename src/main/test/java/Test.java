@@ -1,5 +1,4 @@
 import com.mdmd.constant.WeiXinPublicContant;
-import com.mdmd.entity.bean.SearchCompanyPayBean;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -8,30 +7,19 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
-import static com.mdmd.constant.WeiXinPublicContant.WEIXIN_SEARCH_PAY_URL;
-import static com.mdmd.util.WeixinConfigUtils.transferXml;
-import static com.mdmd.util.WeixinConfigUtils.weiXinPost;
+
 
 public class Test {
 
     public static void main(String[] args) throws ParseException {
-
-        SearchCompanyPayBean searchPay = new SearchCompanyPayBean();
-        searchPay.setAppid( WeiXinPublicContant.WEIXIN_APPID);
-        searchPay.setMch_id(WeiXinPublicContant.WEIXIN_mch_id);
-        searchPay.setNonce_str("shCEJ4xSOmBsCWM5");
-        searchPay.setPartner_trade_no("20190304134836x33xeKq8Xi");
-        searchPay.setSign("9EA092037632B07C9AEA6D007C974F11");
-        String xmlInfo = transferXml(searchPay);
-        try {
-            String s = weiXinPost(xmlInfo, WEIXIN_SEARCH_PAY_URL);
-            System.out.println(s);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        System.out.println(xmlInfo);
-
+        Calendar instance = Calendar.getInstance();
+        System.out.println(instance.get(Calendar.HOUR_OF_DAY));
+        System.out.println(instance.get(Calendar.MINUTE));
+        System.out.println(instance.get(Calendar.SECOND));
 
     }
 

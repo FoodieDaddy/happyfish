@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -23,7 +24,7 @@ import static com.mdmd.constant.SystemConstant.DATEFORMAT__yyyyMMddHHmmss;
 import static com.mdmd.constant.SystemConstant.ENTITYPATH;
 
 
-@Component
+@Service
 public class DataServiceImpl implements DataService {
 
     @Autowired
@@ -37,6 +38,8 @@ public class DataServiceImpl implements DataService {
     private CommissionDao commissionDao;
     @Autowired
     private CommonDao commonDao;
+    @Autowired
+    private TakeoutDao takeoutDao;
 
     @Autowired
     private RedisCacheManager redisCacheManager;
@@ -59,42 +62,46 @@ public class DataServiceImpl implements DataService {
     public void calcYesterdayCommissionList_Schedule() {
        //todo 每日自动计算昨天排行榜放入缓存中
        LOGGER.info("执行缓存" + new SimpleDateFormat(DATEFORMAT__yyyyMMddHHmmss).format(new Date()));
+        List<RankingListJO> rankingListJOS = this.calcYesterdayCommissionRankingList();
+        //设置消亡时间为1天10分钟
+        redisCacheManager.lSet("commYes",rankingListJOS,87000);
     }
 
     public List<RankingListJO> calcYesterdayCommissionRankingList() {
         List<Object[]> commissionEntities = commissionDao.listTopCommissionFromCommission_limit(50);
-        System.out.println(commissionEntities);
-        return null;
-    }
-
-    public void getRanking() {
-        userCommissionDao.listTopCommissionFromUserCommission_limit(50);
-    }
-
-    public List<UserEntity> get5_SuperUserEntity(int userId) throws RuntimeException{
-        UserEntity user = (UserEntity) commonDao.getEntity(UserEntity.class,userId);
-        List<UserEntity> superUserList = new LinkedList<>();
-        int superUserId_a = user.getSuperUserId_a();
-        int superUserId_b = user.getSuperUserId_b();
-        int superUserId_c = user.getSuperUserId_c();
-        int superUserId_d = user.getSuperUserId_d();
-        int superUserId_e = user.getSuperUserId_e();
-        int [] superUserids = {superUserId_a,superUserId_b,superUserId_c,superUserId_d,superUserId_e};
-        for (int i = 0; i < superUserids.length; i++) {
-            int superId = superUserids[i];
-            if(superId > 0)
-            {
-                UserEntity superUser = (UserEntity) commonDao.getEntity(UserEntity.class,superId);
-                if(superUser == null)
-                    break;
-                superUserList.add(superUser);
-            }
-            else
-            {
-                break;
-            }
+        List<RankingListJO> rankingListJOS = new ArrayList<>();
+        for (int i = 0; i < commissionEntities.size(); i++) {
+            Object[] objects = commissionEntities.get(i);
+            RankingListJO rankingListJO = new RankingListJO();
+            rankingListJO.setRanking(i+1);
+            rankingListJO.setUserId((Integer) objects[0]);
+            rankingListJO.setCommission((Double) objects[1]);
+            rankingListJOS.add(rankingListJO);
         }
-        return superUserList;
+        return rankingListJOS;
+    }
+
+    public List<RankingListJO> getYesterdayCommissionRankingList() {
+        Object commYes = redisCacheManager.lGet("commYes",0,-1);
+        if(commYes == null || commYes.equals("null")) {
+            List<Object[]> userCommissionEntities = userCommissionDao.listTopCommissionFromUserCommission_limit(50);
+            List<RankingListJO> rankingListJOS = new ArrayList<>();
+            for (int i = 0; i < userCommissionEntities.size(); i++) {
+                Object[] objects = userCommissionEntities.get(i);
+                RankingListJO rankingListJO = new RankingListJO();
+                rankingListJO.setRanking(i+1);
+                rankingListJO.setUserId((Integer) objects[0]);
+                rankingListJO.setCommission((Double) objects[1]);
+                rankingListJOS.add(rankingListJO);
+            }
+            //计算剩余时间(给一分钟缓冲时间，确保能到第二天。理论上在这天的23.59.30会被定时任务修改)
+            Calendar calendar = Calendar.getInstance();
+            int sur = 86400 - 60 + calendar.get(Calendar.HOUR_OF_DAY) * 3600 + calendar.get(Calendar.MINUTE) * 60 + calendar.get(Calendar.SECOND);
+
+            redisCacheManager.lSet("commYes",rankingListJOS,sur);
+            return rankingListJOS;
+        }
+        return (List<RankingListJO>) commYes;
     }
 
 
@@ -127,12 +134,13 @@ public class DataServiceImpl implements DataService {
         else
         {
             //todo 防止多次缓存对数据库的冲击 应在list为null时对缓存进行标识set，在取到为标识时应让线程等待
-            List listDatas = userDao.listForeignWithUserEntity_desc_limit(Class.forName(classPath), 12, userId);
             list = new LinkedList<>();
-            if(listDatas.size() == 0)
-                return list;
+
             if(type == 1)
             {
+                List listDatas = userDao.listForeignWithUserEntity_desc_limit(Class.forName(classPath), 12, userId);
+                if(listDatas.size() == 0)
+                    return list;
                 for (int i = 0; i < listDatas.size(); i++) {
                     GameRecordEntity o = (GameRecordEntity) listDatas.get(i);
                     list.add(new GameRecordJO(o));
@@ -140,7 +148,9 @@ public class DataServiceImpl implements DataService {
             }
             else if(type == 2)
             {
-
+                List listDatas = userDao.listForeignWithUserEntity_desc_limit(Class.forName(classPath), 12, userId);
+                if(listDatas.size() == 0)
+                    return list;
                 for (int i = 0; i < listDatas.size(); i++) {
                     UserTopupEntity o = (UserTopupEntity) listDatas.get(i);
                     list.add(new UserTopupJO(o));
@@ -148,15 +158,19 @@ public class DataServiceImpl implements DataService {
             }
             else if(type == 3)
             {
-
+                List<UserTakeoutEntity> listDatas = takeoutDao.listUserTakeoutDatas( userId,12);
+                if(listDatas.size() == 0)
+                    return list;
                 for (int i = 0; i < listDatas.size(); i++) {
-                    UserTakeoutEntity o = (UserTakeoutEntity) listDatas.get(i);
+                    UserTakeoutEntity o =  listDatas.get(i);
                     list.add(new UserTakeoutJO(o));
                 }
             }
             else if(type == 4)
             {
-
+                List listDatas = userDao.listForeignWithUserEntity_desc_limit(Class.forName(classPath), 12, userId);
+                if(listDatas.size() == 0)
+                    return list;
                 for (int i = 0; i < listDatas.size(); i++) {
                     UserCommissionEntity o = (UserCommissionEntity) listDatas.get(i);
                     list.add(new UserCommissionJO(o));
@@ -169,30 +183,7 @@ public class DataServiceImpl implements DataService {
         return list;
     }
 
-    /**
-     * 添加数据到reids中 仅支持上面的4类结果查询
-     * @param addRedisObj
-     * @param userId
-     * @return
-     */
-    public boolean addRecordListForRedis(Object addRedisObj,int userId) {
-        String keyName = addRedisObj.getClass().getSimpleName()+userId;
-        //如果有表示被查询 才加入
-        if(redisCacheManager.hasKey(keyName))
-        {
-            long size = redisCacheManager.lGetListSize(keyName);
-            if(size < 12)
-            {
-                redisCacheManager.lSet(keyName,addRedisObj);
-            }
-            else
-            {
-                redisCacheManager.lRightPopAndLeftPush_IfSize(keyName,addRedisObj,12);
-            }
-            return true;
-        }
-        return false;
-    }
+
 
     public List getAllChilds(int userId) {
         return null;

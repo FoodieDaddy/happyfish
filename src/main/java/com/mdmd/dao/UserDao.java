@@ -34,6 +34,7 @@ public  interface UserDao extends BaseRepository{
      */
     UserEntity getUserFromUserId_only(int userId);
 
+
     /**
      * 获取某个级别子类的数量，最多为5级，比如一个user的父类的父类的父类（既第三级父类）level为3，
      * @param userId

@@ -1,9 +1,11 @@
 package com.mdmd.entity.JO;
 
+import java.io.Serializable;
+
 /**
  * 排行榜
  */
-public class RankingListJO {
+public class RankingListJO implements Serializable {
     private int ranking;
     private int userId;
     private double commission;

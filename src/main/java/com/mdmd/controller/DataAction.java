@@ -1,6 +1,8 @@
 package com.mdmd.controller;
 
 
+import com.mdmd.entity.GoldEntity;
+import com.mdmd.entity.JO.RankingListJO;
 import com.mdmd.entity.JO.UserChildsDataJO;
 import com.mdmd.entity.UserEntity;
 import com.mdmd.service.DataService;
@@ -119,8 +121,6 @@ public class DataAction {
     @ResponseBody
     public Map<String, Object> getHomeData(HttpServletRequest request, HttpServletResponse response, HttpSession session, String u) {
         Map<String, Object> result = new HashMap<>();
-        System.out.println("获取u------" + u);
-        LOGGER.info("获取u------" + u);
         try {
             int userId = (int) session.getAttribute(SESSION_USERID);
             System.out.println("获取user--" + userId);
@@ -133,6 +133,7 @@ public class DataAction {
         } catch (Exception e) {
             LOGGER.warn(e.getMessage());
             result.put(SUCCESS, false);
+            result.put(MSG,"获取个人信息失败");
         }
         return result;
     }
@@ -235,7 +236,7 @@ public class DataAction {
             if (t > 0 && t < 5) {
                 List list = dataService.listDatas(t, userId);
                 result.put(SUCCESS, true);
-                result.put("data", list);
+                result.put("list", list);
             } else {
                 result.put(SUCCESS, false);
                 result.put(MSG, "非法数据");
@@ -249,6 +250,13 @@ public class DataAction {
         return result;
     }
 
+    /**
+     * 获取所有下级人数及佣金总数
+     * @param request
+     * @param session
+     * @param response
+     * @return
+     */
     @RequestMapping(value = "/listUnder.do")
     @ResponseBody
     public Map<String, Object> getChildsData(HttpServletRequest request, HttpSession session, HttpServletResponse response) {
@@ -261,8 +269,61 @@ public class DataAction {
         } catch (Exception e) {
             e.printStackTrace();
             result.put(SUCCESS,false);
+            result.put(MSG,e.getMessage());
         }
         return result;
     }
 
+    /**
+     * 获取昨日佣金榜
+     * @param request
+     * @param response
+     * @return
+     */
+    @RequestMapping(value = "/listRanking.do")
+    @ResponseBody
+    public Map<String, Object> listRanking(HttpServletRequest request, HttpServletResponse response) {
+        Map<String, Object> result = new HashMap<>();
+        try {
+            List<RankingListJO> rankingListJOS = dataService.calcYesterdayCommissionRankingList();
+            result.put(SUCCESS, true);
+            result.put("list",rankingListJOS);
+        } catch (Exception e) {
+            e.printStackTrace();
+            result.put(SUCCESS,false);
+            result.put(MSG,e.getMessage());
+        }
+        return result;
+    }
+
+    /**
+     * 获取提现时的某些信息
+     * @param request
+     * @param session
+     * @param response
+     * @return
+     */
+    @RequestMapping(value = "/takeoutInfo.do")
+    @ResponseBody
+    public Map<String, Object> getTakeoutInfo(HttpServletRequest request,HttpSession session, HttpServletResponse response) {
+        Map<String, Object> result = new HashMap<>();
+        try {
+            int userId = (int) session.getAttribute("userId");
+            UserEntity user = userService.getUserWithUserId_self_or_cascade(userId, false);
+            double gold = user.getGold();
+            double commission = user.getCommission();
+            GoldEntity goldEntity = user.singleGoldEntity();
+            double todayWater = goldEntity.todayWater();
+            result.put(SUCCESS, true);
+            result.put("gold",gold);
+            result.put("commission",commission);
+            result.put("todayWater",todayWater);
+            result.put("userId",userId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            result.put(SUCCESS,false);
+            result.put(MSG,e.getMessage());
+        }
+        return result;
+    }
 }

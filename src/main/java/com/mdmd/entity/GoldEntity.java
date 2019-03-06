@@ -2,10 +2,8 @@ package com.mdmd.entity;
 
 
 import java.io.Serializable;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.Calendar;
 
-import static com.mdmd.constant.SystemConstant.DATEFORMAT__yyMMdd;
 
 
 public class GoldEntity implements Serializable {
@@ -17,7 +15,8 @@ public class GoldEntity implements Serializable {
     private int takeoutGold;
 
     public GoldEntity() {
-       this.calcDate = Integer.valueOf(new SimpleDateFormat(DATEFORMAT__yyMMdd).format(new Date()));
+        Calendar calendar = Calendar.getInstance();
+       this.calcDate = calendar.get(Calendar.HOUR_OF_DAY) + calendar.get(Calendar.MINUTE) + calendar.get(Calendar.SECOND);
     }
 
     public int getId() {
@@ -66,5 +65,13 @@ public class GoldEntity implements Serializable {
 
     public void setTakeoutGold(int takeoutGold) {
         this.takeoutGold = takeoutGold;
+    }
+
+    public double todayWater (){
+        Calendar calendar = Calendar.getInstance();
+        int todayInt = calendar.get(Calendar.HOUR_OF_DAY) + calendar.get(Calendar.MINUTE) + calendar.get(Calendar.SECOND);
+        if(todayInt != calcDate)
+            return 0.0;
+        return todayWater;
     }
 }

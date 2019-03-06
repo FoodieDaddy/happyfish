@@ -14,7 +14,6 @@ import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import static com.mdmd.constant.SystemConstant.DATEFORMAT__yyMMdd;
 
 @Component
 public class UserDaoImpl  implements UserDao {
@@ -60,9 +59,9 @@ public class UserDaoImpl  implements UserDao {
                 ") from UserEntity as u where userid=:u");
         query.setParameter("u",userId);
         List<UserEntity> list = query.list();
-        System.out.println(list);
         return list.get(0);
     }
+
 
     public int getChildsLevelNumberFromUser(int userId, int level) {
         Session session = sessionFactory.getCurrentSession();

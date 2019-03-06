@@ -9,8 +9,8 @@ import java.sql.Timestamp;
 public class UserTakeoutJO implements Serializable {
     private int id;
     private Timestamp time;
-    private String takeoutType;
-    private String takeoutResult;
+    private int takeoutType;
+    private int takeoutResult;
     private int takeoutQuantity;
     private int userId;
 
@@ -42,19 +42,19 @@ public class UserTakeoutJO implements Serializable {
         this.time = time;
     }
 
-    public String getTakeoutType() {
+    public int getTakeoutType() {
         return takeoutType;
     }
 
-    public void setTakeoutType(String takeoutType) {
+    public void setTakeoutType(int takeoutType) {
         this.takeoutType = takeoutType;
     }
 
-    public String getTakeoutResult() {
+    public int getTakeoutResult() {
         return takeoutResult;
     }
 
-    public void setTakeoutResult(String takeoutResult) {
+    public void setTakeoutResult(int takeoutResult) {
         this.takeoutResult = takeoutResult;
     }
 

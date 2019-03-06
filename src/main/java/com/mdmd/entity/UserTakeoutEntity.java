@@ -6,9 +6,10 @@ import java.sql.Timestamp;
 public class UserTakeoutEntity{
     private int id;
     private Timestamp time;
-    private String takeoutType;
-    private String takeoutResult;
+    private int takeoutType;
+    private int takeoutResult;
     private int takeoutQuantity;
+    private double realUse;
     private String tradeOrderNum;
     private String wxOrderNum;
     private UserEntity userEntity;
@@ -29,20 +30,20 @@ public class UserTakeoutEntity{
         this.time = time;
     }
 
-    public String getTakeoutType() {
+    public int getTakeoutType() {
         return takeoutType;
     }
 
-    public void setTakeoutType(String takeoutType) {
-        this.takeoutType = takeoutType;
+    public void setTakeoutType(int takeoutType) {
+        this.takeoutType = takeoutType <= 0 ? 0 : 1;
     }
 
-    public String getTakeoutResult() {
+    public int getTakeoutResult() {
         return takeoutResult;
     }
 
-    public void setTakeoutResult(String takeoutResult) {
-        this.takeoutResult = takeoutResult;
+    public void setTakeoutResult(int takeoutResult) {
+        this.takeoutResult = takeoutResult <= 0 ? 0 : 1;
     }
 
     public int getTakeoutQuantity() {
@@ -51,6 +52,14 @@ public class UserTakeoutEntity{
 
     public void setTakeoutQuantity(int takeoutQuantity) {
         this.takeoutQuantity = takeoutQuantity;
+    }
+
+    public double getRealUse() {
+        return realUse;
+    }
+
+    public void setRealUse(double realUse) {
+        this.realUse = realUse;
     }
 
     public UserEntity getUserEntity() {

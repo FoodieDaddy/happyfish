@@ -19,17 +19,18 @@ public interface DataService {
      */
     void calcYesterdayCommissionList_Schedule();
 
+    /**
+     * 简单计算昨天排行榜 这个计算方法是只能计算今天的佣金排行 当在11.59分后计算，误差不大 既为简单计算
+     * @return
+     */
     List<RankingListJO> calcYesterdayCommissionRankingList();
 
-    void getRanking();
-
     /**
-     * 获取一个用户的4个父级
-     * @param userId
+     * 获取排行榜 如果从缓存中没有获取到 则使用精确计算，从数据库中累加得到
      * @return
-     * @throws RuntimeException
      */
-    List<UserEntity> get5_SuperUserEntity(int userId) throws RuntimeException;
+    List<RankingListJO> getYesterdayCommissionRankingList();
+
 
     /**
      * 查询一些数据 根据自定义的type返回数据 返回12条
@@ -39,14 +40,6 @@ public interface DataService {
      */
     List listDatas(int type,int userId) throws ClassNotFoundException;
 
-
-    /**
-     * 添加以user外关联的数据在list中进行添加数据
-     * @param addRedisObj
-     * @param userId
-     * @return
-     */
-    boolean addRecordListForRedis(Object addRedisObj,int userId);
 
     List getAllChilds(int userId);
 

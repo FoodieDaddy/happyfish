@@ -10,13 +10,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import static com.mdmd.constant.SystemConstant.DATEFORMAT__HH;
 
-@Component
+@Service
 public class SysPropServiceImpl implements SysPropService {
 
     @Autowired
@@ -74,7 +74,8 @@ public class SysPropServiceImpl implements SysPropService {
 
             SysPropEntity catchDouSys = sysPropMap.get(3);
             String sysValue = catchDouSys.getSysValue();
-            String now = new SimpleDateFormat(DATEFORMAT__HH).format(new Date());
+            Calendar calendar = Calendar.getInstance();
+            String now = calendar.get(Calendar.HOUR_OF_DAY) + "";
             //是否开启双倍佣金
             if(sysValue.contains("1"))
             {

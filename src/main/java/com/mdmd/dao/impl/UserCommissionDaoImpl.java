@@ -18,7 +18,7 @@ public class UserCommissionDaoImpl implements UserCommissionDao {
     @Autowired
     private SessionFactory sessionFactory;
 
-    public List listTopCommissionFromUserCommission_limit(int count) {
+    public List<Object[]> listTopCommissionFromUserCommission_limit(int count) {
         Date date=new Date();
         Calendar calendar = new GregorianCalendar();
         calendar.setTime(date);

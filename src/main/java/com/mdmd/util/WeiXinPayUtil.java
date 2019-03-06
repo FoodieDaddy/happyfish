@@ -1,29 +1,23 @@
-package com.mdmd.service.impl;
+package com.mdmd.util;
 
 import com.mdmd.constant.WeiXinPublicContant;
-import com.mdmd.dao.CommonDao;
-import com.mdmd.dao.UserDao;
-import com.mdmd.entity.UserEntity;
 import com.mdmd.entity.bean.CompanyPayBean;
-import com.mdmd.service.DealService;
-import com.mdmd.util.WeiXinMessageUtil;
-import com.mdmd.util.WeixinConfigUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.io.ByteArrayInputStream;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import static com.mdmd.constant.ActionConstant.MSG;
-import static com.mdmd.constant.GameConstant.TAKEOUT_TAK;
 import static com.mdmd.constant.WeiXinPublicContant.*;
 import static com.mdmd.util.WeixinConfigUtils.*;
+import static com.mdmd.util.WeixinConfigUtils.weiXinPost;
 
-@Component
-public class DealServiceImpl implements DealService {
-    private static final Logger LOGGER = LogManager.getLogger(DealServiceImpl.class);
+public class WeiXinPayUtil {
+    private static final Logger LOGGER = LogManager.getLogger(WeiXinPayUtil.class);
 
     private static final String  WEIXIN_STATUS_SUCCESS = "SUCCESS";//成功
     private static final String  WEIXIN_STATUS_FAIL = "FAIL";//失败
@@ -32,16 +26,27 @@ public class DealServiceImpl implements DealService {
     private static final String  MSG_SYS_ERROR = "支付失败，意外错误，请联系客服。";//一般为未扣款的错误
     private static final String  MSG_UNKNOW_ERROR = "支付失败，未知错误,请联系客服。";//可能出现重复扣款的错误
 
-    @Autowired
-    private UserDao userDao;
+    /**
+     *    向用戶openid支付 默认在某些失败条件下会重试支付
+     * @param userId
+     * @param openId
+     * @param money 最少100（分）
+     * @param desc 支付说明
 
-    @Autowired
-    private CommonDao commonDao;
-    public Map<String, String> companyPayToUser(int userId, String openId, int money, String desc) {
-        return this.companyPayToUser(userId,openId,money,desc,null,true);
+     */
+    public static Map<String, String> companyPayToUser(int userId, String openId, int money, String desc) {
+        return companyPayToUser(userId,openId,money,desc,null,true);
     }
-
-    public Map<String, String> companyPayToUser(int userId, String openId, int money, String desc, String tradeOrderId, boolean doAgain) {
+    /**
+     *    向用戶openid支付 一般在重新尝试付款时使用
+     * @param userId
+     * @param openId
+     * @param money 最少100（分）
+     * @param desc 支付说明
+     * @param tradeOrderId 商户订单号
+     * @param doAgain 是否在某些失败条件下重试
+     */
+    public static Map<String, String> companyPayToUser(int userId, String openId, int money, String desc, String tradeOrderId, boolean doAgain) {
 
         if(money < 100 )
         {
@@ -83,6 +88,8 @@ public class DealServiceImpl implements DealService {
         try {
             String post = weiXinPost(xmlInfo,WEIXIN_COMPAPY_PAY_URL);
             Map<String, String> record = WeiXinMessageUtil.pareXml(new ByteArrayInputStream(post.getBytes("utf-8")));
+            //不管成功与否将商户订单号填入
+            record.put("partner_trade_no",partner_trade_no);
             //判断通讯是否成功
             if(record.get("return_code").contains(WEIXIN_STATUS_SUCCESS))
             {
@@ -97,7 +104,7 @@ public class DealServiceImpl implements DealService {
                     String err_code = record.get("err_code");//错误码
                     if(err_code.equals("SEND_FAILED"))//付款错误
                     {
-                        Map<String, String> map = this.searchCompanyPayStatusAndOrder(partner_trade_no);
+                        Map<String, String> map = searchCompanyPayStatusAndOrder(partner_trade_no);
                         String status = map.get("status");
                         if(status.equals(WEIXIN_STATUS_SUCCESS))
                         {
@@ -121,7 +128,7 @@ public class DealServiceImpl implements DealService {
                     else if(err_code.equals("SYSTEMERROR"))//系统繁忙，请稍后再试 需要核对订单号是否完成 以免重复付款
                     {
                         //查询该订单号
-                        Map<String, String> map = this.searchCompanyPayStatusAndOrder(partner_trade_no);
+                        Map<String, String> map = searchCompanyPayStatusAndOrder(partner_trade_no);
                         String status = map.get("status");
                         if(status.equals(WEIXIN_STATUS_SUCCESS))
                         {
@@ -138,7 +145,7 @@ public class DealServiceImpl implements DealService {
                             //使用原单号重新付款
                             if(doAgain)
                             {
-                                return this.companyPayToUser(userId,openId,money,desc,partner_trade_no,false);
+                                return companyPayToUser(userId,openId,money,desc,partner_trade_no,false);
                             }
                             record.put(MSG,MSG_UNKNOW_ERROR);
                         }
@@ -146,7 +153,7 @@ public class DealServiceImpl implements DealService {
                     else if(err_code.equals("FREQ_LIMIT"))//超出频率限制 需使用原订单号付款
                     {
                         //一直支付
-                        return this.companyPayToUser(userId,openId,money,desc,partner_trade_no,true);
+                        return companyPayToUser(userId,openId,money,desc,partner_trade_no,true);
                     }
 
                     else if(err_code.equals("MONEY_LIMIT"))//已达到付款给此用户上限
@@ -245,8 +252,12 @@ public class DealServiceImpl implements DealService {
         }
 
     }
-
-    public Map<String,String> searchCompanyPay(String tradeOrderId){
+    /**
+     * 通过商户订单号查询订单结果
+     * @param tradeOrderId
+     * @return
+     */
+    public static Map<String,String> searchCompanyPay(String tradeOrderId){
         // 构造签名的map
         SortedMap<Object, Object> parameters = new TreeMap<>();
         String nonce_str = getRandomString(16);
@@ -273,9 +284,13 @@ public class DealServiceImpl implements DealService {
         }
         return null;
     }
-
-    public Map<String,String> searchCompanyPayStatusAndOrder(String tradeOrderId) {
-        Map<String, String> record = this.searchCompanyPay(tradeOrderId);
+    /**
+     * 通过商户订单号查询订单结果 返回结果 成功还返回微信订单号
+     * @param tradeOrderId
+     * @return
+     */
+    public static Map<String,String> searchCompanyPayStatusAndOrder(String tradeOrderId) {
+        Map<String, String> record = searchCompanyPay(tradeOrderId);
         Map<String, String> map = new HashMap<>();
         if(record == null)
         {
@@ -292,38 +307,5 @@ public class DealServiceImpl implements DealService {
             map.put("status",WEIXIN_STATUS_FAIL);
         }
         return map;
-    }
-
-    public String takeoutForUser(int userId, int num, int type) {
-        UserEntity user = (UserEntity) commonDao.getEntity(UserEntity.class, userId);
-        //不为0则无法提现
-        if(user.getTakeoutBan() != 0)
-        {
-            return "无法提现，请联系客服";
-        }
-        //查看提现次数是否有剩余
-        int takeOutTime = user.takeOutTime();
-        //提现手续费
-        double tax = 0;
-        if(takeOutTime > 0)
-        {
-            tax =  num*TAKEOUT_TAK/100.0;
-        }
-        //金币提现
-        if(type == 0)
-        {
-            double gold = user.getGold();
-            double minGold = num + tax;
-            if(gold < minGold)
-            {
-                return "金币不足";
-            }
-        }
-        else
-        {
-
-        }
-
-        return null;
     }
 }

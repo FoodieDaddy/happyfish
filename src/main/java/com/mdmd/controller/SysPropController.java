@@ -38,31 +38,34 @@ public class SysPropController {
     public Map<String,Object> getSysProp(HttpServletRequest request, HttpSession session, HttpServletResponse response,
                                          @RequestBody Integer[] sys_num) {
         Map<String, Object> result = new HashMap<>();
+        List<SysPropResultJO> sysPropResultJOS = new ArrayList<>();
         try {
-            String s = sys_num.toString();
-            int sysNum = Integer.valueOf(s);
-            SysPropEntity sysPropEntity = sysPropService.getSyspropWithSysNum(sysNum);
-            if(sysPropEntity == null)
-            {
-                result.put(SUCCESS,false);
-                result.put(MSG,"不存在的配置");
-                return result;
-            }
+            for (int i = 0; i < sys_num.length; i++) {
+                int sysNum = sys_num[i];
+                SysPropEntity sysPropEntity = sysPropService.getSyspropWithSysNum(sysNum);
+                if(sysPropEntity == null)
+                {
+                    result.put(SUCCESS,false);
+                    result.put(MSG,"不存在的配置");
+                    return result;
+                }
 
-            Object newVal ;
-            String sysValue = sysPropEntity.getSysValue();
-            List<SysPropResultJO> sysPropList = new LinkedList<>();
-            switch (sysNum){
-                case 2 :
-                    newVal = Arrays.asList(sysValue.split("-"));
-                    break;
-                default:
-                    newVal = sysValue;
-                    break;
+                Object newVal ;
+                String sysValue = sysPropEntity.getSysValue();
+                List<SysPropResultJO> sysPropList = new LinkedList<>();
+                switch (sysNum){
+                    case 2 :
+                        newVal = Arrays.asList(sysValue.split("-"));
+                        break;
+                    default:
+                        newVal = sysValue;
+                        break;
+                }
+                SysPropResultJO sysPropResultJO = new SysPropResultJO(sysPropEntity.getSysNum(), sysPropEntity.getSysName(), newVal);
+                sysPropResultJOS.add(sysPropResultJO);
             }
-            SysPropResultJO sysPropResultJO = new SysPropResultJO(sysPropEntity.getSysNum(), sysPropEntity.getSysName(), newVal);
-
-            result.put("data",sysPropEntity);
+            result.put("data",sysPropResultJOS);
+            result.put(SUCCESS,true);
         } catch (Exception e) {
             result.put(SUCCESS,false);
             result.put(MSG,e.getMessage());
@@ -71,4 +74,11 @@ public class SysPropController {
         return result;
     }
 
+    @RequestMapping(value = "/getFishRules.do")
+    @ResponseBody
+    public Map<String,Object> getFishRules(HttpServletRequest request, HttpSession session, HttpServletResponse response) {
+        Map<String, Object> result = new HashMap<>();
+
+        return result;
+    }
 }

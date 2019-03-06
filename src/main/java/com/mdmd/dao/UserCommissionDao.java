@@ -9,5 +9,5 @@ public interface UserCommissionDao {
      * @param count
      * @return
      */
-    List listTopCommissionFromUserCommission_limit(int count);
+    List<Object[]> listTopCommissionFromUserCommission_limit(int count);
 }

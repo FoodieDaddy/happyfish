@@ -11,6 +11,7 @@ import com.mdmd.util.QrcodeUtil;
 import com.mdmd.util.RSAUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -22,8 +23,7 @@ import java.util.Set;
 import static com.mdmd.constant.SystemConstant.DATEFORMAT__yyyyMMddHHmmss;
 import static com.mdmd.constant.SystemConstant.QRCODE_PREFIX;
 
-@Component
-
+@Service
 public class UserServiceImpl implements UserService {
 
     @Autowired
@@ -52,9 +52,7 @@ public class UserServiceImpl implements UserService {
         }
         else
         {
-            UserEntity userEntity = (UserEntity) commonDao.getEntity(UserEntity.class,userId);
-
-            return userEntity;
+            return (UserEntity) commonDao.getEntity(UserEntity.class, userId);
         }
     }
 

@@ -13,8 +13,6 @@ import org.springframework.util.CollectionUtils;
 
 /**
  * Redis Util
- * @author phil
- * @date 2017年8月14日
  *
  */
 public class RedisCacheManager {

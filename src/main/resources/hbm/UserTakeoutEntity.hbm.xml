@@ -10,16 +10,19 @@
             <generator class="identity"/>
         </id>
         <property name="time">
-            <column name="time" sql-type="timestamp" not-null="true"/>
+            <column name="time" sql-type="timestamp"/>
         </property>
         <property name="takeoutType">
-            <column name="takeoutType" sql-type="varchar(20)" length="20"/>
+            <column name="takeoutType" sql-type="int(11)" />
         </property>
         <property name="takeoutResult">
-            <column name="takeoutResult" sql-type="varchar(20)" length="20"/>
+            <column name="takeoutResult" sql-type="int(11)" />
         </property>
         <property name="takeoutQuantity">
             <column name="takeoutQuantity" sql-type="int(11)"/>
+        </property>
+        <property name="realUse">
+            <column name="realUse" sql-type="double"/>
         </property>
         <property name="tradeOrderNum">
             <column name="tradeOrderNum" sql-type="varchar(50)" length="50" not-null="true"/>

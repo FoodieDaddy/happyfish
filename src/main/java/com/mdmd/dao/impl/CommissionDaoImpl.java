@@ -9,10 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import static com.mdmd.constant.SystemConstant.DATEFORMAT__yyMMdd;
 
 @Component
 public class CommissionDaoImpl implements CommissionDao {
@@ -22,7 +22,8 @@ public class CommissionDaoImpl implements CommissionDao {
 
     public List<Object[]> listTopCommissionFromCommission_limit(int count) {
         Session session = sessionFactory.getCurrentSession();
-        int today = Integer.valueOf(new SimpleDateFormat(DATEFORMAT__yyMMdd).format(new Date()));
+        Calendar calendar = Calendar.getInstance();
+        int today = calendar.get(Calendar.HOUR_OF_DAY) + calendar.get(Calendar.MINUTE) + calendar.get(Calendar.SECOND);
         String hql = "select u.userid,c.todayCommission from  UserEntity as u , CommissionEntity as c " +
                 "where  c in elements(u.commissionEntitySet) and c.calcuDate = :today  order by c.todayCommission desc";
         Query query = session.createQuery(hql);

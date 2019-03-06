@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import static com.mdmd.constant.ActionConstant.SESSION_USERID;
+import static com.mdmd.security.IpHelper.getIpAddress;
 
 public class WXInterceptor implements HandlerInterceptor {
 
@@ -21,6 +22,8 @@ public class WXInterceptor implements HandlerInterceptor {
     private UserService userService;
 
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        String ipAddress = getIpAddress(request);
+        System.out.println(ipAddress);
         return true;
 //        HttpSession session = request.getSession();
 //        String requestURI = request.getRequestURI();

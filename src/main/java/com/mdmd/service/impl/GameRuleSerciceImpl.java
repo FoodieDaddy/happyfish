@@ -1,6 +1,7 @@
 package com.mdmd.service.impl;
 
-import com.mdmd.Manager.RedisCacheManager;
+import com.mdmd.custom.RedisCustom;
+import com.mdmd.custom.UserCustom;
 import com.mdmd.dao.CommonDao;
 import com.mdmd.dao.GameRuleDao;
 import com.mdmd.dao.UserDao;
@@ -9,37 +10,35 @@ import com.mdmd.entity.JO.GameRecordJO;
 import com.mdmd.entity.JO.GameResultJO;
 import com.mdmd.entity.bean.FishProbabilityBean;
 import com.mdmd.entity.bean.GameResultBean;
-import com.mdmd.service.DataService;
-import com.mdmd.service.DealService;
 import com.mdmd.service.GameRuleService;
 import com.mdmd.service.SysPropService;
 import com.mdmd.util.CommonUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static com.mdmd.constant.ActionConstant.MSG;
 import static com.mdmd.constant.GameConstant.*;
-import static com.mdmd.constant.SystemConstant.DATEFORMAT__yyMMdd;
+import static com.mdmd.util.WeiXinPayUtil.companyPayToUser;
 
-@Component
+@Service
 public class GameRuleSerciceImpl implements GameRuleService {
     @Autowired
     private GameRuleDao gameRuleDao;
     @Autowired
     private UserDao userDao;
     @Autowired
-    private DataService dataService;
+    private RedisCustom redisCustom;
     @Autowired
-    private RedisCacheManager redisCacheManager;
+    private UserCustom userCustom;
+
     @Autowired
     private SysPropService sysPropService;
-    @Autowired
-    private DealService dealService;
+  
     @Autowired
     private CommonDao commonDao;
 
@@ -80,7 +79,7 @@ public class GameRuleSerciceImpl implements GameRuleService {
         }
 
         //查看这个用户有没有金币玩游戏
-        UserEntity userEntity = (UserEntity) commonDao.getEntity(UserEntity.class,userId);
+        UserEntity userEntity = (UserEntity) commonDao.getEntity(UserEntity.class, userId);
         double balance = userEntity.getGold();
         System.out.println("用户余额："+balance+",倍率:"+price+",红包数值："+targetValue);
         if(balance < price)
@@ -135,7 +134,7 @@ public class GameRuleSerciceImpl implements GameRuleService {
         gameRecordEntity.setUserEntity(userEntity);
         commonDao.addEntity(gameRecordEntity);
         //将新记录加进缓存
-        dataService.addRecordListForRedis(new GameRecordJO(gameRecordEntity),userId);
+        redisCustom.addRecordListForRedis(new GameRecordJO(gameRecordEntity),userId);
 
         //佣金结算 记录佣金明细 每个人佣金总表 和 用户表中的余额
         this.calcuCommission(userId,price);
@@ -150,7 +149,7 @@ public class GameRuleSerciceImpl implements GameRuleService {
         //总计花费
         int allCost = num * 11 + TREASURE_INFORMCOST;
         //查看这个用户有没有金币玩游戏
-        UserEntity userEntity = (UserEntity) commonDao.getEntity(UserEntity.class,userId);
+        UserEntity userEntity = (UserEntity) commonDao.getEntity(UserEntity.class, userId);
         String openid = userEntity.getUserOpenid();
         double balance = userEntity.getGold();
         if(balance < allCost)
@@ -161,7 +160,7 @@ public class GameRuleSerciceImpl implements GameRuleService {
         //订单号
         String orderNumber ;
         //支付给用户一块钱并获取订单编号
-        Map<String, String> record = dealService.companyPayToUser(userId,openid, 100, "夺宝凭证");
+        Map<String, String> record = companyPayToUser(userId,openid, 100, "夺宝凭证");
         //是否有订单编号，没有则为失败
         if(record.containsKey("payment_no"))
         {
@@ -264,7 +263,7 @@ public class GameRuleSerciceImpl implements GameRuleService {
         commonDao.addEntity(gameRecordEntity);
 
         //将新记录加进缓存
-        dataService.addRecordListForRedis(new GameRecordJO(gameRecordEntity),userId);
+        redisCustom.addRecordListForRedis(new GameRecordJO(gameRecordEntity),userId);
 
         //佣金结算 记录佣金明细 每个人佣金总表 和 用户表中的余额
         this.calcuCommission(userId,num * 10);
@@ -317,7 +316,7 @@ public class GameRuleSerciceImpl implements GameRuleService {
      * @param price
      */
     private void calcuCommission(int userId, double price){
-        List<UserEntity> superUserEntityList = dataService.get5_SuperUserEntity(userId);//index=0为上一级
+        List<UserEntity> superUserEntityList = userCustom.get5_SuperUserEntity(userId);//index=0为上一级
         if(superUserEntityList != null)
         {
 
@@ -361,7 +360,9 @@ public class GameRuleSerciceImpl implements GameRuleService {
      */
     private void calcuCommissionForCommissionEntity(int userId,double addCommiss,CommissionEntity commissionEntity){
         int calcDate = commissionEntity.getCalcuDate();
-        int today = Integer.valueOf(new SimpleDateFormat(DATEFORMAT__yyMMdd).format(new Date()));
+        Calendar calendar = Calendar.getInstance();
+        int today =calendar.get(Calendar.HOUR_OF_DAY) + calendar.get(Calendar.MINUTE) + calendar.get(Calendar.SECOND);
+
         //如果不是今天算的 就将今天以前,上次计算之后的重新算一次并记录
         if(today != calcDate)
         {
@@ -386,7 +387,8 @@ public class GameRuleSerciceImpl implements GameRuleService {
      */
     private void calcuGoldForGoldEntity(int userId,double price,double addGold, GoldEntity goldEntity){
         int calcDate = goldEntity.getCalcDate();
-        int today = Integer.valueOf(new SimpleDateFormat(DATEFORMAT__yyMMdd).format(new Date()));
+        Calendar calendar = Calendar.getInstance();
+        int today = calendar.get(Calendar.HOUR_OF_DAY) + calendar.get(Calendar.MINUTE) + calendar.get(Calendar.SECOND);
         double todayWater = goldEntity.getTodayWater();
         double todayGold = goldEntity.getTodayGold();
         //如果不是今天算的 就将今天以前,上次计算之后的重新算一次并记录

@@ -1,11 +1,9 @@
 package com.mdmd.entity;
 
 import java.io.Serializable;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.Calendar;
 import java.util.Set;
 
-import static com.mdmd.constant.SystemConstant.DATEFORMAT__yyMMdd;
 
 public class UserEntity implements Serializable {
     private int userid;
@@ -250,8 +248,8 @@ public class UserEntity implements Serializable {
      * @return
      */
     public int takeOutTime(){
-        String today = new SimpleDateFormat(DATEFORMAT__yyMMdd).format(new Date());
-        int todayInt = Integer.valueOf(today);
+        Calendar calendar = Calendar.getInstance();
+        int todayInt = calendar.get(Calendar.HOUR_OF_DAY) + calendar.get(Calendar.MINUTE) + calendar.get(Calendar.SECOND);
         if(this.calcuDay != todayInt)
         {
             this.calcuDay = todayInt;

@@ -14,7 +14,7 @@
        http://www.springframework.org/schema/aop/spring-aop.xsd http://www.springframework.org/schema/task
        http://www.springframework.org/schema/task/spring-task.xsd">
 
-    <context:component-scan base-package="com.mdmd.service,com.mdmd.dao,com.mdmd.Manager,com.mdmd.listener,com.mdmd.security" />
+    <context:component-scan base-package="com.mdmd.service,com.mdmd.dao,com.mdmd.Manager,com.mdmd.listener,com.mdmd.security,com.mdmd.custom" />
     <context:property-placeholder location="classpath:/db.properties"/>
 
     <!--数据源-->
