@@ -2,15 +2,31 @@ package com.mdmd.custom;
 
 import com.mdmd.Manager.RedisCacheManager;
 import com.mdmd.dao.CommonDao;
-import com.mdmd.entity.UserEntity;
+import com.mdmd.entity.RedisPubsubFailEntity;
+import com.mdmd.enums.RedisChannelEnum;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.LinkedList;
-import java.util.List;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
+import static com.mdmd.constant.SystemConstant.DATEFORMAT__yyyyMMddHHmmss;
+import static com.mdmd.listener.RedisMsgPubSubListener.redisGson;
+
+
+/**
+ * custom类是防止service层调用service层的一种疏通手段 此类中不应该有增删改操作
+ */
 @Component
 public class RedisCustom {
+    private static final Logger LOGGER = LogManager.getLogger(RedisCustom.class);
+
+    @Autowired
+    private CommonDao commonDao;
 
     @Autowired
     private RedisCacheManager redisCacheManager;
@@ -40,4 +56,25 @@ public class RedisCustom {
         return false;
     }
 
+    /**
+     * 发布消息到频道  此方法必须在service中调用，因为此类没有事务，而该方法中拥有增加操作
+     * @param channelEnum
+     * @param val
+     */
+    public void publish(RedisChannelEnum channelEnum, Object val) {
+        String channel = channelEnum.getChannel();
+        String v = redisGson.toJson(val);
+        try {
+            redisCacheManager.publish(channel,v);
+            LOGGER.info(channel+"频道发送>>>消息时间"+ new SimpleDateFormat(DATEFORMAT__yyyyMMddHHmmss).format(new Date()));
+        } catch (Exception e) {
+            try {
+                //重试发送
+                redisCacheManager.publish(channel,v);
+            } catch (Exception e1) {
+                LOGGER.error("消息发布失败,发往频道"+channel);
+                commonDao.addEntity(new RedisPubsubFailEntity(channel,v,e.getMessage()));
+            }
+        }
+    }
 }

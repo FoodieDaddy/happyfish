@@ -5,10 +5,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import com.google.gson.Gson;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.data.redis.core.ListOperations;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.util.CollectionUtils;
 
 /**
@@ -21,7 +23,6 @@ public class RedisCacheManager {
 
     private static final Logger LOGGER = LogManager.getLogger(RedisCacheManager.class);
 
-
     public void setRedisTemplate(RedisTemplate<String, Object> redisTemplate) {
         this.redisTemplate = redisTemplate;
     }
@@ -29,6 +30,20 @@ public class RedisCacheManager {
 
     public void clear() throws Exception{
         redisTemplate.delete(redisTemplate.keys("*"));
+    }
+
+    public RedisSerializer<?> getValueSerializer(){
+         return redisTemplate.getValueSerializer();
+    }
+
+    /**
+     * 发布消息
+     * @param channel 频道
+     * @param val 值
+     */
+    public void publish(String channel,String val) throws Exception{
+            redisTemplate.convertAndSend(channel,val);
+
     }
 
     /**

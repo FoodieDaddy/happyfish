@@ -51,7 +51,6 @@
         <property name="mappingLocations">
             <list>
                 <value>classpath:/hbm/*.hbm.xml</value>
-                <value>classpath:hbm/SysPropEntity.hbm.xml</value>
             </list>
         </property>
     </bean>
@@ -106,11 +105,53 @@
         <property name="enableTransactionSupport" value="true"/>
     </bean>
 
+    <!-- 设置redis的可线程数量  当订阅监听器接受消息过多，使用线程超过最大线程时会抛异常
+        org.springframework.data.redis.RedisSystemException:
+        Unknown redis exception;
+        nested exception is org.springframework.core.task.TaskRejectedException -->
+    <bean id="springSessionRedisTaskExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+        <!-- 核心线程数 -->
+        <property name="corePoolSize" value="20" />
+        <!-- 最大线程数 -->
+        <property name="maxPoolSize" value="200" />
+        <!-- 队列最大长度 -->
+        <property name="queueCapacity" value="1000" />
+        <!-- 线程池维护线程所允许的空闲时间，默认为60s -->
+        <property name="keepAliveSeconds" value="60" />
+    </bean>
     <!--自定义redis工具类,在需要缓存的地方注入此类  -->
     <bean id="redisrCacheManager" class="com.mdmd.Manager.RedisCacheManager">
         <property name="redisTemplate" ref="redisTemplate" />
     </bean>
+    <!-- 配置redis发布订阅模式 -->
+    <bean id="redisMessageListenerContainer" class="org.springframework.data.redis.listener.RedisMessageListenerContainer">
+        <property name="connectionFactory" ref="jedisConnectionFactory" />
+        <property name="messageListeners">
+            <map>
+                <entry key-ref="messageListenerAdapter">
+                    <!--添加多个频道-->
+                    <list>
+                        <bean class="org.springframework.data.redis.listener.ChannelTopic" >
+                            <constructor-arg value="test"/>
+                        </bean>
+                        <bean class="org.springframework.data.redis.listener.ChannelTopic" >
+                            <constructor-arg value="superComm"/>
+                        </bean>
+                    </list>
 
+                </entry>
+            </map>
+        </property>
+        <property name="taskExecutor" ref="springSessionRedisTaskExecutor"/>
+    </bean>
+
+    <bean id="messageListenerAdapter" class="org.springframework.data.redis.listener.adapter.MessageListenerAdapter">
+        <constructor-arg ref="redisMsgPubSubListener"/>
+    </bean>
+
+    <bean id="redisMsgPubSubListener" class="com.mdmd.listener.RedisMsgPubSubListener">
+
+    </bean>
 
 
     <!-- 事物管理器配置  -->

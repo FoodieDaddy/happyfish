@@ -8,8 +8,10 @@ import com.mdmd.dao.UserDao;
 import com.mdmd.entity.*;
 import com.mdmd.entity.JO.GameRecordJO;
 import com.mdmd.entity.JO.GameResultJO;
+import com.mdmd.entity.RO.SuperCommRO;
 import com.mdmd.entity.bean.FishProbabilityBean;
 import com.mdmd.entity.bean.GameResultBean;
+import com.mdmd.enums.RedisChannelEnum;
 import com.mdmd.service.GameRuleService;
 import com.mdmd.service.SysPropService;
 import com.mdmd.util.CommonUtil;
@@ -137,8 +139,9 @@ public class GameRuleSerciceImpl implements GameRuleService {
         redisCustom.addRecordListForRedis(new GameRecordJO(gameRecordEntity),userId);
 
         //佣金结算 记录佣金明细 每个人佣金总表 和 用户表中的余额
-        this.calcuCommission(userId,price);
-
+        //this.calcuCommission(userId,price);
+        //将上面这一步交给了redis
+        redisCustom.publish(RedisChannelEnum.channel_superComm,new SuperCommRO(userId,price));
         commonDao.updateEntity(userEntity);
 
         return new GameResultJO(gameResultBean.getGameResult(),gameResultBean.getGameCost(),currentGold,0);
@@ -266,10 +269,10 @@ public class GameRuleSerciceImpl implements GameRuleService {
         redisCustom.addRecordListForRedis(new GameRecordJO(gameRecordEntity),userId);
 
         //佣金结算 记录佣金明细 每个人佣金总表 和 用户表中的余额
-        this.calcuCommission(userId,num * 10);
-
+        //this.calcuCommission(userId,num * 10);
+        //将上面这一步交给了redis
+        redisCustom.publish(RedisChannelEnum.channel_superComm,new SuperCommRO(userId,num*10));
         commonDao.updateEntity(userEntity);
-
         return new GameResultJO(win,allCost, userEntity.getGold(),userEntity.getCommission(),orderNumber);
     }
 
@@ -310,12 +313,8 @@ public class GameRuleSerciceImpl implements GameRuleService {
         }
     }
 
-    /**
-     * 计算父类佣金
-     * @param userId
-     * @param price
-     */
-    private void calcuCommission(int userId, double price){
+
+    public void calcuCommission(int userId, double price){
         List<UserEntity> superUserEntityList = userCustom.get5_SuperUserEntity(userId);//index=0为上一级
         if(superUserEntityList != null)
         {

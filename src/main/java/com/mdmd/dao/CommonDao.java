@@ -13,4 +13,8 @@ public interface CommonDao {
     void updateEntity(Object obj);
 
     Object getEntity(Class clazz,int id);
+
+    void removeEntity(Object obj);
+
+    void removeEntity(Class clazz, int id);
 }

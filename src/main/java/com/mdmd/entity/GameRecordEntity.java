@@ -3,7 +3,7 @@ package com.mdmd.entity;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
-public class GameRecordEntity{
+public class GameRecordEntity implements Serializable{
     private int id;
     private Timestamp time;
     private String gameType;

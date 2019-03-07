@@ -379,21 +379,21 @@
 					<div>18-11-25 17:11:23</div>
 					<div>...34242223</div>
 					<div><span>大</span>,<span>1手</span></div>
-					<div><span>-10.00</div>
+					<div><span>-10.00</span></div>
 				</li>
 				<li class="clearfix">
 					<div>夺宝/大小</div>
 					<div>18-11-25 17:11:23</div>
 					<div>...34242223</div>
 					<div><span>大</span>,<span>1手</span></div>
-					<div><span>+1000.00</div>
+					<div><span>+1000.00</span></div>
 				</li>
 				<li class="clearfix">
 					<div>捕鱼/5</div>
 					<div>18-11-25 17:11:23</div>
 					<div>未中</div>
 					<div><span>未中</span><span>,</span><span>+1.13</span></div>
-					<div><span>+1.13</div>
+					<div><span>+1.13</span></div>
 				</li>
 			</ul>
 			<!-- 充值记录 -->
@@ -415,7 +415,8 @@
 					<div>...12312321334</div>
 					<div>30.00</div>
 					<div>充值成功</div>
-				</li class="clearfix"><li>
+				<li>
+				<li class="clearfix">
 					<div>18-11-25 12:12:12</div>
 					<div>...12312321334</div>
 					<div>30.00</div>
@@ -621,11 +622,11 @@
 	var id='3333';
 	var ss = new Array();
 	ss.push(1,2,3,4);
-	var data = JSON.stringify(ss);
+	var data = JSON.stringify([{id:0,price:1,targetValue:1,probability:1,volume:1,minReturn:1,maxReturn:1},{id:100,price:1,targetValue:1,probability:1,volume:1,minReturn:1,maxReturn:1}]);
 	$.ajax({
 		type:"post",
-		url:"/sysprop/getSysProp.do",
-		data:{sys_num:data},
+		url:"/sysprop/addFishRules.do",
+		data:data,
 		// dataType:'json',
 		contentType:"application/json",
 		success:function(data){

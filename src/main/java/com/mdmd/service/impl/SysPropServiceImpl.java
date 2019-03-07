@@ -4,6 +4,9 @@ import com.mdmd.controller.GameAction;
 import com.mdmd.dao.CommonDao;
 import com.mdmd.dao.SysPropDao;
 import com.mdmd.dao.UserDao;
+import com.mdmd.entity.FishRuleEntity;
+import com.mdmd.entity.JO.FishRuleJO;
+import com.mdmd.entity.JO.SysPropResultJO;
 import com.mdmd.entity.SysPropEntity;
 import com.mdmd.service.SysPropService;
 import org.apache.logging.log4j.LogManager;
@@ -14,6 +17,9 @@ import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
+
+import static com.mdmd.constant.ActionConstant.MSG;
+import static com.mdmd.constant.ActionConstant.SUCCESS;
 
 
 @Service
@@ -49,20 +55,98 @@ public class SysPropServiceImpl implements SysPropService {
         }
     }
 
-    public void updateSysprop(int sysNum, String sysValue) {
+    public String updateSysprop(SysPropEntity sysPropEntity) {
+        int sysNum = sysPropEntity.getSysNum();
         if(!sysPropMap.containsKey(sysNum))
-            return;
-        //修改全局变量
-        SysPropEntity sysPropEntity = sysPropMap.get(sysNum);
-        sysPropEntity.setSysValue(sysValue);
-        sysPropMap.put(sysNum,sysPropEntity);
-        //更新数据库
-        commonDao.updateEntity(sysPropEntity);
+            return "不存在的参数";
+        String sysName = sysPropEntity.getSysName();
+        String sysValue = sysPropEntity.getSysValue();
+        if(sysName.trim().equals(""))
+        {
 
+            return "num:"+sysNum+"名字不能为空";
+        }
+        if(sysValue == null)
+        {
+            return  "num:"+sysNum+"不能为空值";
+        }
+        try {
+            String val = sysValue.toString().trim();
+            switch (sysNum){
+                case 1:
+                    if(!val.contains("http"))
+                    {
+                        return "num:"+sysNum+"请加上前缀http或者https";
+                    }
+                    if(!val.contains("."))
+                    {
+                        return "num:" + sysNum + "网站格式不正确";
+                    }
+                    break;
+                case 2:
+                    if(val.contains("-"))
+                    {
+                        String[] split = val.split("-");
+                        for (int i = 0; i < split.length; i++) {
+                            String s = split[i].trim();
+                            if(!"".equals(s))
+                                Integer.valueOf(split[i]);
+                        }
+                    }
+                    break ;
+                case 3:
+                    Integer.valueOf(val);
+                    break;
+                default:
+                    return "num:" + sysNum + "不存在";
+            }
+            //修改全局变量
+            sysPropMap.put(sysNum,sysPropEntity);
+            //更新数据库
+            commonDao.updateEntity(sysPropEntity);
+            return null;
+        } catch (Exception e) {
+           e.printStackTrace();
+           return "num:"+sysNum+"修改时发生错误："+e.getMessage();
+        }
     }
+
+    public String updateSysprops(List<SysPropEntity> sysPropEntities) {
+        for (int i = 0; i < sysPropEntities.size(); i++) {
+            String s = updateSysprop(sysPropEntities.get(i));
+            if(s != null)
+                return s;
+        }
+        return null;
+    }
+
 
     public SysPropEntity getSyspropWithSysNum(int sysNum) {
         return sysPropMap.get(sysNum);
+    }
+
+    public SysPropResultJO getSyspropWithSysNum_JO(int sysNum) {
+        return new SysPropResultJO(sysPropMap.get(sysNum));
+    }
+
+    public List<SysPropEntity> getSyspropWithSysNums(List<Integer> sysNums) {
+        List<SysPropEntity> sysPropEntities = new ArrayList<>();
+        for (int i = 0; i < sysNums.size(); i++) {
+            SysPropEntity sysPropEntity = sysPropMap.get(sysNums.get(i));
+            if(sysPropEntity != null)
+                sysPropEntities.add(sysPropEntity);
+        }
+        return sysPropEntities;
+    }
+
+    public List<SysPropResultJO> getSyspropWithSysNums_JO(List<Integer> sysNums) {
+        List<SysPropResultJO> sysPropResultJOS = new ArrayList<>();
+        for (int i = 0; i < sysNums.size(); i++) {
+            SysPropEntity sysPropEntity = sysPropMap.get(sysNums.get(i));
+            if(sysPropEntity != null)
+                sysPropResultJOS.add(new SysPropResultJO(sysPropEntity));
+        }
+        return sysPropResultJOS;
     }
 
     public List<SysPropEntity> getAllSysprop() {
@@ -80,22 +164,60 @@ public class SysPropServiceImpl implements SysPropService {
             if(sysValue.contains("1"))
             {
                 SysPropEntity doubleTimeSys = sysPropMap.get(2);
-                String timeString = doubleTimeSys.getSysValue().trim();
-                if(timeString.contains("-"))
-                {
-                    String[] split = timeString.split("-");
-                    for (int i = 0; i < split.length; i++) {
-                        if(now.equals(split[i]))
-                            return true;
-                    }
-                }
-                else if(now.equals(timeString))
+                //保证每个时间后面都有-
+                String timeString = doubleTimeSys.getSysValue().trim()+"-";
+                String now_ = now + "-";
+                if(timeString.contains(now_))
                     return true;
+
             }
         } catch (Exception e) {
             return false;
         }
         return false;
     }
+
+    public List<FishRuleJO> listAllFishRule() {
+        List<FishRuleEntity> list = commonDao.listAllEntity(FishRuleEntity.class);
+        List<FishRuleJO> fishRuleJOS = new ArrayList<>();
+        for (int i = 0; i < list.size(); i++) {
+            fishRuleJOS.add(new FishRuleJO(list.get(i)));
+        }
+        return fishRuleJOS;
+    }
+
+    public boolean saveOrUpdateFishRules(List<FishRuleEntity> fishRuleEntities) throws RuntimeException{
+        try {
+            for (int i = 0; i < fishRuleEntities.size(); i++) {
+                FishRuleEntity fishRuleEntity = fishRuleEntities.get(i);
+                //id为0的是创建
+                if(fishRuleEntity.getId() == 0)
+                {
+                    commonDao.addEntity(fishRuleEntity);
+                }
+                else
+                {
+                    commonDao.updateEntity(fishRuleEntity);
+                }
+            }
+            return true;
+        } catch (Exception e) {
+            throw new RuntimeException();
+        }
+
+    }
+
+    public boolean deleteFishRules(List<Integer> ids) throws RuntimeException {
+        try {
+            for (int i = 0; i < ids.size(); i++) {
+                Integer id = ids.get(i);
+                commonDao.removeEntity(FishRuleEntity.class,id);
+            }
+            return true;
+        } catch (Exception e) {
+            throw new RuntimeException();
+        }
+    }
+
 
 }

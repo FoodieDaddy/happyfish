@@ -16,12 +16,11 @@ import java.util.Date;
 public class Test {
 
     public static void main(String[] args) throws ParseException {
-        Calendar instance = Calendar.getInstance();
-        System.out.println(instance.get(Calendar.HOUR_OF_DAY));
-        System.out.println(instance.get(Calendar.MINUTE));
-        System.out.println(instance.get(Calendar.SECOND));
-
+        Integer.valueOf("1 ");
     }
+
+
+
 
     public static void mergeImage(String bigPath,String smallPath,int x,int y) throws IOException {
 

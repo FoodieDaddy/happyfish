@@ -26,8 +26,7 @@ public class GameAction {
 
     @Autowired
     private GameRuleService gameRuleService;
-    @Autowired
-    private UserService userService;
+
 
     private static final Logger LOGGER = LogManager.getLogger(GameAction.class);
 
@@ -49,8 +48,8 @@ public class GameAction {
                 result.put(SUCCESS,false);
                 return result;
             }
-            int userId = (int)session.getAttribute(SESSION_USERID);
-
+//            int userId = (int)session.getAttribute(SESSION_USERID);
+            int userId = 34;
             int g = 0,c=0;
             boolean flag = true;
             try {

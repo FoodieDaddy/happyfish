@@ -37,5 +37,10 @@ public interface GameRuleService {
      * @return
      */
     GameResultJO getTreasureResult(int type, int num, int userId);
-
+    /**
+     * 计算父类佣金
+     * @param userId
+     * @param price
+     */
+    void calcuCommission(int userId, double price);
 }

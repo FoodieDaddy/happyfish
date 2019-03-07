@@ -8,6 +8,9 @@ import org.springframework.stereotype.Component;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * custom类是防止service层调用service层的一种疏通手段 此类中不应该有增删改操作
+ */
 @Component
 public class UserCustom {
     @Autowired

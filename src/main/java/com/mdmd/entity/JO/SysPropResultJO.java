@@ -5,33 +5,27 @@ import com.mdmd.entity.SysPropEntity;
 import java.io.Serializable;
 
 public class SysPropResultJO implements Serializable {
+    private int id;
     private int sysNum;
     private String sysName;
-    private Object sysValue;
+    private String sysValue;
 
     public SysPropResultJO() {
     }
 
-    public SysPropResultJO(int sysNum, String sysName) {
-        this.sysNum = sysNum;
-        this.sysName = sysName;
-    }
-
-    public SysPropResultJO(int sysNum, String sysName, Object sysValue) {
-        this.sysNum = sysNum;
-        this.sysName = sysName;
-        this.sysValue = sysValue;
-    }
-
     public SysPropResultJO(SysPropEntity sysPropEntity) {
+        this.id = sysPropEntity.getId();
         this.sysNum = sysPropEntity.getSysNum();
         this.sysName = sysPropEntity.getSysName();
         this.sysValue = sysPropEntity.getSysValue();
     }
-    public SysPropResultJO(SysPropEntity sysPropEntity,Object sysValue) {
-        this.sysNum = sysPropEntity.getSysNum();
-        this.sysName = sysPropEntity.getSysName();
-        this.sysValue = sysValue;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public int getSysNum() {
@@ -50,11 +44,12 @@ public class SysPropResultJO implements Serializable {
         this.sysName = sysName;
     }
 
-    public Object getSysValue() {
+    public String getSysValue() {
         return sysValue;
     }
 
-    public void setSysValue(Object sysValue) {
+    public void setSysValue(String sysValue) {
         this.sysValue = sysValue;
     }
+
 }

@@ -30,6 +30,18 @@ public class CommonDaoimpl implements CommonDao {
         return session.get(clazz, id);
     }
 
+    public void removeEntity(Object obj) {
+        Session session = sessionFactory.getCurrentSession();
+        session.delete(obj);
+    }
+
+    public void removeEntity(Class clazz, int id) {
+        Session session = sessionFactory.getCurrentSession();
+        String hql = "delete from " + clazz.getSimpleName() +" as c where c.id = "+id;
+        Query query = session.createQuery(hql);
+        query.executeUpdate();
+    }
+
     public List listAllEntity(Class clazz) {
         String name = clazz.getSimpleName();
         Session session = sessionFactory.getCurrentSession();
