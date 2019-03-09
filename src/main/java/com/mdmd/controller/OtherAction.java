@@ -12,24 +12,6 @@ import static com.mdmd.service.impl.SysPropServiceImpl.sysPropMap;
 @Controller
 public class OtherAction {
 
-    /**
-     * 微信数字认证
-     * @param response
-     */
-    @RequestMapping(value = "MP_verify_bvG4JnJzyk7M3RNH.txt")
-    public void rediat_uri_depend(HttpServletResponse response){
-        PrintWriter writer = null;
-        try {
-             writer = response.getWriter();
-             writer.print("bvG4JnJzyk7M3RNH");//将微信提供的txt文件中的代码返回
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        finally {
-            if(writer != null)
-                writer.close();
-        }
-    }
 
     /**
      * 扫描二维码跳转

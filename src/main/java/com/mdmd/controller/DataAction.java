@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import java.io.IOException;
 import java.security.interfaces.RSAPublicKey;
 import java.util.HashMap;
 import java.util.List;
@@ -100,13 +101,19 @@ public class DataAction {
                     String encrypt = RSAUtil.encrypt(userid + "");
                     response.sendRedirect("../stc/index.html?token=" + encrypt);
                 } else {
-                    response.sendRedirect("http://www.baidu,com");
+                    response.sendRedirect("http://www.baidu.com");
                 }
             }
         } catch (Exception e) {
             LOGGER.warn(e.getMessage());
+            try {
+                response.sendRedirect("http://www.baidu.com");
+            } catch (IOException e1) {
+                LOGGER.warn(e1.getMessage());
+
+            }
         }
-        //todo 跳转到什么网页
+
     }
 
 
