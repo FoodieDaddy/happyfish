@@ -1,8 +1,11 @@
 package com.mdmd.entity;
 
 
+import com.mdmd.controller.GameAction;
+import com.mdmd.util.DateFormatUtil;
+
 import java.io.Serializable;
-import java.util.Calendar;
+import java.util.Date;
 
 
 
@@ -15,8 +18,7 @@ public class GoldEntity implements Serializable {
     private int takeoutGold;
 
     public GoldEntity() {
-        Calendar calendar = Calendar.getInstance();
-       this.calcDate = calendar.get(Calendar.HOUR_OF_DAY) + calendar.get(Calendar.MINUTE) + calendar.get(Calendar.SECOND);
+       this.calcDate = DateFormatUtil.now_yyMMdd_intVal();
     }
 
     public int getId() {
@@ -68,8 +70,7 @@ public class GoldEntity implements Serializable {
     }
 
     public double todayWater (){
-        Calendar calendar = Calendar.getInstance();
-        int todayInt = calendar.get(Calendar.HOUR_OF_DAY) + calendar.get(Calendar.MINUTE) + calendar.get(Calendar.SECOND);
+        int todayInt = DateFormatUtil.now_yyMMdd_intVal();
         if(todayInt != calcDate)
             return 0.0;
         return todayWater;

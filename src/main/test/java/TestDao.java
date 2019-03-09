@@ -14,7 +14,9 @@ import org.springframework.data.redis.core.RedisTemplate;
 import sun.awt.windows.ThemeReader;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class TestDao extends TestBase{
 
@@ -40,19 +42,19 @@ public class TestDao extends TestBase{
 
     @Test
     public void testRedis()  {
-        System.out.println("test".equals(RedisChannelEnum.channel_test.getChannel()));
+        dataService.test();
     }
 
     @Test
     public void testService(){
-
+    gameRuleService.calcuCommission(41,5);
 }
 
 
     @Test
     public void testService2(){
         try {
-            List list = dataService.listDatas(1, 34);
+            List list = dataService.listDatas(1, 1);
             System.out.println(list);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();

@@ -17,10 +17,10 @@ import org.springframework.stereotype.Service;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import static com.mdmd.constant.SystemConstant.DATEFORMAT__yyyyMMddHHmmss;
 import static com.mdmd.constant.SystemConstant.ENTITYPATH;
 
 
@@ -61,7 +61,7 @@ public class DataServiceImpl implements DataService {
     @Scheduled(cron = "30 59 23 ? * *")
     public void calcYesterdayCommissionList_Schedule() {
        //todo 每日自动计算昨天排行榜放入缓存中
-       LOGGER.info("执行缓存" + new SimpleDateFormat(DATEFORMAT__yyyyMMddHHmmss).format(new Date()));
+       LOGGER.info("执行缓存");
         List<RankingListJO> rankingListJOS = this.calcYesterdayCommissionRankingList();
         //设置消亡时间为1天10分钟
         redisCacheManager.lSet("commYes",rankingListJOS,87000);
@@ -177,7 +177,7 @@ public class DataServiceImpl implements DataService {
                 }
             }
             //个人数据缓存10分钟
-            redisCacheManager.lSet(keyName,list,1000);
+            redisCacheManager.lSet(keyName,list,600);
         }
 
         return list;
@@ -229,4 +229,9 @@ public class DataServiceImpl implements DataService {
         UserEntity userEntity = userDao.getUserFromUserId_only(qrcodeEntity.getUserId());
         return userEntity;
     }
+    public void test(){
+        int takeoutCount_today_0gold_1commission = takeoutDao.getTakeoutCount_today_0gold_1commission(1, 0);
+        System.out.println(takeoutCount_today_0gold_1commission);
+    }
+
 }

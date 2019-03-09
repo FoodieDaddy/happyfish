@@ -2,13 +2,14 @@ package com.mdmd.entity.JO;
 
 import com.mdmd.entity.UserCommissionEntity;
 import com.mdmd.entity.UserEntity;
+import com.mdmd.util.DateFormatUtil;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
 
 public class UserCommissionJO implements Serializable {
     private int id;
-    private Timestamp time;
+    private String time;
     private String commissionType;
     private double commissionResult;
     private int nodeUserId;
@@ -19,7 +20,14 @@ public class UserCommissionJO implements Serializable {
 
     public UserCommissionJO(UserCommissionEntity userCommissionEntity) {
         this.id = userCommissionEntity.getId();
-        this.time = userCommissionEntity.getTime();
+        if(userCommissionEntity.getTime() != null)
+        {
+            this.time = userCommissionEntity.getTime().toString().split("\\.")[0];
+        }
+        else
+        {
+            this.time = DateFormatUtil.now_yyyyMMddHHmmss();
+        }
         this.commissionType = userCommissionEntity.getCommissionType();
         this.commissionResult = userCommissionEntity.getCommissionResult();
         this.nodeUserId = userCommissionEntity.getNodeUserId();
@@ -45,11 +53,11 @@ public class UserCommissionJO implements Serializable {
         this.userId = userId;
     }
 
-    public Timestamp getTime() {
+    public String getTime() {
         return time;
     }
 
-    public void setTime(Timestamp time) {
+    public void setTime(String time) {
         this.time = time;
     }
 

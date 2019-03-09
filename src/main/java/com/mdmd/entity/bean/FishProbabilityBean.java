@@ -4,6 +4,7 @@ import com.mdmd.entity.FishRuleEntity;
 import com.mdmd.service.GameRuleService;
 import com.mdmd.util.CommonUtil;
 
+import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -12,11 +13,13 @@ import java.util.Random;
 /**
  * 存储捕鱼概率和记录概率类
  */
-public class FishProbabilityBean {
+public class FishProbabilityBean implements Serializable {
 
     private ArrayList<Integer> values;//概率显示化集合
     private int index;//当前角标
     private int price;//倍率
+    private int volume;//容积 最大次数
+    private int probability;//几率
     private int targetValue;//红包数值
     private double minReturn;//不中最小返还
     private double maxReturn;//不中最大返还
@@ -27,6 +30,19 @@ public class FishProbabilityBean {
         this.maxReturn = maxReturn;
         this.minReturn = minReturn;
         this.index = 0;
+        this.volume = volume;
+        this.probability = probability;
+        this.initValues(probability,volume);
+    }
+
+    public FishProbabilityBean(FishRuleEntity fishRuleEntity){
+        this.price = fishRuleEntity.getPrice();
+        this.targetValue = fishRuleEntity.getTargetValue();
+        this.minReturn = fishRuleEntity.getMinReturn();
+        this.maxReturn = fishRuleEntity.getMaxReturn();
+        this.index = 0;
+        this.volume = fishRuleEntity.getVolume();
+        this.probability = fishRuleEntity.getProbability();
         this.initValues(probability,volume);
     }
 
@@ -36,7 +52,11 @@ public class FishProbabilityBean {
         this.minReturn = fishRuleEntity.getMinReturn();
         this.maxReturn = fishRuleEntity.getMaxReturn();
         this.index = 0;
-        this.initValues(fishRuleEntity.getProbability(),fishRuleEntity.getVolume());
+        this.volume = fishRuleEntity.getVolume();
+        this.probability = fishRuleEntity.getProbability();
+        //在几率和容量有一个不相等时才重新生成概率集合
+        if(volume != fishRuleEntity.getVolume() || probability != fishRuleEntity.getProbability())
+            this.initValues(probability,volume);
     }
 
     /**
@@ -113,6 +133,13 @@ public class FishProbabilityBean {
         return price;
     }
 
+    public int getProbability() {
+        return probability;
+    }
+
+    public int getVolume() {
+        return volume;
+    }
 
     public int getTargetValue() {
         return targetValue;

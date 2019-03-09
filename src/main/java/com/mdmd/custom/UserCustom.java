@@ -36,7 +36,7 @@ public class UserCustom {
             int superId = superUserids[i];
             if(superId > 0)
             {
-                UserEntity superUser = (UserEntity) commonDao.getEntity(UserEntity.class, userId);
+                UserEntity superUser = (UserEntity) commonDao.getEntity(UserEntity.class, superId);
                 if(superUser == null)
                     break;
                 superUserList.add(superUser);

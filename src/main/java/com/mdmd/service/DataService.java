@@ -53,4 +53,6 @@ public interface DataService {
 
     UserEntity getUserWithQrcodeSceneId(int sceneId)throws Exception;
 
+    void test();
+
 }

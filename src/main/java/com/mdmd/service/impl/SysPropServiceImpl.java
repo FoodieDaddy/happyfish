@@ -1,5 +1,6 @@
 package com.mdmd.service.impl;
 
+import com.mdmd.Manager.RedisCacheManager;
 import com.mdmd.controller.GameAction;
 import com.mdmd.dao.CommonDao;
 import com.mdmd.dao.SysPropDao;
@@ -9,6 +10,7 @@ import com.mdmd.entity.JO.FishRuleJO;
 import com.mdmd.entity.JO.SysPropResultJO;
 import com.mdmd.entity.SysPropEntity;
 import com.mdmd.service.SysPropService;
+import com.mdmd.util.DateFormatUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,7 @@ import java.util.*;
 
 import static com.mdmd.constant.ActionConstant.MSG;
 import static com.mdmd.constant.ActionConstant.SUCCESS;
+import static com.mdmd.constant.RedisConstant.*;
 
 
 @Service
@@ -29,6 +32,8 @@ public class SysPropServiceImpl implements SysPropService {
     private CommonDao commonDao;
     @Autowired
     private SysPropDao sysPropDao;
+    @Autowired
+    private RedisCacheManager redisCacheManager;
 
     private static final Logger LOGGER = LogManager.getLogger(SysPropServiceImpl.class);
 
@@ -158,8 +163,7 @@ public class SysPropServiceImpl implements SysPropService {
 
             SysPropEntity catchDouSys = sysPropMap.get(3);
             String sysValue = catchDouSys.getSysValue();
-            Calendar calendar = Calendar.getInstance();
-            String now = calendar.get(Calendar.HOUR_OF_DAY) + "";
+            int now = DateFormatUtil.now_HH();
             //是否开启双倍佣金
             if(sysValue.contains("1"))
             {
@@ -199,6 +203,8 @@ public class SysPropServiceImpl implements SysPropService {
                 {
                     commonDao.updateEntity(fishRuleEntity);
                 }
+                //更新缓存中数据
+                setFishRuleEntity_redis(fishRuleEntity);
             }
             return true;
         } catch (Exception e) {
@@ -212,12 +218,29 @@ public class SysPropServiceImpl implements SysPropService {
             for (int i = 0; i < ids.size(); i++) {
                 Integer id = ids.get(i);
                 commonDao.removeEntity(FishRuleEntity.class,id);
+                //更新缓存中数据
+                FishRuleEntity fishRuleEntity = (FishRuleEntity) commonDao.getEntity(FishRuleEntity.class, id);
+                delFishRuleEntity_redis(fishRuleEntity.getPrice(),fishRuleEntity.getTargetValue());
             }
             return true;
         } catch (Exception e) {
             throw new RuntimeException();
         }
     }
+    private void setFishRuleEntity_redis( FishRuleEntity fishRuleEntity) {
+        String key = fishRuleEntity.getPrice() + REDIS_KEY_fishRules_itemkey + fishRuleEntity.getTargetValue();
+        if(!redisCacheManager.hset(REDIS_KEY_fishRules, key, fishRuleEntity))
+            if(!redisCacheManager.hset(REDIS_KEY_fishRules, key, fishRuleEntity))
+                LOGGER.error("捕鱼规则数据插入失败(redis插入错误)");
+    }
 
+
+
+    private void delFishRuleEntity_redis(int price, int targetValue) {
+        String key = price + REDIS_KEY_fishRules_itemkey + targetValue;
+        if(!redisCacheManager.hdel(REDIS_KEY_fishRules,key))
+            if(!redisCacheManager.hdel(REDIS_KEY_fishRules,key))
+                LOGGER.error("捕鱼规则数据删除失败(redis插入错误)");
+    }
 
 }

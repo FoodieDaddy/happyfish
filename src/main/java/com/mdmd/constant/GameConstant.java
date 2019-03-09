@@ -15,6 +15,7 @@ public class GameConstant {
     public static final String TREASURE_CONTENT_SMALL_SINGLE = "小单";
     public static final String TREASURE_CONTENT_BIG_DOUBLE = "大双";
     public static final String TREASURE_CONTENT_SMALL_DOUBLE = "小双";
+    public static final String TREASURE_CONTENT_OTHER = "合";
 
     public static final int TREASURE_INFORMCOST = 1;//通知费
 

@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.mdmd.constant.WeiXinPublicContant.*;
+import static com.mdmd.service.impl.SysPropServiceImpl.sysPropMap;
 import static com.mdmd.util.WeiXinMessageUtil.*;
 
 @Controller
@@ -202,7 +203,7 @@ public class WeiXinPublicAction {
     public void redirectToMyPage(HttpServletRequest request,HttpServletResponse response){
         StringBuffer sb = new StringBuffer();
         StringBuffer encodeUrl = new StringBuffer(300);
-        String redirectUrl = "http://www.miaojieshan.com/qx/home.do?sup=";
+        String redirectUrl = sysPropMap.get(1).getSysValue() + "/qx/home.do?sup=";
         try {
             String sup = request.getParameter("token");
             if(sup != null)
@@ -213,7 +214,7 @@ public class WeiXinPublicAction {
                 }
             }
             //公众号中配置的回调域名（网页授权回调域名）
-            sb.append("https://open.weixin.qq.com/connect/oauth2/authorize?appid=");
+            sb.append(WEIXIN_RETURN_URL);
             sb.append(WEIXIN_APPID);
             String url = "";
             //对重定向url进行编码，官方文档要求

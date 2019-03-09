@@ -1,4 +1,9 @@
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.mdmd.constant.WeiXinPublicContant;
+import com.mdmd.util.Base64Utl;
+import com.mdmd.util.MD5Util;
+import org.apache.commons.codec.binary.Base64;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -6,20 +11,19 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
+
 import java.util.Date;
 
 
 
 public class Test {
+    public static void main(String[] args) {
 
-    public static void main(String[] args) throws ParseException {
-        Integer.valueOf("1 ");
+
     }
-
-
 
 
     public static void mergeImage(String bigPath,String smallPath,int x,int y) throws IOException {

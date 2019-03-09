@@ -7,6 +7,11 @@ import java.util.List;
 
 public interface GameRuleService {
 
+
+    /**
+     * 初始化捕鱼规则
+     */
+    void initFishRules();
     /**
      * 获取所有的规则
      * @return
@@ -43,4 +48,6 @@ public interface GameRuleService {
      * @param price
      */
     void calcuCommission(int userId, double price);
+
+
 }

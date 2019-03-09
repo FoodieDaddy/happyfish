@@ -3,7 +3,6 @@ package com.mdmd.controller;
 
 import com.mdmd.entity.JO.GameResultJO;
 import com.mdmd.service.GameRuleService;
-import com.mdmd.service.UserService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,8 +47,7 @@ public class GameAction {
                 result.put(SUCCESS,false);
                 return result;
             }
-//            int userId = (int)session.getAttribute(SESSION_USERID);
-            int userId = 34;
+            int userId = (int)session.getAttribute(SESSION_USERID);
             int g = 0,c=0;
             boolean flag = true;
             try {
@@ -109,7 +107,7 @@ public class GameAction {
             String treasureNum = treasure_num.trim();
             int type = Integer.valueOf(treasureType);
             int num = Integer.valueOf(treasureNum);
-            if(type > 9 && type < 18 && num > 0 && num < 101)
+            if(type > 9 && type < 19 && num > 0 && num < 101)
             {
                 GameResultJO treasureResult = gameRuleService.getTreasureResult(type, num, userId);
                 if(treasureResult.isSuccess())

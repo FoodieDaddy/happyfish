@@ -4,6 +4,7 @@ import com.mdmd.Manager.RedisCacheManager;
 import com.mdmd.dao.CommonDao;
 import com.mdmd.entity.RedisPubsubFailEntity;
 import com.mdmd.enums.RedisChannelEnum;
+import com.mdmd.util.DateFormatUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,10 +12,8 @@ import org.springframework.stereotype.Component;
 
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 
-import static com.mdmd.constant.SystemConstant.DATEFORMAT__yyyyMMddHHmmss;
 import static com.mdmd.listener.RedisMsgPubSubListener.redisGson;
 
 
@@ -66,11 +65,12 @@ public class RedisCustom {
         String v = redisGson.toJson(val);
         try {
             redisCacheManager.publish(channel,v);
-            LOGGER.info(channel+"频道发送>>>消息时间"+ new SimpleDateFormat(DATEFORMAT__yyyyMMddHHmmss).format(new Date()));
+            LOGGER.info(channel+"频道发送>>>消息时间"+ DateFormatUtil.now_yyyyMMddHHmmss());
         } catch (Exception e) {
             try {
                 //重试发送
                 redisCacheManager.publish(channel,v);
+                LOGGER.info(channel+"频道发送>>>消息时间"+ DateFormatUtil.now_yyyyMMddHHmmss());
             } catch (Exception e1) {
                 LOGGER.error("消息发布失败,发往频道"+channel);
                 commonDao.addEntity(new RedisPubsubFailEntity(channel,v,e.getMessage()));

@@ -22,9 +22,6 @@ public class WXInterceptor implements HandlerInterceptor {
     private UserService userService;
 
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-//        String ipAddress = getIpAddress(request);
-//        System.out.println(ipAddress);
-//        return true;
         HttpSession session = request.getSession();
         String requestURI = request.getRequestURI();
         if(requestURI.contains("/gm/")||requestURI.contains("/qx/")){
@@ -65,8 +62,14 @@ public class WXInterceptor implements HandlerInterceptor {
             return true;
         }
         //不需要做session判断的方法
-        else if(requestURI.contains("/MP_verify_bvG4JnJzyk7M3RNH.txt")||requestURI.contains("/red.do"))
+        else if(requestURI.contains("/MP_verify_bvG4JnJzyk7M3RNH.txt"))
         {
+            return true;
+        }
+        else if(requestURI.contains("/red.do"))
+        {
+            String ipAddress = getIpAddress(request);
+            System.out.println("ip:"+ipAddress);
             return true;
         }
         //不需要做session的命名空间

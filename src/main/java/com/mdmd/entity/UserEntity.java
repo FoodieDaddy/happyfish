@@ -1,7 +1,8 @@
 package com.mdmd.entity;
 
+import com.mdmd.util.DateFormatUtil;
+
 import java.io.Serializable;
-import java.util.Calendar;
 import java.util.Set;
 
 
@@ -29,6 +30,11 @@ public class UserEntity implements Serializable {
 
     public UserEntity(String userOpenid) {
         this.userOpenid = userOpenid;
+        this.superUserId_a = 0;
+        this.superUserId_b = 0;
+        this.superUserId_c = 0;
+        this.superUserId_d = 0;
+        this.superUserId_e = 0;
     }
 
     public UserEntity(String userOpenid,UserEntity superUser) {
@@ -248,8 +254,7 @@ public class UserEntity implements Serializable {
      * @return
      */
     public int takeOutTime(){
-        Calendar calendar = Calendar.getInstance();
-        int todayInt = calendar.get(Calendar.HOUR_OF_DAY) + calendar.get(Calendar.MINUTE) + calendar.get(Calendar.SECOND);
+        int todayInt = DateFormatUtil.now_yyMMdd_intVal();
         if(this.calcuDay != todayInt)
         {
             this.calcuDay = todayInt;

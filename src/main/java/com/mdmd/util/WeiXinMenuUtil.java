@@ -27,10 +27,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.mdmd.constant.SystemConstant.DATEFORMAT__yyyyMMddHHmmss;
 import static com.mdmd.constant.WeiXinPublicContant.WEIXIN_APPID;
 import static com.mdmd.constant.WeiXinPublicContant.WEIXIN_APPSECRET;
-import static com.mdmd.util.CommonUtil.SIMPLEDATEFORMATE;
 
 public class WeiXinMenuUtil {
     //get
@@ -90,7 +88,7 @@ public class WeiXinMenuUtil {
                     ACCESS_TOKEN = new AccessToken();
                     ACCESS_TOKEN.setToken(jsonObject.getString("access_token"));
                     ACCESS_TOKEN.setExpiresIn(jsonObject.getInt("expires_in"));
-                    GET_ASSESS_TOKEN_TIME = SIMPLEDATEFORMATE.format(new Date());
+                    GET_ASSESS_TOKEN_TIME = DateFormatUtil.now_yyyyMMddHHmmss();
                 } catch (Exception e) {
                     ACCESS_TOKEN = null;
                     // 获取token失败
@@ -100,18 +98,18 @@ public class WeiXinMenuUtil {
         }
         else
         {
-            String now = SIMPLEDATEFORMATE.format(new Date());
+            String now = DateFormatUtil.now_yyyyMMddHHmmss();
             Date nowDate = null;
             long time = 0;
             try {
-                nowDate = SIMPLEDATEFORMATE.parse(now);
-                Date beforeDate = SIMPLEDATEFORMATE.parse(GET_ASSESS_TOKEN_TIME);
+                nowDate = DateFormatUtil.parse_yyyyMMddHHmmss(now);
+                Date beforeDate = DateFormatUtil.parse_yyyyMMddHHmmss(GET_ASSESS_TOKEN_TIME);
                 time = (nowDate.getTime() - beforeDate.getTime()) / 60000;
             } catch (ParseException e) {
                 ACCESS_TOKEN = new AccessToken();
                 ACCESS_TOKEN.setToken(jsonObject.getString("access_token"));
                 ACCESS_TOKEN.setExpiresIn(jsonObject.getInt("expires_in"));
-                GET_ASSESS_TOKEN_TIME = SIMPLEDATEFORMATE.format(new Date());
+                GET_ASSESS_TOKEN_TIME = DateFormatUtil.now_yyyyMMddHHmmss();
             }
             //消亡时间为2小时 这里每100分钟请求一次
             if(time > 100)
@@ -119,7 +117,7 @@ public class WeiXinMenuUtil {
                 ACCESS_TOKEN = new AccessToken();
                 ACCESS_TOKEN.setToken(jsonObject.getString("access_token"));
                 ACCESS_TOKEN.setExpiresIn(jsonObject.getInt("expires_in"));
-                GET_ASSESS_TOKEN_TIME = SIMPLEDATEFORMATE.format(new Date());
+                GET_ASSESS_TOKEN_TIME = DateFormatUtil.now_yyyyMMddHHmmss();
             }
         }
 

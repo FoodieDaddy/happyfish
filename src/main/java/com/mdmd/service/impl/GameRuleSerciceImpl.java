@@ -1,10 +1,11 @@
 package com.mdmd.service.impl;
 
+import com.mdmd.Manager.RedisCacheManager;
+import com.mdmd.controller.GameAction;
 import com.mdmd.custom.RedisCustom;
 import com.mdmd.custom.UserCustom;
 import com.mdmd.dao.CommonDao;
 import com.mdmd.dao.GameRuleDao;
-import com.mdmd.dao.UserDao;
 import com.mdmd.entity.*;
 import com.mdmd.entity.JO.GameRecordJO;
 import com.mdmd.entity.JO.GameResultJO;
@@ -15,16 +16,17 @@ import com.mdmd.enums.RedisChannelEnum;
 import com.mdmd.service.GameRuleService;
 import com.mdmd.service.SysPropService;
 import com.mdmd.util.CommonUtil;
+import com.mdmd.util.DateFormatUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static com.mdmd.constant.ActionConstant.MSG;
 import static com.mdmd.constant.GameConstant.*;
+import static com.mdmd.constant.RedisConstant.*;
 import static com.mdmd.util.WeiXinPayUtil.companyPayToUser;
 
 @Service
@@ -32,19 +34,19 @@ public class GameRuleSerciceImpl implements GameRuleService {
     @Autowired
     private GameRuleDao gameRuleDao;
     @Autowired
-    private UserDao userDao;
-    @Autowired
     private RedisCustom redisCustom;
     @Autowired
     private UserCustom userCustom;
-
+    @Autowired
+    private RedisCacheManager redisCacheManager;
     @Autowired
     private SysPropService sysPropService;
   
     @Autowired
     private CommonDao commonDao;
 
-    private Map<Integer, Map<Integer, FishProbabilityBean>>  fishRules = null;
+
+    private Map<String,FishProbabilityBean>  fishRules = null;
 
     private static final Logger LOGGER = LogManager.getLogger(GameRuleSerciceImpl.class);
 
@@ -53,7 +55,26 @@ public class GameRuleSerciceImpl implements GameRuleService {
         return null;
     }
 
-
+    /**
+     * 初始化捕鱼规则
+     */
+    public void initFishRules(){
+        List<FishRuleEntity> fishRuleEntities = commonDao.listAllEntity(FishRuleEntity.class);
+        if(fishRuleEntities.size() == 0){
+            LOGGER.error("捕鱼规则初始化失败(无规则)");
+            System.exit(0);
+        }
+        Map<String,Object> fishRuleMap = new HashMap<>();
+        fishRules = new HashMap<>();
+        for (int i = 0; i < fishRuleEntities.size(); i++) {
+            FishRuleEntity fishRuleEntity = fishRuleEntities.get(i);
+            String key= fishRuleEntity.getPrice() + REDIS_KEY_fishRules_itemkey + fishRuleEntity.getTargetValue();
+            fishRuleMap.put(key, fishRuleEntity);
+            fishRules.put(key,new FishProbabilityBean(fishRuleEntity));
+        }
+        setFishRuleEntityMap(fishRuleMap);
+        LOGGER.info("捕鱼规则初始化完成");
+    }
 
     public FishRuleEntity getFishRulesWithPriceAndTargetValue(int price, int targetValue) {
         FishRuleEntity fishRuleEntity = gameRuleDao.getFishRuleWithPriceAndTargetValue(price, targetValue);
@@ -70,16 +91,14 @@ public class GameRuleSerciceImpl implements GameRuleService {
     }
 
     public GameResultJO getFishResult(int price, int targetValue, int userId) throws RuntimeException{
-        if(fishRules == null)
-            this.init();
-        //如果这个倍率不在库中
-        if(!fishRules.containsKey(price))
+
+        //如果这个倍率或者目标红包金额不在库中
+        if(!hasPriceTargetValue(price, targetValue))
         {
-            LOGGER.error("用户"+userId+"不存在的倍率"+price+"!!!");
-            String msg = "倍率"+price+"不存在";
+            LOGGER.error("用户"+userId+"不存在的倍率或者红包金额："+price+"，"+targetValue+"!");
+            String msg = "不存在的倍率或者红包金额："+price+"，"+targetValue+"!";
             return new GameResultJO(msg);
         }
-
         //查看这个用户有没有金币玩游戏
         UserEntity userEntity = (UserEntity) commonDao.getEntity(UserEntity.class, userId);
         double balance = userEntity.getGold();
@@ -89,30 +108,22 @@ public class GameRuleSerciceImpl implements GameRuleService {
             String msg = "您的金币不足哦~";
             return new GameResultJO(msg);
         }
-        Map<Integer, FishProbabilityBean> integerFishProbabilityBeanMap = fishRules.get(price);
-        //如果这个红包数值不在库中
-        if(!integerFishProbabilityBeanMap.containsKey(targetValue))
-        {
-            LOGGER.error("用户"+userId+"不存在的红包金额"+targetValue+"!!!");
-            String msg = "红包金额"+targetValue+"不存在";
-            return new GameResultJO(msg);
-        }
-        FishProbabilityBean fishProbabilityBean = integerFishProbabilityBeanMap.get(targetValue);
+
+        FishProbabilityBean fishProbabilityBean = getFishProbabilityBean(price, targetValue);
 
         GameResultBean gameResultBean = null;
         //将对象锁住
         synchronized (fishProbabilityBean){
             int index = fishProbabilityBean.getIndex();
-            // 0就是输，
-            gameResultBean = fishProbabilityBean.getResult();
 
             //>=为了防止意外情况
-            if(index >= 9)
+            if(index >= fishProbabilityBean.getVolume())
             {
                 //更新值
-                fishProbabilityBean.updateValue(this.getFishRulesWithPriceAndTargetValue(price, targetValue));
-
+                fishProbabilityBean.updateValue(getFishRuleEntityBean(price,targetValue));
             }
+            // 0就是输，
+            gameResultBean = fishProbabilityBean.getResult();
         }
         double gameCost = gameResultBean.getGameCost();
         boolean gameResult = gameResultBean.getGameResult();
@@ -140,10 +151,9 @@ public class GameRuleSerciceImpl implements GameRuleService {
 
         //佣金结算 记录佣金明细 每个人佣金总表 和 用户表中的余额
         //this.calcuCommission(userId,price);
-        //将上面这一步交给了redis
-        redisCustom.publish(RedisChannelEnum.channel_superComm,new SuperCommRO(userId,price));
         commonDao.updateEntity(userEntity);
-
+        //将上面这一步交给了redis todo 缓存服务器停止运作时应使用如上方法（后期应整体可脱离redis，万全解耦）
+        redisCustom.publish(RedisChannelEnum.channel_superComm,new SuperCommRO(userId,price));
         return new GameResultJO(gameResultBean.getGameResult(),gameResultBean.getGameCost(),currentGold,0);
 
     }
@@ -182,65 +192,74 @@ public class GameRuleSerciceImpl implements GameRuleService {
                 if(resultNumber >= 5)
                 {
                     get = num * 20;
-                    gameType = TREASURE_TYPE_BIGSMALL_1;
-                    gameContent = TREASURE_CONTENT_BIG;
+
                 }
+                gameType = TREASURE_TYPE_BIGSMALL_1;
+                gameContent = TREASURE_CONTENT_BIG;
                 break;
             case 11 ://小
                 if(resultNumber < 5)
                 {
                     get = num * 20;
-                    gameType = TREASURE_TYPE_BIGSMALL_1;
-                    gameContent = TREASURE_CONTENT_SMALL;
                 }
+                gameType = TREASURE_TYPE_BIGSMALL_1;
+                gameContent = TREASURE_CONTENT_SMALL;
                 break;
             case 12 ://单
                 if(resultNumber % 2 == 1)
                 {
                     get = num * 20;
-                    gameType = TREASURE_TYPE_BIGSMALL_1;
-                    gameContent = TREASURE_CONTENT_SINGLE;
                 }
+                gameType = TREASURE_TYPE_BIGSMALL_1;
+                gameContent = TREASURE_CONTENT_SINGLE;
                 break;
             case 13 ://双
                 if(resultNumber % 2 == 0)
                 {
                     get = num * 20;
-                    gameType = TREASURE_TYPE_BIGSMALL_1;
-                    gameContent = TREASURE_CONTENT_DOUBLE;
                 }
+                gameType = TREASURE_TYPE_BIGSMALL_1;
+                gameContent = TREASURE_CONTENT_DOUBLE;
                 break;
             case 14 : //大单
-                if(resultNumber >= 5 && resultNumber % 2 == 1)
+                if(resultNumber == 7 || resultNumber == 9)
                 {
                     get = num * 45;
-                    gameType = TREASURE_TYPE_BIGSMALL_2;
-                    gameContent = TREASURE_CONTENT_BIG_SINGLE;
                 }
+                gameType = TREASURE_TYPE_BIGSMALL_2;
+                gameContent = TREASURE_CONTENT_BIG_SINGLE;
                 break;
             case 15 : //小单
-                if(resultNumber < 5 && resultNumber % 2 == 1)
+                if(resultNumber == 1 || resultNumber == 3)
                 {
                     get = num * 45;
-                    gameType = TREASURE_TYPE_BIGSMALL_2;
-                    gameContent = TREASURE_CONTENT_SMALL_SINGLE;
                 }
+                gameType = TREASURE_TYPE_BIGSMALL_2;
+                gameContent = TREASURE_CONTENT_SMALL_SINGLE;
                 break;
             case 16 : //大双
-                if(resultNumber >= 5 && resultNumber % 2 == 0)
+                if(resultNumber == 6 || resultNumber == 8)
                 {
                     get = num * 45;
-                    gameType = TREASURE_TYPE_BIGSMALL_2;
-                    gameContent = TREASURE_CONTENT_BIG_DOUBLE;
                 }
+                gameType = TREASURE_TYPE_BIGSMALL_2;
+                gameContent = TREASURE_CONTENT_BIG_DOUBLE;
                 break;
             case 17 : //小双
-                if(resultNumber < 5 && resultNumber % 2 == 0)
+                if(resultNumber == 2 || resultNumber == 4)
                 {
                     get = num * 45;
-                    gameType = TREASURE_TYPE_BIGSMALL_2;
-                    gameContent = TREASURE_CONTENT_SMALL_DOUBLE;
                 }
+                gameType = TREASURE_TYPE_BIGSMALL_2;
+                gameContent = TREASURE_CONTENT_SMALL_DOUBLE;
+                break;
+            case 18 : //合
+                if(resultNumber == 0 || resultNumber == 5)
+                {
+                    get = num * 45;
+                }
+                gameType = TREASURE_TYPE_BIGSMALL_2;
+                gameContent = TREASURE_CONTENT_OTHER;
                 break;
             default://一赔五 0-9
                //todo 没有这个
@@ -270,48 +289,13 @@ public class GameRuleSerciceImpl implements GameRuleService {
 
         //佣金结算 记录佣金明细 每个人佣金总表 和 用户表中的余额
         //this.calcuCommission(userId,num * 10);
-        //将上面这一步交给了redis
-        redisCustom.publish(RedisChannelEnum.channel_superComm,new SuperCommRO(userId,num*10));
         commonDao.updateEntity(userEntity);
+
+        redisCustom.publish(RedisChannelEnum.channel_superComm,new SuperCommRO(userId,num*10));
         return new GameResultJO(win,allCost, userEntity.getGold(),userEntity.getCommission(),orderNumber);
     }
 
 
-    /**
-     * 初始化捕鱼规则
-     */
-    private void init(){
-        List<FishRuleEntity> fishRuleEntities = commonDao.listAllEntity(FishRuleEntity.class);
-        if(fishRuleEntities.size() == 0){
-            fishRules = null;
-            return;
-        }
-        fishRules = new HashMap<>();
-        for (int i = 0; i < fishRuleEntities.size(); i++) {
-            FishRuleEntity fishRuleEntity = fishRuleEntities.get(i);
-            int price = fishRuleEntity.getPrice();
-            int targetValue = fishRuleEntity.getTargetValue();
-            int probability = fishRuleEntity.getProbability();
-            int volume = fishRuleEntity.getVolume();
-            double minReturn = fishRuleEntity.getMinReturn();
-            double maxReturn = fishRuleEntity.getMaxReturn();
-            //如果集合中有这个价格，存入
-            if(fishRules.containsKey(price))
-            {
-                Map<Integer, FishProbabilityBean> probabilityBeanMap = fishRules.get(price);
-                //创建一个新的捕鱼概率计算类
-                FishProbabilityBean fishProbabilityBean = new FishProbabilityBean(probability, volume,price, targetValue,minReturn,maxReturn);
-                probabilityBeanMap.put(targetValue,fishProbabilityBean);
-            }
-            else
-            {
-                HashMap<Integer, FishProbabilityBean> beanHashMap = new HashMap<>();
-                FishProbabilityBean fishProbabilityBean = new FishProbabilityBean(probability, volume,price, targetValue,minReturn,maxReturn);
-                beanHashMap.put(targetValue,fishProbabilityBean);
-                fishRules.put(price,beanHashMap);
-            }
-        }
-    }
 
 
     public void calcuCommission(int userId, double price){
@@ -347,9 +331,14 @@ public class GameRuleSerciceImpl implements GameRuleService {
                 userCommissionEntity.setCommissionType(GAME_FISH_RECORD);
                 userCommissionEntity.setNodeUserId(userId);
                 commonDao.addEntity(userCommissionEntity);
+
+                //插入缓存
+                redisCustom.addRecordListForRedis(userCommissionEntity,superUser.getUserid());
             }
         }
     }
+
+
 
     /**
      * 计算用户佣金对象
@@ -359,8 +348,7 @@ public class GameRuleSerciceImpl implements GameRuleService {
      */
     private void calcuCommissionForCommissionEntity(int userId,double addCommiss,CommissionEntity commissionEntity){
         int calcDate = commissionEntity.getCalcuDate();
-        Calendar calendar = Calendar.getInstance();
-        int today =calendar.get(Calendar.HOUR_OF_DAY) + calendar.get(Calendar.MINUTE) + calendar.get(Calendar.SECOND);
+        int today = DateFormatUtil.now_yyMMdd_intVal();
 
         //如果不是今天算的 就将今天以前,上次计算之后的重新算一次并记录
         if(today != calcDate)
@@ -386,8 +374,7 @@ public class GameRuleSerciceImpl implements GameRuleService {
      */
     private void calcuGoldForGoldEntity(int userId,double price,double addGold, GoldEntity goldEntity){
         int calcDate = goldEntity.getCalcDate();
-        Calendar calendar = Calendar.getInstance();
-        int today = calendar.get(Calendar.HOUR_OF_DAY) + calendar.get(Calendar.MINUTE) + calendar.get(Calendar.SECOND);
+        int today = DateFormatUtil.now_yyMMdd_intVal();
         double todayWater = goldEntity.getTodayWater();
         double todayGold = goldEntity.getTodayGold();
         //如果不是今天算的 就将今天以前,上次计算之后的重新算一次并记录
@@ -431,4 +418,29 @@ public class GameRuleSerciceImpl implements GameRuleService {
         }
 
     }
+
+
+    private void setFishRuleEntityMap(Map<String,Object> fishRuleMap){
+        if(!redisCacheManager.hmset(REDIS_KEY_fishRules, fishRuleMap))
+        {
+            LOGGER.error("捕鱼规则初始化失败(redis插入错误)");
+            System.exit(0);
+        }
+    }
+    private FishRuleEntity getFishRuleEntityBean(int price,int targetValue){
+        String key = price + REDIS_KEY_fishRules_itemkey + targetValue;
+        Object hget = redisCacheManager.hget(REDIS_KEY_fishRules, key);
+        if(hget == null)
+            return null;
+        return (FishRuleEntity) hget;
+    }
+
+    private FishProbabilityBean getFishProbabilityBean(int price, int targetValue){
+        return fishRules.get(price + REDIS_KEY_fishRules_itemkey + targetValue);
+    }
+
+    private boolean hasPriceTargetValue(int price, int targetValue){
+        return fishRules.containsKey(price+REDIS_KEY_fishRules_itemkey+targetValue);
+    }
+
 }

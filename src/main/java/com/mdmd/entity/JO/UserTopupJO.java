@@ -2,13 +2,14 @@ package com.mdmd.entity.JO;
 
 import com.mdmd.entity.UserEntity;
 import com.mdmd.entity.UserTopupEntity;
+import com.mdmd.util.DateFormatUtil;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
 
 public class UserTopupJO implements Serializable {
     private int id;
-    private Timestamp time;
+    private String time;
     private String orderNumber;
     private String topupType;
     private String topupResult;
@@ -20,7 +21,14 @@ public class UserTopupJO implements Serializable {
 
     public UserTopupJO(UserTopupEntity userTopupEntity) {
         this.id = userTopupEntity.getId();
-        this.time = userTopupEntity.getTime();
+        if(userTopupEntity.getTime() != null)
+        {
+            this.time = userTopupEntity.getTime().toString().split("\\.")[0];
+        }
+        else
+        {
+            this.time = DateFormatUtil.now_yyyyMMddHHmmss();
+        }
         this.orderNumber = userTopupEntity.getOrderNumber();
         this.topupType = userTopupEntity.getTopupType();
         this.topupResult = userTopupEntity.getTopupResult();
@@ -36,11 +44,11 @@ public class UserTopupJO implements Serializable {
         this.id = id;
     }
 
-    public Timestamp getTime() {
+    public String getTime() {
         return time;
     }
 
-    public void setTime(Timestamp time) {
+    public void setTime(String time) {
         this.time = time;
     }
 

@@ -39,7 +39,7 @@ public class WeixinConfigUtils {
         return sb.toString();
     }
     public static String createWXOrderNo(String desc){
-        return new SimpleDateFormat("yyyyMMddHHmmss").format(new Date())+ desc + getRandomString(6);
+        return DateFormatUtil.now_orderTime() + desc + getRandomString(6);
     }
 
      /** 构造企业付款xml参数

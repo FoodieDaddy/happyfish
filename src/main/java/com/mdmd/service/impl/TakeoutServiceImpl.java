@@ -1,5 +1,6 @@
 package com.mdmd.service.impl;
 
+import com.mdmd.custom.RedisCustom;
 import com.mdmd.dao.CommonDao;
 import com.mdmd.dao.TakeoutDao;
 import com.mdmd.dao.UserDao;
@@ -31,6 +32,8 @@ public class TakeoutServiceImpl implements TakeoutService {
     private TakeoutDao takeoutDao;
     @Autowired
     private CommonDao commonDao;
+    @Autowired
+    private RedisCustom  redisCustom;
 
 
     public String takeoutForUser(int userId, int num, int type) {
@@ -115,6 +118,8 @@ public class TakeoutServiceImpl implements TakeoutService {
                     return "提现失败";
                 }
                 commonDao.addEntity(userTakeoutEntity);
+                //新增消息到redis中
+                redisCustom.addRecordListForRedis(userTakeoutEntity,userId);
                 //修改提现总额
                 goldEntity.setTakeoutGold(goldEntity.getTakeoutGold() + num);
                 user.setGold(formatDouble_two(gold - cost));
@@ -174,6 +179,8 @@ public class TakeoutServiceImpl implements TakeoutService {
                     return "提现失败";
                 }
                 commonDao.addEntity(userTakeoutEntity);
+                //新增记录到redis中
+                redisCustom.addRecordListForRedis(userTakeoutEntity,userId);
                 //修改提现总额
                 commissionEntity.setTakeoutCommission( commissionEntity.getTakeoutCommission() + num);
                 user.setCommission(formatDouble_two(commission- cost));

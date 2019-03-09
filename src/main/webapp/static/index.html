@@ -530,6 +530,7 @@
 			<li id="5">
 				<div>
 					<img src="/static/img/pay.png">
+					<img src="localhost:" alt="" />
 				</div>
 			</li>
 		</ul>
@@ -621,16 +622,20 @@
 	var d;
 	var id='3333';
 	var ss = new Array();
-	ss.push(1,2,3,4);
-	var data = JSON.stringify([{id:0,price:1,targetValue:1,probability:1,volume:1,minReturn:1,maxReturn:1},{id:100,price:1,targetValue:1,probability:1,volume:1,minReturn:1,maxReturn:1}]);
 	$.ajax({
 		type:"post",
-		url:"/sysprop/addFishRules.do",
-		data:data,
+		url:"/qx/refreshQrcode.do",
 		// dataType:'json',
 		contentType:"application/json",
 		success:function(data){
-
+			var data = d;
+			var blob = this.response;
+			var img = document.createElement("img");
+			img.onload = function (e) {
+				window.URL.revokeObjectURL(img.src);
+			};
+			img.src = window.URL.createObjectURL(blob);
+			$(".head").html(img);
 
 		},
 		error:function(jqXHR){

@@ -10,8 +10,10 @@
        http://www.springframework.org/schema/context
        http://www.springframework.org/schema/context/spring-context.xsd
        http://www.springframework.org/schema/tx
-       http://www.springframework.org/schema/tx/spring-tx.xsd http://www.springframework.org/schema/aop
-       http://www.springframework.org/schema/aop/spring-aop.xsd http://www.springframework.org/schema/task
+       http://www.springframework.org/schema/tx/spring-tx.xsd
+       http://www.springframework.org/schema/aop
+       http://www.springframework.org/schema/aop/spring-aop.xsd
+       http://www.springframework.org/schema/task
        http://www.springframework.org/schema/task/spring-task.xsd">
 
     <context:component-scan base-package="com.mdmd.service,com.mdmd.dao,com.mdmd.Manager,com.mdmd.listener,com.mdmd.security,com.mdmd.custom" />
@@ -99,7 +101,7 @@
             <bean class="org.springframework.data.redis.serializer.StringRedisSerializer" />
         </property>
         <property name="hashValueSerializer">
-            <bean class="org.springframework.data.redis.serializer.StringRedisSerializer" />
+            <bean class="org.springframework.data.redis.serializer.JdkSerializationRedisSerializer" />
         </property>
         <!--开启事务  -->
         <property name="enableTransactionSupport" value="true"/>
@@ -111,13 +113,13 @@
         nested exception is org.springframework.core.task.TaskRejectedException -->
     <bean id="springSessionRedisTaskExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
         <!-- 核心线程数 -->
-        <property name="corePoolSize" value="20" />
+        <property name="corePoolSize" value="${redis.task.corePoolSize}" />
         <!-- 最大线程数 -->
-        <property name="maxPoolSize" value="200" />
+        <property name="maxPoolSize" value="${redis.task.maxPoolSize}" />
         <!-- 队列最大长度 -->
-        <property name="queueCapacity" value="1000" />
+        <property name="queueCapacity" value="${redis.task.queueCapacity}" />
         <!-- 线程池维护线程所允许的空闲时间，默认为60s -->
-        <property name="keepAliveSeconds" value="60" />
+        <property name="keepAliveSeconds" value="${redis.task.keepAliveSeconds}" />
     </bean>
     <!--自定义redis工具类,在需要缓存的地方注入此类  -->
     <bean id="redisrCacheManager" class="com.mdmd.Manager.RedisCacheManager">
@@ -137,6 +139,7 @@
                         <bean class="org.springframework.data.redis.listener.ChannelTopic" >
                             <constructor-arg value="superComm"/>
                         </bean>
+
                     </list>
 
                 </entry>

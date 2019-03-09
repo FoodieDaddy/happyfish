@@ -11,6 +11,8 @@ public class WeiXinPublicContant {
     public static final String ECHOSTR = "echostr";
 
 
+    //微信认证回调域名
+    public static final String WEIXIN_RETURN_URL = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=";
     public static final String WEIXIN_APPID = "wxf16e677138970e0a";
     public static final String WEIXIN_APPSECRET= "3fe08f5a5244a2e7a30b8c49bb566445";
     public static final String KEY = "a30b8c49bb566445a30b8c49bb566445";//商户号api密码
@@ -18,7 +20,7 @@ public class WeiXinPublicContant {
     public static final String WEIXIN_COMPAPY_PAY_URL = "https://api.mch.weixin.qq.com/mmpaymkttransfers/promotion/transfers";//微信支付url
     public static final String WEIXIN_SEARCH_PAY_URL = "https://api.mch.weixin.qq.com/mmpaymkttransfers/gettransferinfo";//微信企业支付查询结果url
     public static final String WEIXIN_PIC_IMG = "/usr/local/wximg";
-//    public static final String CERT_PATH = "/usr/local/happyfish/apiclient_cert.p12";//支付证书位置
-    public static final String CERT_PATH = "d:/apiclient_cert.p12";//支付证书位置
+    public static final String CERT_PATH = "/usr/local/happyfish/apiclient_cert.p12";//支付证书位置
+//    public static final String CERT_PATH = "d:/apiclient_cert.p12";//支付证书位置
     public static final String WEIXIN_SERVER_IP = "47.101.201.185";
 }

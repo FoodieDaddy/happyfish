@@ -17,6 +17,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -139,27 +140,20 @@ public class DataAction {
     }
 
     /**
-     * 获取二维码tickert
-     *
-     * @param request
-     * @param session
-     * @param response
+     * 获取二维码
      * @return
      */
-    @RequestMapping(value = "/refreshQrcode.do")
-    @ResponseBody
-    public Map<String, Object> catchFish(HttpServletRequest request, HttpSession session, HttpServletResponse response) {
+    @RequestMapping(value = "/qrcode.do")
+    public void catchFish(HttpServletRequest request, HttpSession session, HttpServletResponse response) {
         Map<String, Object> result = new HashMap<>();
         try {
             int userId = (int) session.getAttribute(SESSION_USERID);
-            QrcodeUtil.createQrcode(QRCODE_PREFIX + userId, userId + "");
-            result.put(SUCCESS, Boolean.TRUE);
+            QrcodeUtil.mergeImageAndDrawQrcode_outputStream(QRCODE_PREFIX + userId,userId + "" ,  response.getOutputStream());
         } catch (Exception e) {
             result.put(SUCCESS, false);
             result.put(MSG, e.getMessage());
             e.printStackTrace();
         }
-        return result;
     }
 
 //    /**
@@ -285,7 +279,7 @@ public class DataAction {
     public Map<String, Object> listRanking(HttpServletRequest request, HttpServletResponse response) {
         Map<String, Object> result = new HashMap<>();
         try {
-            List<RankingListJO> rankingListJOS = dataService.calcYesterdayCommissionRankingList();
+            List<RankingListJO> rankingListJOS = dataService.getYesterdayCommissionRankingList();
             result.put(SUCCESS, true);
             result.put("list",rankingListJOS);
         } catch (Exception e) {

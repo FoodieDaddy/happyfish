@@ -27,7 +27,13 @@ public class TakeoutDaoImpl implements TakeoutDao {
         Query query = session.createQuery(hql);
         query.setParameter("userId", userId);
         query.setParameter("today", today);
-        Number o = (Number) query.list().get(0);
+        List list = query.list();
+        if(list == null)
+            return 0;
+        Object n = list.get(0);
+        if(n == null)
+            return 0;
+        Number o = (Number) n;
         return o.intValue();
     }
 
@@ -43,7 +49,13 @@ public class TakeoutDaoImpl implements TakeoutDao {
         query.setParameter("userId", userId);
         query.setParameter("today", today);
         query.setParameter("type", type);
-        Number o = (Number) query.list().get(0);
+        List list = query.list();
+        if(list == null)
+            return 0;
+        Object n = list.get(0);
+        if(n == null)
+            return 0;
+        Number o = (Number) n;
         return o.intValue();
     }
 

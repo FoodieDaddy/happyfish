@@ -5,8 +5,7 @@ package com.mdmd.enums;
  */
 public enum RedisChannelEnum {
     channel_test("test"),
-    channel_superComm("superComm");
-
+    channel_superComm("superComm");//用于异步计算佣金
     private String channel;
 
     RedisChannelEnum(String channel) {

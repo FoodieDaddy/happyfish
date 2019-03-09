@@ -1,10 +1,13 @@
 package com.mdmd.service.impl;
 
 import com.google.zxing.WriterException;
+import com.mdmd.custom.RedisCustom;
 import com.mdmd.dao.CommonDao;
 import com.mdmd.dao.UserDao;
 import com.mdmd.entity.*;
 import com.mdmd.entity.JO.UserChildsDataJO;
+import com.mdmd.entity.RO.SuperCommRO;
+import com.mdmd.enums.RedisChannelEnum;
 import com.mdmd.service.UserService;
 import com.mdmd.util.CommonUtil;
 import com.mdmd.util.QrcodeUtil;
@@ -20,7 +23,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import static com.mdmd.constant.SystemConstant.DATEFORMAT__yyyyMMddHHmmss;
 import static com.mdmd.constant.SystemConstant.QRCODE_PREFIX;
 
 @Service
@@ -28,7 +30,8 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserDao userDao;
-
+    @Autowired
+    private RedisCustom redisCustom;
     @Autowired
     private CommonDao commonDao;
 
@@ -79,9 +82,8 @@ public class UserServiceImpl implements UserService {
         commonDao.addEntity(userEntity);
         //创建用户明细信息
         userDao.addUserDetail(userEntity);
-        int userId = userEntity.getUserid();
-        //创建二维码
-        QrcodeUtil.mergeImageAndDrawQrcode(QRCODE_PREFIX + userId, userId+"");
+
+//        QrcodeUtil.mergeImageAndDrawQrcode(QRCODE_PREFIX + userId, userId+"");
         return userEntity;
     }
 
@@ -107,7 +109,6 @@ public class UserServiceImpl implements UserService {
         //创建用户明细信息
         userDao.addUserDetail(userEntity);
         int userId = userEntity.getUserid();
-        //创建二维码
         QrcodeUtil.mergeImageAndDrawQrcode(QRCODE_PREFIX + userId, userId+"");
         return userEntity;
     }
@@ -125,6 +126,8 @@ public class UserServiceImpl implements UserService {
             userTopupEntity.setUserEntity(userEntity);
             userTopupEntity.setOrderNumber("none");
             commonDao.addEntity(userTopupEntity);
+            //加入缓存
+            redisCustom.addRecordListForRedis(userTopupEntity,userId);
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException("充值时发生意外user"+userId+",数量"+quantity+"。");

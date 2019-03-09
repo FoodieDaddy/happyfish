@@ -1,9 +1,10 @@
 package com.mdmd.entity.bean;
 
+import com.mdmd.util.DateFormatUtil;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import static com.mdmd.constant.SystemConstant.DATEFORMAT__yyyyMMddHHmmss;
 
 public class GameResultBean {
 
@@ -14,7 +15,7 @@ public class GameResultBean {
     public GameResultBean(boolean gameResult, double gameCost) {
         this.gameResult = gameResult;
         this.gameCost = gameCost;
-        this.gameTime = new SimpleDateFormat(DATEFORMAT__yyyyMMddHHmmss).format(new Date());
+        this.gameTime = DateFormatUtil.now_yyyyMMddHHmmss();
     }
 
     public boolean getGameResult() {

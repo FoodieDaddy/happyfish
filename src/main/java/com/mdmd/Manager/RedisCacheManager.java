@@ -347,12 +347,15 @@ public class RedisCacheManager {
      *            键 不能为null
      * @param item
      *            项 可以使多个 不能为null
+     * @return
      */
-    public void hdel(String key, Object... item) {
+    public boolean hdel(String key, Object... item) {
         try {
             redisTemplate.opsForHash().delete(key, item);
+            return true;
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
+            return false;
         }
     }
 

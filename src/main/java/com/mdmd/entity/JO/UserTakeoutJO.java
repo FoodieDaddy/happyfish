@@ -2,13 +2,14 @@ package com.mdmd.entity.JO;
 
 import com.mdmd.entity.UserEntity;
 import com.mdmd.entity.UserTakeoutEntity;
+import com.mdmd.util.DateFormatUtil;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
 
 public class UserTakeoutJO implements Serializable {
     private int id;
-    private Timestamp time;
+    private String time;
     private int takeoutType;
     private int takeoutResult;
     private int takeoutQuantity;
@@ -19,7 +20,14 @@ public class UserTakeoutJO implements Serializable {
 
     public UserTakeoutJO(UserTakeoutEntity userTakeoutEntity) {
         this.id = userTakeoutEntity.getId();
-        this.time = userTakeoutEntity.getTime();
+        if(userTakeoutEntity.getTime() != null)
+        {
+            this.time = userTakeoutEntity.getTime().toString().split("\\.")[0];
+        }
+        else
+        {
+            this.time = DateFormatUtil.now_yyyyMMddHHmmss();
+        }
         this.takeoutType = userTakeoutEntity.getTakeoutType();
         this.takeoutResult = userTakeoutEntity.getTakeoutResult();
         this.takeoutQuantity = userTakeoutEntity.getTakeoutQuantity();
@@ -34,11 +42,11 @@ public class UserTakeoutJO implements Serializable {
         this.id = id;
     }
 
-    public Timestamp getTime() {
+    public String getTime() {
         return time;
     }
 
-    public void setTime(Timestamp time) {
+    public void setTime(String time) {
         this.time = time;
     }
 
