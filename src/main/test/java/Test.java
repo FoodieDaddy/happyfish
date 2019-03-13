@@ -9,6 +9,7 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.Timestamp;
@@ -21,8 +22,6 @@ import java.util.Date;
 
 public class Test {
     public static void main(String[] args) {
-
-
     }
 
 

@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+
+    <class name="com.mdmd.entity.AdminUserEntity" table="admin_user" schema="happyfish">
+        <id name="adminid">
+            <column name="adminid" sql-type="int(11)"/>
+            <generator class="identity"/>
+        </id>
+        <property name="openid">
+            <column name="openid" sql-type="varchar(32)" length="32"/>
+        </property>
+        <property name="aliasName">
+            <column name="aliasName" sql-type="varchar(50)" length="50"/>
+        </property>
+        <property name="setMoney">
+            <column name="setMoney" sql-type="int(11)"/>
+        </property>
+        <property name="setSys">
+            <column name="setSys" sql-type="int(11)"/>
+        </property>
+    </class>
+</hibernate-mapping>

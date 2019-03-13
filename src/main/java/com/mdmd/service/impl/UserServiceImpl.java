@@ -120,9 +120,9 @@ public class UserServiceImpl implements UserService {
             userEntity.setGold(CommonUtil.formatDouble_two(userEntity.getGold() + quantity));
             commonDao.updateEntity(userEntity);
             UserTopupEntity userTopupEntity = new UserTopupEntity();
-            userTopupEntity.setTopupType("人工");
+            userTopupEntity.setTopupType("人工充值");
             userTopupEntity.setTopupQuantity(quantity);
-            userTopupEntity.setTopupResult("成功");
+            userTopupEntity.setTopupResult(2);
             userTopupEntity.setUserEntity(userEntity);
             userTopupEntity.setOrderNumber("none");
             commonDao.addEntity(userTopupEntity);

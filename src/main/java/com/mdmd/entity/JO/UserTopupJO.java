@@ -31,7 +31,15 @@ public class UserTopupJO implements Serializable {
         }
         this.orderNumber = userTopupEntity.getOrderNumber();
         this.topupType = userTopupEntity.getTopupType();
-        this.topupResult = userTopupEntity.getTopupResult();
+        int topupResult = userTopupEntity.getTopupResult();
+        if(topupResult == 0)
+        {
+            this.topupResult = "充值未到账";
+        }
+        else if(topupResult == 1)
+        {
+            this.topupResult = "充值成功";
+        }
         this.topupQuantity = userTopupEntity.getTopupQuantity();
         this.userId = userTopupEntity.getUserEntity().getUserid();
     }

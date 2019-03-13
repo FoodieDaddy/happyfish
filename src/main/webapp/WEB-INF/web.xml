@@ -5,7 +5,6 @@
                       http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
          version="3.1">
 
-
     <filter>
         <filter-name>characterEncodingFilter</filter-name>
         <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
@@ -59,13 +58,12 @@
         </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
-    <servlet-mapping>
-        <servlet-name>spring-mvc</servlet-name>
-        <url-pattern>*.txt</url-pattern>
-    </servlet-mapping>
+
     <servlet-mapping>
         <servlet-name>spring-mvc</servlet-name>
         <url-pattern>*.do</url-pattern>
+        <servlet-name>spring-mvc</servlet-name>
+        <url-pattern>*.php</url-pattern>
     </servlet-mapping>
 
 

@@ -1,6 +1,7 @@
 package com.mdmd.service.impl;
 
 import com.mdmd.Manager.RedisCacheManager;
+import com.mdmd.Manager.SysPropManager;
 import com.mdmd.controller.GameAction;
 import com.mdmd.custom.RedisCustom;
 import com.mdmd.custom.UserCustom;
@@ -135,7 +136,7 @@ public class GameRuleSerciceImpl implements GameRuleService {
         userEntity.setGold(currentGold);
 
         //更新金币类记录
-        this.calcuGoldForGoldEntity(userId,price,gameCost,goldEntity);
+        userCustom.calcuGoldForGoldEntity(price,gameCost,goldEntity);
 
         //记录游戏记录
         GameRecordEntity gameRecordEntity = new GameRecordEntity();
@@ -271,7 +272,7 @@ public class GameRuleSerciceImpl implements GameRuleService {
         //金币余额
         userEntity.setGold(goldQuantity);
         //更新金币类记录
-        this.calcuGoldForGoldEntity(userId,allCost,get, userEntity.singleGoldEntity());
+        userCustom.calcuGoldForGoldEntity(allCost,get, userEntity.singleGoldEntity());
         //记录游戏记录
 
         GameRecordEntity gameRecordEntity = new GameRecordEntity();
@@ -311,7 +312,7 @@ public class GameRuleSerciceImpl implements GameRuleService {
                 //获取当前级别佣金千分比
                 int awardNum = NODE_VALUES[i];
                 //是否是双倍佣金时间
-                if(sysPropService.isDoubleCommissionTime())
+                if(SysPropManager.isDoubleCommissionTime())
                 {
                     awardNum += awardNum;
                 }
@@ -365,59 +366,7 @@ public class GameRuleSerciceImpl implements GameRuleService {
     }
 
 
-    /**
-     * 计算用户金币对象
-     * @param userId
-     * @param price
-     * @param addGold
-     * @param goldEntity
-     */
-    private void calcuGoldForGoldEntity(int userId,double price,double addGold, GoldEntity goldEntity){
-        int calcDate = goldEntity.getCalcDate();
-        int today = DateFormatUtil.now_yyMMdd_intVal();
-        double todayWater = goldEntity.getTodayWater();
-        double todayGold = goldEntity.getTodayGold();
-        //如果不是今天算的 就将今天以前,上次计算之后的重新算一次并记录
-//        if(today != calcDate)
-//        {
-//            String beforeDay = "20" + calcDate/10000 + "-" + calcDate%10000/100 + "-" + calcDate%10000%100 + " 00:00:00";
-//            String endDay = "20" + today/10000 + "-" + today%10000/100 + "-" + today%10000%100 + " 00:00:00";
-//            //查找这段时间内的游戏记录 获取这段时间内的总花费（总利润 - 总本金）
-//            double costs = userDao.getGameRecord_costs_betweenTime(userId, beforeDay, endDay);
-//
-//            //查找这段时间内的提现记录
-//            double takeouts = userDao.getTakeout_sum_betweenTime(userId, beforeDay, endDay);
-//
-//            //查找这段时间内的充值记录
-//            double topups = userDao.getTopup_sum_betweenTime(userId, beforeDay, endDay);
-//
-//            //今天以前赢得 = 上次计算总赢 + 近日提现数量 + 总花费（赢的） - 充值数量
-//            double bala = + takeouts + costs - topups;
-//            //如果重新核对的近段时间记录跟存储的不同，用重新计算的
-//
-//            goldEntity.setPreGold(bala + goldEntity.getPreGold());
-//            goldEntity.setTodayGold(addGold - price);
-//            goldEntity.setTodayWater(price);
-//            goldEntity.setCalcDate(today);
-//
-//        }
-        if(today != calcDate)
-        {
-            goldEntity.setPreGold(CommonUtil.formatDouble_two(goldEntity.getPreGold() + goldEntity.getTodayGold()));
-            goldEntity.setTodayGold(CommonUtil.formatDouble_three(addGold - price));
-            goldEntity.setTodayWater(price);
-            goldEntity.setCalcDate(today);
 
-        }
-        else
-        {
-            //记录今日赢得金币，正为今天赢得（需要在充值时减掉充值金额）
-            goldEntity.setTodayGold(todayGold + addGold - price );
-            //记录今日流水
-            goldEntity.setTodayWater(todayWater + price);
-        }
-
-    }
 
 
     private void setFishRuleEntityMap(Map<String,Object> fishRuleMap){

@@ -1,5 +1,6 @@
 package com.mdmd.controller;
 
+import com.mdmd.Manager.SysPropManager;
 import com.mdmd.service.DataService;
 import com.mdmd.service.UserService;
 import com.mdmd.util.WeiXinMenuUtil;
@@ -23,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 
 import static com.mdmd.constant.WeiXinPublicContant.*;
-import static com.mdmd.service.impl.SysPropServiceImpl.sysPropMap;
 import static com.mdmd.util.WeiXinMessageUtil.*;
 
 @Controller
@@ -144,7 +144,7 @@ public class WeiXinPublicAction {
         AccessToken token = WeiXinMenuUtil.getAccessToken(WEIXIN_APPID,WEIXIN_APPSECRET);
         if(token == null)
         {
-            System.out.println("获取失败");
+            LOGGER.warn("创建菜单获取token失败");
             return null;
         }
         else
@@ -165,12 +165,12 @@ public class WeiXinPublicAction {
         Menu menu = new Menu();
         List<Button> buttons = new ArrayList<>();//一级菜单
         ViewButton viewButton = new ViewButton();
-        viewButton.setName("百度~");
-        viewButton.setUrl("http://www.baidu.com");
+        viewButton.setName("管理中心");
+        viewButton.setUrl(SysPropManager.getSystemWebUrl()+"/wx/routerToServer.do");
         buttons.add(viewButton);
 
         ClickButton clickButton = new ClickButton();
-        clickButton.setName("测试按钮");
+        clickButton.setName("后台入口");
         clickButton.setKey("testButton");
         buttons.add(clickButton);
 
@@ -185,7 +185,7 @@ public class WeiXinPublicAction {
 
         ViewButton viewButton2 = new ViewButton();
         viewButton2.setName("登录测试~");
-        viewButton2.setUrl("www.miaojieshan.com/wx/routerToMyPage.do");
+        viewButton2.setUrl(SysPropManager.getSystemWebUrl()+"/wx/routerToMyPage.do");
         sub_button.add(viewButton2);
 
         commonButton.setSub_button(sub_button);
@@ -195,15 +195,14 @@ public class WeiXinPublicAction {
     }
 
     /**
-     * 通过重定向获取openid
+     * 通过重定向获取openid (跳转到游戏界面)
      * @param request
      * @param response
      */
     @RequestMapping(value="/routerToMyPage.do")
     public void redirectToMyPage(HttpServletRequest request,HttpServletResponse response){
         StringBuffer sb = new StringBuffer();
-        StringBuffer encodeUrl = new StringBuffer(300);
-        String redirectUrl = sysPropMap.get(1).getSysValue() + "/qx/home.do?sup=";
+        String redirectUrl = SysPropManager.getSystemWebUrl() + "/qx/home.do?sup=";
         try {
             String sup = request.getParameter("token");
             if(sup != null)
@@ -226,12 +225,38 @@ public class WeiXinPublicAction {
 
             response.sendRedirect(sb.toString());
         }  catch (Exception e) {
-            System.out.println("重定向url编码失败：>>" );
-
+            LOGGER.warn("重定向url编码失败：>>");
             e.printStackTrace();
         }
     }
 
+    /**
+     * 通过重定向获取openid (跳转到后台)
+     * @param request
+     * @param response
+     */
+    @RequestMapping(value="/routerToServer.do")
+    public void redirectToMyPage_server(HttpServletRequest request,HttpServletResponse response){
+        StringBuffer sb = new StringBuffer();
+        String redirectUrl = SysPropManager.getSystemWebUrl() + "/sysprop/home.do";
+        try {
+            //公众号中配置的回调域名（网页授权回调域名）
+            sb.append(WEIXIN_RETURN_URL);
+            sb.append(WEIXIN_APPID);
+            String url = "";
+            //对重定向url进行编码，官方文档要求
+            url = URLEncoder.encode(redirectUrl, "utf-8");
+            sb.append("&redirect_uri=").append(url);
+            //网页授权的静默授权snsapi_base
+            sb.append("&response_type=code&scope=snsapi_base&state=123#wechat_redirect");
+            System.out.println("~~~~~redi~~~~~~" + sb.toString() +"~~~~~");
+
+            response.sendRedirect(sb.toString());
+        }  catch (Exception e) {
+            LOGGER.warn("重定向url编码失败：>>");
+            e.printStackTrace();
+        }
+    }
 
 }
 

@@ -4,34 +4,28 @@
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
 
-    <class name="com.mdmd.entity.UserTopupEntity" table="user_topup" schema="happyfish">
+    <class name="com.mdmd.entity.UserOrderTopupEntity" table="user_order_topup" schema="happyfish">
         <id name="id">
             <column name="id" sql-type="int(11)"/>
             <generator class="identity"/>
         </id>
         <property name="time">
-            <column name="time" sql-type="timestamp" />
+            <column name="time" sql-type="timestamp"/>
         </property>
         <property name="orderNumber">
-            <column name="orderNumber" sql-type="varchar(30)" length="30" />
-        </property>
-        <property name="foreignOrderNumber">
-            <column name="foreignOrderNumber" sql-type="varchar(50)" length="50" default=" "/>
+            <column name="orderNumber" sql-type="varchar(30)" length="30"/>
         </property>
         <property name="topupType">
-            <column name="topupType" sql-type="varchar(20)" length="20" />
-        </property>
-        <property name="topupResult">
-            <column name="topupResult" sql-type="int(11)"  default="1"/>
+            <column name="topupType" sql-type="varchar(20)" length="20"/>
         </property>
         <property name="topupQuantity">
             <column name="topupQuantity" sql-type="int(11)"/>
         </property>
-        <property name="realQuantity">
-            <column name="realQuantity" sql-type="double"/>
+        <property name="doCheck">
+            <column name="doCheck" sql-type="int(11)"/>
         </property>
-        <property name="collector">
-            <column name="collector" sql-type="varchar(50)" length="50" default=" "/>
+        <property name="doCheckResult">
+            <column name="doCheckResult" sql-type="varchar(200)" length="200" />
         </property>
         <many-to-one name="userEntity" class="com.mdmd.entity.UserEntity" cascade="none" lazy="false">
             <column name="userId"/>

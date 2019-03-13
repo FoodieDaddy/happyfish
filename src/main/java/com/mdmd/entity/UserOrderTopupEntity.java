@@ -1,25 +1,27 @@
 package com.mdmd.entity;
 
-import java.io.Serializable;
 import java.sql.Timestamp;
 
-public class UserTopupEntity{
+public class UserOrderTopupEntity {
     private int id;
     private Timestamp time;
     private String orderNumber;
-    private String foreignOrderNumber;
     private String topupType;
-    private int topupResult;//结果  数据库默认为1 充值中
     private int topupQuantity;
-    private double realQuantity;
-    private String collector;
+    private int doCheck;
+    private String doCheckResult;
     private UserEntity userEntity;
 
-    public UserTopupEntity() {
+    public UserOrderTopupEntity() {
     }
 
-
-
+    public UserOrderTopupEntity(String orderNumber, String topupType, int topupQuantity, UserEntity userEntity) {
+        this.orderNumber = orderNumber;
+        this.topupType = topupType;
+        this.topupQuantity = topupQuantity;
+        this.userEntity = userEntity;
+        this.doCheckResult = " ";
+    }
 
     public int getId() {
         return id;
@@ -45,30 +47,6 @@ public class UserTopupEntity{
         this.orderNumber = orderNumber;
     }
 
-    public String getForeignOrderNumber() {
-        return foreignOrderNumber;
-    }
-
-    public String getCollector() {
-        return collector;
-    }
-
-    public void setCollector(String collector) {
-        this.collector = collector;
-    }
-
-    public void setForeignOrderNumber(String foreignOrderNumber) {
-        this.foreignOrderNumber = foreignOrderNumber;
-    }
-
-    public double getRealQuantity() {
-        return realQuantity;
-    }
-
-    public void setRealQuantity(double realQuantity) {
-        this.realQuantity = realQuantity;
-    }
-
     public String getTopupType() {
         return topupType;
     }
@@ -77,20 +55,28 @@ public class UserTopupEntity{
         this.topupType = topupType;
     }
 
-    public int getTopupResult() {
-        return topupResult;
-    }
-
-    public void setTopupResult(int topupResult) {
-        this.topupResult = topupResult;
-    }
-
     public int getTopupQuantity() {
         return topupQuantity;
     }
 
     public void setTopupQuantity(int topupQuantity) {
         this.topupQuantity = topupQuantity;
+    }
+
+    public int getDoCheck() {
+        return doCheck;
+    }
+
+    public void setDoCheck(int doCheck) {
+        this.doCheck = doCheck;
+    }
+
+    public String getDoCheckResult() {
+        return doCheckResult;
+    }
+
+    public void setDoCheckResult(String doCheckResult) {
+        this.doCheckResult = doCheckResult;
     }
 
     public UserEntity getUserEntity() {

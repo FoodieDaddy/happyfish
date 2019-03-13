@@ -20,13 +20,14 @@ import java.net.URL;
 import java.util.Hashtable;
 import java.util.Properties;
 
+import static com.mdmd.constant.ActionConstant.QRCODE_URL;
+
 public class QrcodeUtil {
 //    private static final String QRCODE_URL = "http://www.miaojieshan.com/wx/routerToMyPage.do?token=";
     private static Properties prop = null;
     private static final Logger LOGGER = LogManager.getLogger(QrcodeUtil.class);
 
     //给了个默认配置，在读取配置文件失败时使用
-    private static final String QRCODE_URL = "http://47.101.201.185/red.do?token=";
     private static String qr_format = "png";
     private static String qr_path = "/usr/local/happyfish/stc/qrcode";
     private static int qr_whitelength = 3;//边框

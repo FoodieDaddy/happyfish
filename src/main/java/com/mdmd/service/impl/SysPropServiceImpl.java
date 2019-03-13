@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import static com.mdmd.Manager.SysPropManager.getSysPropMap;
 import static com.mdmd.constant.ActionConstant.MSG;
 import static com.mdmd.constant.ActionConstant.SUCCESS;
 import static com.mdmd.constant.RedisConstant.*;
@@ -39,19 +40,20 @@ public class SysPropServiceImpl implements SysPropService {
 
 
     //记录所有的配置编号和值
-    public static Map<Integer,SysPropEntity> sysPropMap = null;
 
     public void initSysProps(){
         try {
             List<SysPropEntity> list = commonDao.listAllEntity(SysPropEntity.class);
-            if(list != null)
+            Map<Integer, SysPropEntity> sysPropMap = getSysPropMap();
+            if(list != null )
             {
-                sysPropMap = new HashMap<>();
                 for (int i = 0; i < list.size(); i++) {
                     SysPropEntity sysPropEntity = list.get(i);
                     sysPropMap.put(sysPropEntity.getSysNum(),sysPropEntity);
                 }
             }
+            Map<Integer, SysPropEntity> s = getSysPropMap();
+            System.out.println(s);
         } catch (Exception e) {
             e.printStackTrace();
             LOGGER.error("读取系统配置文件失败,终止服务!");
@@ -61,6 +63,7 @@ public class SysPropServiceImpl implements SysPropService {
     }
 
     public String updateSysprop(SysPropEntity sysPropEntity) {
+        Map<Integer, SysPropEntity> sysPropMap = getSysPropMap();
         int sysNum = sysPropEntity.getSysNum();
         if(!sysPropMap.containsKey(sysNum))
             return "不存在的参数";
@@ -76,7 +79,7 @@ public class SysPropServiceImpl implements SysPropService {
             return  "num:"+sysNum+"不能为空值";
         }
         try {
-            String val = sysValue.toString().trim();
+            String val = sysValue.trim();
             switch (sysNum){
                 case 1:
                     if(!val.contains("http"))
@@ -100,7 +103,14 @@ public class SysPropServiceImpl implements SysPropService {
                     }
                     break ;
                 case 3:
-                    Integer.valueOf(val);
+                    if(!("0".equals(val)||"1".equals(val)))
+                        return "num:" + sysNum + " 值只能为1或0";
+                    break;
+                case 4:
+                    if(!("0".equals(val)||"1".equals(val)))
+                        return "num:" + sysNum + " 值只能为1或0";
+                    break;
+                case 5:
                     break;
                 default:
                     return "num:" + sysNum + "不存在";
@@ -111,7 +121,7 @@ public class SysPropServiceImpl implements SysPropService {
             commonDao.updateEntity(sysPropEntity);
             return null;
         } catch (Exception e) {
-           e.printStackTrace();
+          LOGGER.warn("num:"+sysNum+"修改时发生错误："+e.getMessage());
            return "num:"+sysNum+"修改时发生错误："+e.getMessage();
         }
     }
@@ -125,61 +135,14 @@ public class SysPropServiceImpl implements SysPropService {
         return null;
     }
 
-
-    public SysPropEntity getSyspropWithSysNum(int sysNum) {
-        return sysPropMap.get(sysNum);
-    }
-
-    public SysPropResultJO getSyspropWithSysNum_JO(int sysNum) {
-        return new SysPropResultJO(sysPropMap.get(sysNum));
-    }
-
-    public List<SysPropEntity> getSyspropWithSysNums(List<Integer> sysNums) {
-        List<SysPropEntity> sysPropEntities = new ArrayList<>();
-        for (int i = 0; i < sysNums.size(); i++) {
-            SysPropEntity sysPropEntity = sysPropMap.get(sysNums.get(i));
-            if(sysPropEntity != null)
-                sysPropEntities.add(sysPropEntity);
-        }
-        return sysPropEntities;
-    }
-
-    public List<SysPropResultJO> getSyspropWithSysNums_JO(List<Integer> sysNums) {
+    public List<SysPropResultJO> getSyspropWithSysNums_JO(List<Integer> ids) {
         List<SysPropResultJO> sysPropResultJOS = new ArrayList<>();
-        for (int i = 0; i < sysNums.size(); i++) {
-            SysPropEntity sysPropEntity = sysPropMap.get(sysNums.get(i));
-            if(sysPropEntity != null)
-                sysPropResultJOS.add(new SysPropResultJO(sysPropEntity));
+        for (int i = 0; i < ids.size(); i++) {
+            sysPropResultJOS.add(new SysPropResultJO(sysPropDao.getSysPropWithSysNum(ids.get(i))));
         }
         return sysPropResultJOS;
     }
 
-    public List<SysPropEntity> getAllSysprop() {
-        return new ArrayList<>(sysPropMap.values());
-    }
-
-    public  boolean isDoubleCommissionTime() {
-        try {
-
-            SysPropEntity catchDouSys = sysPropMap.get(3);
-            String sysValue = catchDouSys.getSysValue();
-            int now = DateFormatUtil.now_HH();
-            //是否开启双倍佣金
-            if(sysValue.contains("1"))
-            {
-                SysPropEntity doubleTimeSys = sysPropMap.get(2);
-                //保证每个时间后面都有-
-                String timeString = doubleTimeSys.getSysValue().trim()+"-";
-                String now_ = now + "-";
-                if(timeString.contains(now_))
-                    return true;
-
-            }
-        } catch (Exception e) {
-            return false;
-        }
-        return false;
-    }
 
     public List<FishRuleJO> listAllFishRule() {
         List<FishRuleEntity> list = commonDao.listAllEntity(FishRuleEntity.class);

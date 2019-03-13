@@ -4,6 +4,7 @@ import com.mdmd.Manager.RedisCacheManager;
 import com.mdmd.dao.UserDao;
 import com.mdmd.entity.FishRuleEntity;
 import com.mdmd.entity.GameRecordEntity;
+import com.mdmd.entity.UserTopupEntity;
 import com.mdmd.enums.RedisChannelEnum;
 import com.mdmd.service.*;
 import org.junit.Test;
@@ -39,6 +40,8 @@ public class TestDao extends TestBase{
     private TakeoutService dealService;
     @Autowired
     private RedisTemplate redisTemplate;
+    @Autowired
+    private TopupService topupService;
 
     @Test
     public void testRedis()  {
@@ -46,9 +49,11 @@ public class TestDao extends TestBase{
     }
 
     @Test
-    public void testService(){
-    gameRuleService.calcuCommission(41,5);
-}
+    public void testService() throws Exception {
+//        topupService.getParametersForTopup(1,50,1);
+        boolean s = topupService.updateUserTopupEntityData("20190313164644000001418", "222", "陈", 1000, 1, true);
+        
+    }
 
 
     @Test

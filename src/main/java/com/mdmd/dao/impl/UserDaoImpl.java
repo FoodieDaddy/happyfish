@@ -2,6 +2,7 @@ package com.mdmd.dao.impl;
 
 import com.mdmd.dao.UserDao;
 import com.mdmd.entity.*;
+import com.mdmd.util.DateFormatUtil;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
@@ -98,10 +99,12 @@ public class UserDaoImpl  implements UserDao {
 
     public double getChildsLevelCommissionFormUser(int userId, int level) {
         Session session = sessionFactory.getCurrentSession();
-        String hql = "select sum(u.commissionResult) from UserCommissionEntity as u  where u.userEntity.userid = :userId and u.childNodeIndex = :level";
+        String today = DateFormatUtil.today_yyyyMMddHHmmss();
+        String hql = "select sum(u.commissionResult) from UserCommissionEntity as u  where u.userEntity.userid = :userId and u.childNodeIndex = :level and unix_timestamp(u.time) > unix_timestamp(:today)";
         Query query = session.createQuery(hql);
         query.setParameter("level",level);
         query.setParameter("userId",userId);
+        query.setParameter("today",today);
         Object o = query.list().get(0);
         return  o == null ? 0 : (double)o;
     }

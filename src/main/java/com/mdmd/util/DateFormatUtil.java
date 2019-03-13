@@ -8,15 +8,11 @@ import java.util.Date;
 
 public class DateFormatUtil {
 
-    private static final String DATEFORMAT__yyMMdd = "yyMMdd";
-    private static final DateFormat dateFormat_HHmmss = new SimpleDateFormat(DATEFORMAT__yyMMdd);
-
-    private static final String DATEFORMAT__yyyyMMddHHmmss = "yyyy-MM-dd HH:mm:ss";
-    private static final DateFormat dateFormat_yyyyMMddHHmmss = new SimpleDateFormat(DATEFORMAT__yyyyMMddHHmmss);
-
-    private static final String DATEFORMAT_ORDERTIME = "yyyyMMddHHmmss";
-    private static final DateFormat dateFormat_orderTime = new SimpleDateFormat(DATEFORMAT_ORDERTIME);
-
+    private static final DateFormat dateFormat_HHmmss = new SimpleDateFormat( "yyMMdd");
+    private static final DateFormat dateFormat_yyyyMMdd = new SimpleDateFormat("yyyy-MM-dd");
+    private static final DateFormat dateFormat_yyyyMMddHHmmss = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private static final DateFormat dateFormat_orderTime = new SimpleDateFormat("yyyyMMddHHmmss");
+    private static final String HHmmss_0 = " 00:00:00";
 
     public static Integer now_yyMMdd_intVal(){
         return Integer.valueOf(now_yyMMdd());
@@ -28,10 +24,15 @@ public class DateFormatUtil {
 
     }
 
+    public static String today_yyyyMMddHHmmss(){
+        Date date = new Date();
+        return dateFormat_yyyyMMdd.format(date) + HHmmss_0;
+    }
     public static String now_yyyyMMddHHmmss(){
         Date date = new Date();
         return dateFormat_yyyyMMddHHmmss.format(date);
     }
+
     public static  Date parse_yyyyMMddHHmmss(String time) throws ParseException {
         return dateFormat_yyyyMMddHHmmss.parse(time);
     }

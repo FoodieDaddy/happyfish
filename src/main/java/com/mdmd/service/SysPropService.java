@@ -21,39 +21,9 @@ public interface SysPropService {
     String updateSysprop( SysPropEntity sysPropEntity);
 
     String updateSysprops(List<SysPropEntity> sysPropEntities);
-    /**
-     * 通过配置编号获取某个配置信息
-     * @param sysNum
-     * @return
-     */
-    SysPropEntity getSyspropWithSysNum(int sysNum);
-
-    SysPropResultJO getSyspropWithSysNum_JO(int sysNum);
 
 
-    /**
-     * 通过配置编号获取某些配置信息
-     * @param sysNums
-     * @return
-     */
-    List<SysPropEntity> getSyspropWithSysNums(List<Integer> sysNums);
-
-    List<SysPropResultJO> getSyspropWithSysNums_JO(List<Integer> sysNums);
-    /**
-     * 获取所有配置
-     * @return
-     */
-    List<SysPropEntity> getAllSysprop();
-
-
-
-
-    /**
-     * 是否为双倍佣金时间
-     * @return
-     */
-    boolean isDoubleCommissionTime();
-
+    List<SysPropResultJO> getSyspropWithSysNums_JO(List<Integer> ids);
 
     List<FishRuleJO> listAllFishRule();
 

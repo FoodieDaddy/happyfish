@@ -1,7 +1,10 @@
 package com.mdmd.custom;
 
 import com.mdmd.dao.CommonDao;
+import com.mdmd.entity.GoldEntity;
 import com.mdmd.entity.UserEntity;
+import com.mdmd.util.CommonUtil;
+import com.mdmd.util.DateFormatUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -47,5 +50,34 @@ public class UserCustom {
             }
         }
         return superUserList;
+    }
+
+    /**
+     * 计算用户金币对象
+     * @param price
+     * @param addGold
+     * @param goldEntity
+     */
+    public void calcuGoldForGoldEntity(double price,double addGold, GoldEntity goldEntity){
+        int calcDate = goldEntity.getCalcDate();
+        int today = DateFormatUtil.now_yyMMdd_intVal();
+        double todayWater = goldEntity.getTodayWater();
+        double todayGold = goldEntity.getTodayGold();
+        if(today != calcDate)
+        {
+            goldEntity.setPreGold(CommonUtil.formatDouble_two(goldEntity.getPreGold() + goldEntity.getTodayGold()));
+            goldEntity.setTodayGold(CommonUtil.formatDouble_three(addGold - price));
+            goldEntity.setTodayWater(price);
+            goldEntity.setCalcDate(today);
+
+        }
+        else
+        {
+            //记录今日赢得金币，正为今天赢得（需要在充值时减掉充值金额）
+            goldEntity.setTodayGold(todayGold + addGold - price );
+            //记录今日流水
+            goldEntity.setTodayWater(todayWater + price);
+        }
+
     }
 }
