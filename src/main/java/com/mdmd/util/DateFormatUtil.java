@@ -8,8 +8,10 @@ import java.util.Date;
 
 public class DateFormatUtil {
 
-    private static final DateFormat dateFormat_HHmmss = new SimpleDateFormat( "yyMMdd");
+    private static final DateFormat dateFormat_yyMMdd = new SimpleDateFormat( "yyMMdd");
     private static final DateFormat dateFormat_yyyyMMdd = new SimpleDateFormat("yyyy-MM-dd");
+    private static final DateFormat dateFormat_yyyyMMdd_int = new SimpleDateFormat("yyyyMMdd");
+
     private static final DateFormat dateFormat_yyyyMMddHHmmss = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private static final DateFormat dateFormat_orderTime = new SimpleDateFormat("yyyyMMddHHmmss");
     private static final String HHmmss_0 = " 00:00:00";
@@ -20,8 +22,11 @@ public class DateFormatUtil {
 
     public static String now_yyMMdd(){
         Date date = new Date();
-        return dateFormat_HHmmss.format(date);
+        return dateFormat_yyMMdd.format(date);
 
+    }
+    public static Integer now_yyyyMMdd_intVal(){
+        return Integer.valueOf(dateFormat_yyyyMMdd_int.format(new Date()));
     }
 
     public static String today_yyyyMMddHHmmss(){
@@ -46,4 +51,17 @@ public class DateFormatUtil {
         Date date = new Date();
         return dateFormat_orderTime.format(date);
     }
+
+    /**
+     * 获取日期
+     * @param index 0 为今天
+     * @return
+     */
+    public static String getDayByCalendar(int index){
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DATE,index);
+        Date time = calendar.getTime();
+        return dateFormat_yyyyMMdd.format(time);
+    }
+
 }

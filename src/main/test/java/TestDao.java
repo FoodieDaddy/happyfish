@@ -4,6 +4,9 @@ import com.mdmd.Manager.RedisCacheManager;
 import com.mdmd.dao.UserDao;
 import com.mdmd.entity.FishRuleEntity;
 import com.mdmd.entity.GameRecordEntity;
+import com.mdmd.entity.JO.PageJO;
+import com.mdmd.entity.JO.UserResultJO;
+import com.mdmd.entity.UserTakeoutEntity;
 import com.mdmd.entity.UserTopupEntity;
 import com.mdmd.enums.RedisChannelEnum;
 import com.mdmd.service.*;
@@ -45,25 +48,23 @@ public class TestDao extends TestBase{
 
     @Test
     public void testRedis()  {
-        dataService.test();
+        gameRuleService.calcuCommission(7,10);
     }
 
     @Test
     public void testService() throws Exception {
-//        topupService.getParametersForTopup(1,50,1);
-        boolean s = topupService.updateUserTopupEntityData("20190313164644000001418", "222", "陈", 1000, 1, true);
-        
+        PageJO pageJO = new PageJO();
+        pageJO.setPageSize(10);
+        pageJO.setPageNo(1);
+        HashMap<String, Object> stringObjectHashMap = new HashMap<>();
+        stringObjectHashMap.put("userid","1");
+        List<GameRecordEntity> gameRecordEntities = sysPropService.listDatas_page(GameRecordEntity.class, pageJO, stringObjectHashMap);
     }
 
 
     @Test
     public void testService2(){
-        try {
-            List list = dataService.listDatas(1, 1);
-            System.out.println(list);
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
+
 
     }
 }

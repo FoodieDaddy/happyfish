@@ -28,11 +28,11 @@ public class QrcodeUtil {
     private static final Logger LOGGER = LogManager.getLogger(QrcodeUtil.class);
 
     //给了个默认配置，在读取配置文件失败时使用
-    private static String qr_format = "png";
+    private static String qr_format = "jpg";
     private static String qr_path = "/usr/local/happyfish/stc/qrcode";
     private static int qr_whitelength = 3;//边框
     private static int qr_length = 155;//长度
-    private static String modeImg_path = "/usr/local/happyfish/qrcode_mode.png";
+    private static String modeImg_path = "/usr/local/happyfish/qrcode_mode.jpg";
     static {
         prop = new Properties();
         InputStream in = QrcodeUtil.class.getClassLoader().getResourceAsStream( "qrcode.properties" );
@@ -93,7 +93,7 @@ public class QrcodeUtil {
             g.drawString(data,90,46);
             g.drawImage(small, x, y, small.getWidth(), small.getHeight(), null);
             g.dispose();
-            ImageIO.write(big, "png", target);
+            ImageIO.write(big, "jpg", target);
         } catch (Exception e) {
             LOGGER.warn("为用户"+data+"创建推广码失败!!" + e.getMessage());
         }
@@ -141,7 +141,7 @@ public class QrcodeUtil {
             g.drawString(data,90,46);
             g.drawImage(small, x, y, small.getWidth(), small.getHeight(), null);
             g.dispose();
-            ImageIO.write(big, "png", outputStream);
+            ImageIO.write(big, "jpg", outputStream);
         } catch (Exception e) {
             e.printStackTrace();
             LOGGER.warn("为用户"+data+"创建推广码失败!!" + e.getMessage());

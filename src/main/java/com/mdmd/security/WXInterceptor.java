@@ -14,6 +14,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import java.net.URLEncoder;
+
 import static com.mdmd.constant.ActionConstant.*;
 import static com.mdmd.security.IpHelper.getIpAddress;
 import static com.mdmd.security.IpHelper.isBlackIp;
@@ -30,12 +32,39 @@ public class WXInterceptor implements HandlerInterceptor {
         {
             return true;
         }
-        String msg = SysPropManager.stopWebServer();
-        if(msg != null)
+        //todo 后台登录验证 也要验证user
+        else  if(requestURI.contains("/sysprop/"))
+            {
+                HttpSession session = request.getSession();
+                Object adminid = session.getAttribute(SESSION_ADMINID);
+                if(adminid == null)
+                {
+                    if(requestURI.contains("/home.do"))
+                    {
+                        return true;
+                    }
+                    if(requestURI.contains("/load.do"))
+                    {
+                        String u = request.getParameter("u");
+                        if(u!=null&&!u.equals(""))
+                        {
+                            String ad = RSAUtil.decryptByHttpRequestValue(u);
+                            int adminidInt = Integer.valueOf(ad);
+                            session.setAttribute(SESSION_ADMINID,adminidInt);
+                            return true;
+                        }
+                    }
+                    response.sendRedirect(SysPropManager.getSystemWebUrl()+NOUSER_SUF_URL);
+                    return false;
+                }
+                return true;
+            }
+        if(SysPropManager.stopWebServer())
         {
-            response.sendRedirect(SysPropManager.getSystemWebUrl()+"/stc/stop_server.html?msg="+msg);
+            response.sendRedirect(SysPropManager.getSystemWebUrl()+STOPSERVER_SUF_URL);
             return false;
         }
+
         HttpSession session = request.getSession();
         if(requestURI.contains("/qx/")){
             Object userId = session.getAttribute(SESSION_USERID);
@@ -60,16 +89,10 @@ public class WXInterceptor implements HandlerInterceptor {
                                 session.setAttribute(SESSION_USERID,userIdInt);
                                 return true;
                             }
-                        } catch (Exception e) {
-                            return false;
-                        }
-
-                    }
-                    else
-                    {
-                        return false;
+                        } catch (Exception e) {}
                     }
                 }
+                response.sendRedirect(SysPropManager.getSystemWebUrl()+NOUSER_SUF_URL);
                 return false;
             }
             return true;
@@ -79,7 +102,11 @@ public class WXInterceptor implements HandlerInterceptor {
 
             Object userId = session.getAttribute(SESSION_USERID);
             if(userId == null)
+            {
+                response.sendRedirect(SysPropManager.getSystemWebUrl()+NOUSER_SUF_URL);
                 return false;
+
+            }
             return true;
         }
         //充值
@@ -90,7 +117,11 @@ public class WXInterceptor implements HandlerInterceptor {
                 return true;
             Object userId = session.getAttribute(SESSION_USERID);
             if(userId == null)
+            {
+                response.sendRedirect(SysPropManager.getSystemWebUrl()+NOUSER_SUF_URL);
                 return false;
+
+            }
             return true;
         }
         else if(requestURI.contains("/ot/"))
@@ -104,32 +135,8 @@ public class WXInterceptor implements HandlerInterceptor {
             return true;
         }
 
-        //todo 后台登录验证 也要验证user
-        else if(requestURI.contains("/sysprop/"))
-        {
-            Object adminid = session.getAttribute(SESSION_ADMINID);
-            if(adminid == null)
-            {
-                if(requestURI.contains("/home.do"))
-                {
-                    return true;
-                }
-                if(requestURI.contains("/load.do"))
-                {
-                    String u = request.getParameter("u");
-                    if(u!=null&&!u.equals(""))
-                    {
-                            String ad = RSAUtil.decryptByHttpRequestValue(u);
-                            int adminidInt = Integer.valueOf(ad);
-                            session.setAttribute(SESSION_ADMINID,adminidInt);
-                            return true;
-                    }
-                }
-            }
-            return true;
-        }
-
-        return false;
+            response.sendRedirect(SysPropManager.getSystemWebUrl()+NOUSER_SUF_URL);
+            return false;
     }
 
     @Override

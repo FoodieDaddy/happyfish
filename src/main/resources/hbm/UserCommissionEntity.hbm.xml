@@ -16,7 +16,7 @@
             <column name="commissionType" sql-type="varchar(20)" length="20"/>
         </property>
         <property name="commissionResult">
-            <column name="commissionResult" sql-type="double" precision="-1"/>
+            <column name="commissionResult" sql-type="double" precision="-3"/>
         </property>
         <property name="nodeUserId">
             <column name="nodeUserId" sql-type="int(11)"/>

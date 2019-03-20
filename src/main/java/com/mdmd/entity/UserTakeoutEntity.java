@@ -3,7 +3,7 @@ package com.mdmd.entity;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
-public class UserTakeoutEntity{
+public class UserTakeoutEntity implements Serializable{
     private int id;
     private Timestamp time;
     private int takeoutType;

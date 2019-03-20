@@ -18,6 +18,7 @@ import java.util.*;
 import static com.mdmd.constant.ActionConstant.MSG;
 import static com.mdmd.constant.GameConstant.TAKEOUT_MAX_QUATITY;
 import static com.mdmd.constant.GameConstant.TAKEOUT_TAK;
+import static com.mdmd.util.CommonUtil.formatDouble_three;
 import static com.mdmd.util.CommonUtil.formatDouble_two;
 import static com.mdmd.util.WeiXinPayUtil.companyPayToUser;
 
@@ -38,14 +39,14 @@ public class TakeoutServiceImpl implements TakeoutService {
 
     public String takeoutForUser(int userId, int num, int type) {
         try {
-            UserEntity user = (UserEntity) commonDao.getEntity(UserEntity.class, userId);
+            UserEntity user = commonDao.getEntity(UserEntity.class, userId);
             //不为0则无法提现
             if(user.getTakeoutBan() != 0)
             {
                 return "无法提现，请联系客服";
             }
             //查看提现次数
-            int takeOutTime = user.takeOutTime();
+            int takeOutTime = takeoutDao.getTakeoutTime(userId);
             //提现手续费
             double tax = 0;
             if(takeOutTime > 0)
@@ -122,6 +123,7 @@ public class TakeoutServiceImpl implements TakeoutService {
                 redisCustom.addRecordListForRedis(userTakeoutEntity,userId);
                 //修改提现总额
                 goldEntity.setTakeoutGold(goldEntity.getTakeoutGold() + num);
+                goldEntity.setTodayWater(goldEntity.getTodayGold() - num);
                 user.setGold(formatDouble_two(gold - cost));
                 user.setTakeoutTime(  user.getTakeoutTime() + 1);
                 commonDao.addEntity(user);
@@ -183,7 +185,7 @@ public class TakeoutServiceImpl implements TakeoutService {
                 redisCustom.addRecordListForRedis(userTakeoutEntity,userId);
                 //修改提现总额
                 commissionEntity.setTakeoutCommission( commissionEntity.getTakeoutCommission() + num);
-                user.setCommission(formatDouble_two(commission- cost));
+                user.setCommission(formatDouble_three(commission- cost));
                 user.setTakeoutTime(  user.getTakeoutTime() + 1);
                 commonDao.addEntity(user);
 
@@ -194,5 +196,9 @@ public class TakeoutServiceImpl implements TakeoutService {
             e.printStackTrace();
             throw new RuntimeException();
         }
+    }
+
+    public int getTakeoutTime(int userId) {
+        return takeoutDao.getTakeoutTime(userId);
     }
 }

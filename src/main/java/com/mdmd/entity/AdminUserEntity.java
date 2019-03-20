@@ -1,6 +1,8 @@
 package com.mdmd.entity;
 
-public class AdminUserEntity {
+import java.io.Serializable;
+
+public class AdminUserEntity implements Serializable {
     private int adminid;
     private String openid;
     private String aliasName;

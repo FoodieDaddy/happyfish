@@ -63,7 +63,8 @@
         <servlet-name>spring-mvc</servlet-name>
         <url-pattern>*.do</url-pattern>
         <servlet-name>spring-mvc</servlet-name>
-        <url-pattern>*.php</url-pattern>
+        <url-pattern>*.jpg</url-pattern>
+
     </servlet-mapping>
 
 

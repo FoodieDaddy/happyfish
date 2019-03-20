@@ -20,7 +20,7 @@ public class GameConstant {
     public static final int TREASURE_INFORMCOST = 1;//通知费
 
     //奖励级别 千分比
-    public static final int[] NODE_VALUES = {25,15,5,5,5};
+    public static final int[] NODE_VALUES = {25,10,5,5,5};
 
     public static final int TAKEOUT_TAK = 2;//提现的收款比例 百分之
     public static final int TAKEOUT_MAX_QUATITY = 10000;//提现最大数量

@@ -22,7 +22,7 @@
             <column name="takeoutQuantity" sql-type="int(11)"/>
         </property>
         <property name="realUse">
-            <column name="realUse" sql-type="double"/>
+            <column name="realUse" sql-type="double" precision="-2"/>
         </property>
         <property name="tradeOrderNum">
             <column name="tradeOrderNum" sql-type="varchar(50)" length="50" not-null="true"/>

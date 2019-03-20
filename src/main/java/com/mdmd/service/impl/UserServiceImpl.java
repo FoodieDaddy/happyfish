@@ -5,8 +5,11 @@ import com.mdmd.custom.RedisCustom;
 import com.mdmd.dao.CommonDao;
 import com.mdmd.dao.UserDao;
 import com.mdmd.entity.*;
+import com.mdmd.entity.JO.PageJO;
 import com.mdmd.entity.JO.UserChildsDataJO;
+import com.mdmd.entity.JO.UserResultJO;
 import com.mdmd.entity.RO.SuperCommRO;
+import com.mdmd.entity.bean.PageBean;
 import com.mdmd.enums.RedisChannelEnum;
 import com.mdmd.service.UserService;
 import com.mdmd.util.CommonUtil;
@@ -18,10 +21,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static com.mdmd.constant.SystemConstant.QRCODE_PREFIX;
 
@@ -55,7 +55,7 @@ public class UserServiceImpl implements UserService {
         }
         else
         {
-            return (UserEntity) commonDao.getEntity(UserEntity.class, userId);
+            return  commonDao.getEntity(UserEntity.class, userId);
         }
     }
 
@@ -113,26 +113,56 @@ public class UserServiceImpl implements UserService {
         return userEntity;
     }
 
-    public UserEntity handlerTopup(int userId, int quantity) throws RuntimeException{
+    public String handlerTopup(int userId, int quantity ,String openid) throws Exception{
         UserEntity userEntity = null;
         try {
-            userEntity = (UserEntity) commonDao.getEntity(UserEntity.class, userId);
+            userEntity =commonDao.getEntity(UserEntity.class, userId);
             userEntity.setGold(CommonUtil.formatDouble_two(userEntity.getGold() + quantity));
             commonDao.updateEntity(userEntity);
             UserTopupEntity userTopupEntity = new UserTopupEntity();
             userTopupEntity.setTopupType("人工充值");
             userTopupEntity.setTopupQuantity(quantity);
-            userTopupEntity.setTopupResult(2);
+            userTopupEntity.setTopupResult(1);
             userTopupEntity.setUserEntity(userEntity);
-            userTopupEntity.setOrderNumber("none");
+            userTopupEntity.setForeignOrderNumber("0");
+            userTopupEntity.setCollector(openid);
+            userTopupEntity.setRealQuantity(quantity);
+            userTopupEntity.setOrderNumber("0");
             commonDao.addEntity(userTopupEntity);
             //加入缓存
             redisCustom.addRecordListForRedis(userTopupEntity,userId);
+            return "充值成功";
         } catch (Exception e) {
             e.printStackTrace();
-            throw new RuntimeException("充值时发生意外user"+userId+",数量"+quantity+"。");
+            return "充值失败";
         }
-        return userEntity;
+    }
+
+    public List<UserResultJO> listUserEntity_page(PageJO pageJO, Map<String, Object> filter,Map<String,Object> sort) throws Exception {
+        int count = commonDao.getCount(UserEntity.class);
+        pageJO.setAllCount(count);
+        PageBean pageData = CommonUtil.getPageData(pageJO);
+
+        List<UserResultJO> userResultJOS = userDao.listUserEntity_limit(pageData, filter, sort);
+        return userResultJOS;
+    }
+
+    public void updateUserEntityFromUserResultJO(List<UserResultJO> userResultJOs) throws Exception {
+        for (int i = 0; i < userResultJOs.size(); i++) {
+            UserResultJO userResultJO = userResultJOs.get(i);
+            UserEntity user = commonDao.getEntity(UserEntity.class, userResultJO.userId);
+            user.setGold(userResultJO.gold);
+            user.setCommission(userResultJO.commission);
+            byte a = 0;
+            if(userResultJO.ban)
+               a = 1;
+            user.setLoginBan(a);
+            user.setTakeoutBan(a);
+            user.setTopupBan(a);
+            user.setCommissionGetBan(a);
+            user.setCommissionGiveBan(a);
+            commonDao.updateEntity(user);
+        }
     }
 
 

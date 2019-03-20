@@ -34,12 +34,5 @@ public class OtherAction {
             }
         }
     }
-    @RequestMapping(value = "/stopServer.do")
-    public void stopServer(HttpServletResponse response, String token) {
-        try {
-            response.sendRedirect("/index.do?msg=我大大");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+
 }

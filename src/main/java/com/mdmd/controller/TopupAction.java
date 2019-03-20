@@ -88,7 +88,7 @@ public class TopupAction {
             String newSign = MD5Util.MD5Encode(actual_price + bill_no + orderid + orderuid + price + TOPUP_token, "utf-8");
             if(newSign.equals(key))
             {
-                a_p =  CommonUtil.formatDouble_two(Integer.valueOf(actual_price)/100);
+                a_p =  CommonUtil.formatDouble_two(Double.valueOf(actual_price)/100);
                 boolean re = topupService.updateUserTopupEntityData(orderid,bill_no,account_name, a_p,userId,true);
                 LOGGER.info(userId+"收款"+re);
             }

@@ -10,10 +10,10 @@
             <generator class="identity"/>
         </id>
         <property name="preCommission">
-            <column name="preCommission" sql-type="double" precision="-1"/>
+            <column name="preCommission" sql-type="double" precision="-3"/>
         </property>
         <property name="todayCommission">
-            <column name="todayCommission" sql-type="double" precision="-1"/>
+            <column name="todayCommission" sql-type="double" precision="-3"/>
         </property>
         <property name="calcuDate">
             <column name="calcuDate" sql-type="int(11)"/>

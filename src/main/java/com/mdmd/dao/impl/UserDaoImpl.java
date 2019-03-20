@@ -2,9 +2,13 @@ package com.mdmd.dao.impl;
 
 import com.mdmd.dao.UserDao;
 import com.mdmd.entity.*;
+import com.mdmd.entity.JO.PageJO;
+import com.mdmd.entity.JO.UserResultJO;
+import com.mdmd.entity.bean.PageBean;
 import com.mdmd.util.DateFormatUtil;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.query.NativeQuery;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -12,6 +16,8 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
+import java.lang.reflect.Field;
+import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -110,56 +116,78 @@ public class UserDaoImpl  implements UserDao {
     }
 
 
-    public double getGameRecord_costs_betweenTime(int userId, String beginTime, String endTime) {
+    public List<UserResultJO> listUserEntity_limit(PageBean pageBean, Map<String, Object> filter, Map<String,Object> sort) throws Exception {
         Session session = sessionFactory.getCurrentSession();
-        Query query = session.createQuery(" select sum(g.gameCost) - sum(g.principal)  " +
-                "from GameRecordEntity as g where g.userEntity.userid = :u " +
-                "and unix_timestamp(g.time) " +
-                "between unix_timestamp(:beginTime) and  unix_timestamp(:endTime)");
-        query.setParameter("u",userId);
-        query.setParameter("beginTime",beginTime);
-        query.setParameter("endTime",endTime);
-        List list = query.list();
-        Object o = list.get(0);
-        if(o == null)
-            return 0;
-        return (double) o;
-
+        StringBuilder sql = new StringBuilder();
+        sql.append("select s.userid as userId\n" +
+                "       ,s.userOpenid as openId\n" +
+                "       ,s.gold as gold\n" +
+                "       ,s.goldTake + s.gold as allGold\n" +
+                "       ,s.commission as commission\n" +
+                "       ,s.takeCom + s.commission as allCommission\n" +
+                "       ,s.superUserId as superUserId\n"+
+                "       ,s.a+s.b+s.c+s.d+s.e as childs\n" +
+                "       ,s.a as childs_1,s.b as childs_2\n" +
+                "       ,s.c as childs_3\n" +
+                "       ,s.d as childs_4\n" +
+                "       ,s.e as childs_5\n" +
+                "       ,s.loginBan as ban\n" +
+                "from(select  u.userid as userid,u.userOpenid as userOpenid,u.gold as gold,g.takeoutGold as goldTake\n" +
+                "       ,u.commission as commission,com.takeoutCommission as takeCom,u.superUserId_a as superUserId,u.loginBan as loginBan,\n" +
+                "       (select count(u1.userid) from user as u1 where u1.superUserId_a = u.userid) as a,\n" +
+                "       (select count(u1.userid) from user as u1 where u1.superUserId_b = u.userid) as b,\n" +
+                "       (select count(u1.userid) from user as u1 where u1.superUserId_c = u.userid) as c,\n" +
+                "       (select count(u1.userid) from user as u1 where u1.superUserId_d = u.userid) as d,\n" +
+                "       (select count(u1.userid) from user as u1 where u1.superUserId_e = u.userid) as e\n" +
+                "from user as u\n" +
+                "left join commission as com on u.userid = com.userId\n" +
+                "left join gold g on u.userid = g.userId)as s");
+        if(filter.size() > 0)
+        {
+            Iterator<Map.Entry<String, Object>> iterator = filter.entrySet().iterator();
+            boolean flag = true;
+            while (iterator.hasNext()){
+                Map.Entry<String, Object> next = iterator.next();
+                if(flag)
+                {
+                    sql.append(" where " + next.getKey() + "="+ next.getValue());
+                    flag = false;
+                }
+                else
+                {
+                    sql.append(" and " + next.getKey() + "="+ next.getValue());
+                }
+            }
+        }
+        if(sort.size() > 0)
+        {
+            Object field = sort.get("field");
+            Object type = sort.get("type");
+            sql.append(" order by " + field +" " + type);
+        }
+        NativeQuery sqlQuery = session.createSQLQuery(sql.toString());
+        sqlQuery.setFirstResult(pageBean.getIndex());
+        sqlQuery.setMaxResults(pageBean.getCount());
+        List list = sqlQuery.list();
+        List<UserResultJO> userResultJOS = new LinkedList<>();
+        //结果赋值 非通用方法
+        if(list != null)
+        {
+            Field[] fields = UserResultJO.class.getDeclaredFields();
+            for (int i = 0; i < list.size(); i++) {
+                UserResultJO userResultJO = new UserResultJO();
+                Object[] o = (Object[]) list.get(i);
+                for (int j = 0; j < o.length; j++) {
+                    Object val = o[j];
+                    if(val instanceof BigInteger)
+                        val = ((BigInteger) val).intValue();
+                    fields[j].set(userResultJO,val);
+                }
+                userResultJOS.add(userResultJO);
+            }
+        }
+        return userResultJOS;
     }
-
-    public double getTopup_sum_betweenTime(int userId, String beginTime, String endTime) {
-        Session session = sessionFactory.getCurrentSession();
-        Query query = session.createQuery(" select sum(tu.topupQuantity) " +
-                "from UserTopupEntity as tu where tu.userEntity.userid = :u " +
-                "and unix_timestamp(tu.time) " +
-                "between unix_timestamp(:beginTime) and  unix_timestamp(:endTime)");
-        query.setParameter("u",userId);
-        query.setParameter("beginTime",beginTime);
-        query.setParameter("endTime",endTime);
-        List list = query.list();
-        Object o = list.get(0);
-        if(o == null)
-            return 0;
-        return (double) o;
-    }
-
-    public double getTakeout_sum_betweenTime(int userId, String beginTime, String endTime) {
-        Session session = sessionFactory.getCurrentSession();
-        Query query = session.createQuery(" select sum(to.takeoutQuantity) " +
-                "from UserTakeoutEntity as to where to.userEntity.userid = :u " +
-                "and unix_timestamp(to.time) " +
-                "between unix_timestamp(:beginTime) and  unix_timestamp(:endTime)");
-        query.setParameter("u",userId);
-        query.setParameter("beginTime",beginTime);
-        query.setParameter("endTime",endTime);
-        List list = query.list();
-        Object o = list.get(0);
-        if(o == null)
-            return 0;
-        return (double) o;
-    }
-
-
 
 
 

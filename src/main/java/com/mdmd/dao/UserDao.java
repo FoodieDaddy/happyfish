@@ -1,6 +1,9 @@
 package com.mdmd.dao;
 
 import com.mdmd.entity.*;
+import com.mdmd.entity.JO.PageJO;
+import com.mdmd.entity.JO.UserResultJO;
+import com.mdmd.entity.bean.PageBean;
 
 import java.util.List;
 import java.util.Map;
@@ -51,34 +54,5 @@ public  interface UserDao extends BaseRepository{
      */
     double getChildsLevelCommissionFormUser(int userId, int level);
 
-
-    /**
-     * 获取用户某个时间段的游戏记录 并返回游戏花费（利润 - 本金）
-     * @param userId
-     * @param beginTime
-     * @param endTime
-     * @return
-     */
-    double getGameRecord_costs_betweenTime(int userId, String beginTime, String endTime);
-
-    /**
-     * 获取用户某个时间段的充值总数
-     * @param userId
-     * @param beginTime
-     * @param endTime
-     * @return
-     */
-    double getTopup_sum_betweenTime(int userId, String beginTime, String endTime);
-
-    /**
-     * 获取用户某个时间段的提现总数
-     * @param userId
-     * @param beginTime
-     * @param endTime
-     * @return
-     */
-    double getTakeout_sum_betweenTime(int userId, String beginTime, String endTime);
-
-
-
+    List<UserResultJO> listUserEntity_limit(PageBean pageBean, Map<String, Object> filter, Map<String,Object> sort) throws Exception;
 }

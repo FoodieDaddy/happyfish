@@ -249,18 +249,5 @@ public class UserEntity implements Serializable {
         return (CommissionEntity) commissionEntitySet.toArray()[0];
     }
 
-    /**
-     * 获取今日甚于提现次数
-     * @return
-     */
-    public int takeOutTime(){
-        int todayInt = DateFormatUtil.now_yyMMdd_intVal();
-        if(this.calcuDay != todayInt)
-        {
-            this.calcuDay = todayInt;
-            this.takeoutTime = 0;
-            return 0;
-        }
-        return takeoutTime;
-    }
+
 }

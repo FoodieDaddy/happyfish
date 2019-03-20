@@ -12,4 +12,6 @@ public interface TakeoutService {
      * @return
      */
     String takeoutForUser(int userId,int num, int type);
+
+    int getTakeoutTime(int userId);
 }

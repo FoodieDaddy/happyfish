@@ -1,5 +1,7 @@
 package com.mdmd.entity.JO;
 
+import com.mdmd.util.CommonUtil;
+
 import java.io.Serializable;
 
 public class UserChildsDataJO implements Serializable {
@@ -12,7 +14,7 @@ public class UserChildsDataJO implements Serializable {
 
     public UserChildsDataJO(int levelNum, double commissionSum, int childsCount) {
         this.levelNum = levelNum;
-        this.commissionSum = commissionSum;
+        this.commissionSum = CommonUtil.formatDouble_three(commissionSum);
         this.childsCount = childsCount;
     }
 

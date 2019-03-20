@@ -21,6 +21,7 @@ public interface TakeoutDao {
      */
     int getTakeoutCount_today_0gold_1commission(int userId,int type);
 
+    int getTakeoutTime(int userId);
     /**
      * 获取用户提现记录成功的数据
      * @param userId

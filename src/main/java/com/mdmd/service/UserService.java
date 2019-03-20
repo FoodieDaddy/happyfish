@@ -1,11 +1,14 @@
 package com.mdmd.service;
 
 import com.google.zxing.WriterException;
+import com.mdmd.entity.JO.PageJO;
 import com.mdmd.entity.JO.UserChildsDataJO;
+import com.mdmd.entity.JO.UserResultJO;
 import com.mdmd.entity.UserEntity;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 public interface UserService {
 
@@ -32,7 +35,9 @@ public interface UserService {
 
     UserEntity addUserInfo(String openId,int superUserId) throws Exception;
 
-    UserEntity handlerTopup(int userId,int quantity) throws RuntimeException;
+    String handlerTopup(int userId,int quantity,String openid) throws Exception;
 
+    List<UserResultJO> listUserEntity_page(PageJO pageJO, Map<String, Object> filter, Map<String,Object> sort) throws Exception;
 
+    void updateUserEntityFromUserResultJO(List<UserResultJO> userResultJOs) throws Exception;
 }

@@ -48,9 +48,16 @@ public class SysPropManager {
      * 网站是否维护中,如果维护中，返回维护信息
      * @return
      */
-    public static String stopWebServer(){
+    public static boolean stopWebServer(){
         if(sysPropMap.get(4).getSysValue().equals("0"))
-            return null;
+            return false;
+        return true;
+    }
+    /**
+     * 网站是否维护中,如果维护中，返回维护信息
+     * @return
+     */
+    public static String getInfomation(){
         return sysPropMap.get(5).getSysValue();
     }
 
@@ -80,7 +87,4 @@ public class SysPropManager {
         }
         return false;
     }
-
-
-
 }

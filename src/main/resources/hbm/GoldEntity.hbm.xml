@@ -10,16 +10,16 @@
             <generator class="identity"/>
         </id>
         <property name="preGold">
-            <column name="preGold" sql-type="double" precision="-1"/>
+            <column name="preGold" sql-type="double" precision="-2"/>
         </property>
         <property name="calcDate">
             <column name="calcDate" sql-type="int(11)" not-null="true"/>
         </property>
         <property name="todayWater">
-            <column name="todayWater" sql-type="double" precision="-1"/>
+            <column name="todayWater" sql-type="double" precision="-2"/>
         </property>
         <property name="todayGold">
-            <column name="todayGold" sql-type="double" precision="-1"/>
+            <column name="todayGold" sql-type="double" precision="-2"/>
         </property>
         <property name="takeoutGold">
             <column name="takeoutGold" sql-type="int(11)"/>

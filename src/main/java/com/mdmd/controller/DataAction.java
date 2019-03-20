@@ -6,7 +6,9 @@ import com.mdmd.entity.JO.RankingListJO;
 import com.mdmd.entity.JO.UserChildsDataJO;
 import com.mdmd.entity.UserEntity;
 import com.mdmd.service.DataService;
+import com.mdmd.service.TakeoutService;
 import com.mdmd.service.UserService;
+import com.mdmd.util.CommonUtil;
 import com.mdmd.util.QrcodeUtil;
 import com.mdmd.util.RSAUtil;
 import org.apache.commons.codec.binary.Base64;
@@ -28,6 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.mdmd.Manager.SysPropManager.getInfomation;
 import static com.mdmd.constant.ActionConstant.*;
 import static com.mdmd.constant.SystemConstant.QRCODE_PREFIX;
 import static com.mdmd.util.WeiXinSignUtil.getOpenId;
@@ -39,6 +42,8 @@ public class DataAction {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private TakeoutService takeoutService;
     @Autowired
     private DataService dataService;
     static final Logger LOGGER = LogManager.getLogger(DataAction.class);
@@ -56,8 +61,6 @@ public class DataAction {
             String state = request.getParameter("state");
             String test = request.getParameter("test");
             String sup = request.getParameter("sup");
-
-            LOGGER.info("home获取到" + code + ";" + state + ";" + sup + "。");
 
             UserEntity userEntity = null;
             if (test != null) {
@@ -136,6 +139,7 @@ public class DataAction {
             LOGGER.info("------user是:" + userId);
             result.put("userId", userId);
             result.put("gold", userEntity.getGold());
+            result.put("inform",getInfomation());
             result.put("commission", userEntity.getCommission());//todo 未计算
             result.put(SUCCESS, Boolean.TRUE);
         } catch (Exception e) {
@@ -150,7 +154,7 @@ public class DataAction {
      * 获取二维码
      * @return
      */
-    @RequestMapping(value = "/qrcode.do")
+    @RequestMapping(value = "/qrcode.jpg")
     public void catchFish(HttpServletRequest request, HttpSession session, HttpServletResponse response) {
         Map<String, Object> result = new HashMap<>();
         try {
@@ -162,31 +166,6 @@ public class DataAction {
             e.printStackTrace();
         }
     }
-
-//    /**
-//     * 获取微信二维码tickert
-//     * @param request
-//     * @param session
-//     * @param response
-//     * @return
-//     */
-//    @RequestMapping(value = "/getQRCode.do")
-//    @ResponseBody
-//    public Map<String,Object> getQrCODE(HttpServletRequest request, HttpSession session,HttpServletResponse response){
-//        Map<String, Object> result = new HashMap<>();
-//        try {
-//            int userId = (int) session.getAttribute("userId");
-//            String ticket = dataService.getQRCodeTicketWithUserId(userId);
-//            result.put("data",QRCODE_GET_URL+ URLEncoder.encode(ticket));
-//            result.put(SUCCESS,Boolean.TRUE);
-//        } catch (Exception e) {
-//            result.put(SUCCESS,false);
-//            result.put(MSG,e.getMessage());
-//            e.printStackTrace();
-//        }
-//        return result;
-//    }
-
 
     /**
      * 获取公钥
@@ -317,8 +296,10 @@ public class DataAction {
             double todayWater = goldEntity.todayWater();
             result.put(SUCCESS, true);
             result.put("gold",gold);
+            result.put("takeoutTime",takeoutService.getTakeoutTime(userId));
+            result.put("allTakeoutTime",user.getTakeoutTime());
             result.put("commission",commission);
-            result.put("todayWater",todayWater);
+            result.put("todayWater", CommonUtil.formatDouble_two(todayWater));
             result.put("userId",userId);
         } catch (Exception e) {
             e.printStackTrace();
@@ -327,4 +308,6 @@ public class DataAction {
         }
         return result;
     }
+
+
 }

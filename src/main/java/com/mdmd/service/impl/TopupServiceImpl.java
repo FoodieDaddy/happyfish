@@ -60,6 +60,7 @@ public class TopupServiceImpl implements TopupService {
             userOrderTopupEntity.setDoCheck(1);
             userEntity.setGold(userEntity.getGold() + money);
             userCustom.calcuGoldForGoldEntity(0,money,userEntity.singleGoldEntity());
+            commonDao.updateEntity(userEntity);
         }
         else
         {
@@ -93,7 +94,7 @@ public class TopupServiceImpl implements TopupService {
         String key = MD5Util.MD5Encode(sb.toString(),"utf-8").toLowerCase();
         parameters.remove("token");
         parameters.put("key",key);
-        UserEntity userEntity = (UserEntity) commonDao.getEntity(UserEntity.class, userId);
+        UserEntity userEntity =  commonDao.getEntity(UserEntity.class, userId);
         //创建一个支付订单
         UserOrderTopupEntity userOrderTopupEntity = new UserOrderTopupEntity(orderid, type == 1 ? "微信支付" : "支付宝支付", money, userEntity);
         commonDao.addEntity(userOrderTopupEntity);

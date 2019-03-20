@@ -13,10 +13,10 @@
             <column name="userOpenid" sql-type="varchar(28)" length="28"/>
         </property>
         <property name="gold">
-            <column name="gold" sql-type="double" precision="-1"/>
+            <column name="gold" sql-type="double" precision="-2"/>
         </property>
         <property name="commission">
-            <column name="commission" sql-type="double" precision="-1"/>
+            <column name="commission" sql-type="double" precision="-3"/>
         </property>
         <property name="superUserId_a">
             <column name="superUserId_a" sql-type="int(11)"/>

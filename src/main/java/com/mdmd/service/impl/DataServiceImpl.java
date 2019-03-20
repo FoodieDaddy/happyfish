@@ -49,6 +49,7 @@ public class DataServiceImpl implements DataService {
     public  void initCache() {
         try {
             redisCacheManager.clear();
+            //todo
             LOGGER.info("初始化缓存");
         } catch (Exception e) {
             e.printStackTrace();

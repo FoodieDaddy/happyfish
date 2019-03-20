@@ -27,7 +27,7 @@ public class UserCustom {
      * @throws RuntimeException
      */
     public List<UserEntity> get5_SuperUserEntity(int userId) throws RuntimeException{
-        UserEntity user =(UserEntity) commonDao.getEntity(UserEntity.class, userId);
+        UserEntity user =commonDao.getEntity(UserEntity.class, userId);
         List<UserEntity> superUserList = new LinkedList<>();
         int superUserId_a = user.getSuperUserId_a();
         int superUserId_b = user.getSuperUserId_b();
@@ -39,7 +39,7 @@ public class UserCustom {
             int superId = superUserids[i];
             if(superId > 0)
             {
-                UserEntity superUser = (UserEntity) commonDao.getEntity(UserEntity.class, superId);
+                UserEntity superUser = commonDao.getEntity(UserEntity.class, superId);
                 if(superUser == null)
                     break;
                 superUserList.add(superUser);
@@ -66,7 +66,7 @@ public class UserCustom {
         if(today != calcDate)
         {
             goldEntity.setPreGold(CommonUtil.formatDouble_two(goldEntity.getPreGold() + goldEntity.getTodayGold()));
-            goldEntity.setTodayGold(CommonUtil.formatDouble_three(addGold - price));
+            goldEntity.setTodayGold(CommonUtil.formatDouble_two(addGold - price));
             goldEntity.setTodayWater(price);
             goldEntity.setCalcDate(today);
 

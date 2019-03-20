@@ -30,8 +30,7 @@ import static com.mdmd.util.WeiXinMessageUtil.*;
 @RequestMapping("/wx")
 public class WeiXinPublicAction {
 
-    @Autowired
-    private DataService dataService;
+
     @Autowired
     private UserService userService;
     private static final Logger LOGGER = LogManager.getLogger(WeiXinPublicAction.class);
@@ -82,8 +81,8 @@ public class WeiXinPublicAction {
                         String[] split = content.split("-");
                         int userId = Integer.valueOf(split[1]);
                         int gold = Integer.valueOf(split[2]);
-                        userService.handlerTopup(userId,gold);
-                        LOGGER.info("充值："+fromUserName+"为用户"+userId+"充值了"+gold+"。");
+                        String s = userService.handlerTopup(userId, gold,fromUserName);
+                        LOGGER.info(s+"："+fromUserName+"为用户"+userId+"充值"+gold+"。");
                     }else if(content.contains("myopenid")){
                         respContent = fromUserName;
                     }

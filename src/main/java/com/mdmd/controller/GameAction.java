@@ -101,40 +101,68 @@ public class GameAction {
     @ResponseBody
     public Map<String,Object> seizeTreasure(HttpServletRequest request, HttpSession session,HttpServletResponse response,String treasure_type, String treasure_num) {
         Map<String, Object> result = new HashMap<>();
+        int userId = 0,type = 0,num =0;
         try {
-            int userId = (int)session.getAttribute(SESSION_USERID);
+            userId = (int)session.getAttribute(SESSION_USERID);
             String treasureType = treasure_type.trim();
             String treasureNum = treasure_num.trim();
-            int type = Integer.valueOf(treasureType);
-            int num = Integer.valueOf(treasureNum);
-            if(type > 9 && type < 19 && num > 0 && num < 101)
-            {
-                GameResultJO treasureResult = gameRuleService.getTreasureResult(type, num, userId);
-                if(treasureResult.isSuccess())
-                {
-                    result.put("data",treasureResult);
-                    result.put(SUCCESS,true);
-                }
-                else
-                {
-                    result.put(SUCCESS,false);
-                    result.put(MSG,treasureResult.getMsg());
-                }
-
-            }
-            else
+            type = Integer.valueOf(treasureType);
+            num = Integer.valueOf(treasureNum);
+            if(!(type > 9 && type < 19 && num > 0 && num < 201))
             {
                 result.put(SUCCESS,false);
                 result.put(MSG,"非法数据");
                 LOGGER.error("《夺宝》来自用户:"+userId+"的非法数据type="+type+",num="+num+"。");
+                return result;
             }
-
         } catch (Exception e) {
             e.printStackTrace();
             LOGGER.warn(e.getMessage());
             result.put(SUCCESS,false);
             result.put(MSG,"意外的错误");
+            return result;
         }
+
+        String msg = null;
+        try {
+            msg = gameRuleService.getTreasureResult_1_deductMoney(num, userId);
+        } catch (Exception e) {
+            msg =e.getMessage();
+            LOGGER.error("用户"+ userId +"夺宝时扣款时错误");
+        }
+        if(msg != null)
+        {
+            result.put(SUCCESS,false);
+            result.put(MSG,msg);
+            return result;
+        }
+
+        GameResultJO treasureResult = null;
+        try {
+            treasureResult = gameRuleService.getTreasureResult(type, num, userId);
+            msg = treasureResult.getMsg();
+        } catch (Exception e) {
+            msg = e.getMessage();
+        }
+
+        if(msg == null)
+        {
+            result.put("data",treasureResult);
+            result.put(SUCCESS,true);
+        }
+        else
+        {
+            result.put(SUCCESS,false);
+            result.put(MSG,treasureResult.getMsg());
+            try {
+                gameRuleService.treasureCost_back(num,userId);
+            } catch (Exception e) {
+                result.put(SUCCESS,false);
+                result.put(MSG,e.getMessage());
+                LOGGER.error("用户"+ userId +"夺宝失败还款时错误");
+            }
+        }
+
         return result;
     }
 
